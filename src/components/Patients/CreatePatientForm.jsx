@@ -77,7 +77,7 @@ export default function CreatePatientForm({ onClose }) {
     setLoading(true);
 
     try {
-      await axios.post("http://backproyectplataform.onrender.com/api/patients", formData);
+      await axios.post("https://backproyectplataform.onrender.com/api/patients", formData);
       alert("Paciente guardado con éxito!");
       onClose();
     } catch (error) {

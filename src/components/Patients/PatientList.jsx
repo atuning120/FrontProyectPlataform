@@ -8,7 +8,7 @@ export default function PatientList() {
   useEffect(() => {
     const fetchPatients = async () => {
       try {
-        const response = await axios.get("http://backproyectplataform.onrender.com/api/patients");
+        const response = await axios.get("https://backproyectplataform.onrender.com/api/patients");
         setPatients(response.data);
         setLoading(false);
       } catch (error) {
