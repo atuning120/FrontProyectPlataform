@@ -2,11 +2,11 @@ import { useContext } from "react";
 import { AuthContext } from "./Auth/AuthProvider";
 import { logout } from "../services/firebase";
 
-export default function UserProfile() {
+export default function Header() {
   const { user } = useContext(AuthContext);
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md flex flex-col items-center">
+    <div className="bg-white p-4 rounded-lg shadow-md flex flex-col items-center fixed top-0 w-full z-10">
       <img src={user.photoURL} alt="User profile" className="w-16 h-16 rounded-full" />
       <p className="font-medium mt-2">{user.displayName}</p>
       <p className="text-sm text-gray-500">{user.email}</p>

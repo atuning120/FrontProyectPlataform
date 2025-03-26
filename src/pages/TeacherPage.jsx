@@ -1,7 +1,7 @@
 import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../components/Auth/AuthProvider";
 import { useNavigate } from "react-router-dom";
-import UserProfile from "../components/UserProfile";
+import UserProfile from "../components/Header";
 import CreatePatientForm from "../components/Patients/CreatePatientForm";
 import PatientList from "../components/Patients/PatientList";
 

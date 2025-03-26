@@ -14,7 +14,7 @@ export function AuthProvider({ children }) {
         const email = user.email;
         let role = "alumno"; 
 
-        if (email === "benjagilberto44@gmail.com" || email == "silasglauco@gmail.com") {
+        if (email === "benjagilberto44@gmail.com" || email == "silasglauco@gmail.com" || email == "cristian.ignacio.nunez@gmail.com") {
           role = "profesor"; // Asignar rol profesor a este correo
         } else if (email.endsWith("@ucn.cl") || email.endsWith("@ce.ucn.cl")) {
           role = "profesor";  // Correo de profesor
