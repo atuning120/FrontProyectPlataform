@@ -6,16 +6,15 @@ export const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); // Agregar estado para manejar errores
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         const email = user.email;
-        let role = "alumno"; // Por defecto, todos son alumnos
+        let role = "alumno"; 
 
-        // Asignamos el rol para benjagilberto44@gmail.com como profesor
-        if (email === "benjagilberto44@gmail.com") {
+        if (email === "benjagilberto44@gmail.com" || email == "silasglauco@gmail.com") {
           role = "profesor"; // Asignar rol profesor a este correo
         } else if (email.endsWith("@ucn.cl") || email.endsWith("@ce.ucn.cl")) {
           role = "profesor";  // Correo de profesor

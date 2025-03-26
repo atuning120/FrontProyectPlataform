@@ -59,6 +59,24 @@ export default function CreatePatientForm({ onClose }) {
       }
 
       setFormData({ ...formData, run: cleanedValue });
+    } else if (name === "mobileNumber") {
+      // Limitar a solo números y máximo 9 dígitos
+      let cleanedValue = value.replace(/\D/g, "");
+
+      // Limitar a 9 dígitos
+      if (cleanedValue.length > 9) {
+        cleanedValue = cleanedValue.slice(0, 9);
+      }
+
+      // Formatear el número con un espacio después del primer dígito y luego cada 4 dígitos
+      cleanedValue = cleanedValue.replace(/(\d{1})(\d{4})(\d{4})/, "$1 $2 $3");
+
+      setFormData({ ...formData, mobileNumber: cleanedValue });
+    } else if (name === "age") {
+      // Solo permitir números para la edad
+      let cleanedValue = value.replace(/\D/g, "");
+
+      setFormData({ ...formData, age: cleanedValue });
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -157,14 +175,6 @@ export default function CreatePatientForm({ onClose }) {
           disabled={loading}
         >
           {loading ? "Guardando..." : "Guardar Paciente"}
-        </button>
-        <button
-          type="button"
-          onClick={onClose}
-          className="w-full bg-gray-400 text-white py-2 rounded-lg hover:bg-gray-500 transition mt-2"
-          disabled={loading}
-        >
-          Cancelar
         </button>
       </form>
     </div>
