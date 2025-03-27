@@ -1,11 +1,14 @@
 import { useEffect, useState, useContext } from "react";
 import axios from "axios";
-import { AuthContext } from "../Auth/AuthProvider"; // Importar contexto de autenticación
-import DeleteClinicalRecord from "./DeleteClinicalRecord"; // Importar el componente DeleteClinicalRecord
+import { AuthContext } from "../Auth/AuthProvider";
+import DeleteClinicalRecord from "./DeleteClinicalRecord";
+import CreateAnsweredClinicalRecords from "../AnsweredClinicalRecords/CreateAnsweredClinicalRecord";
+import FindAnsweredClinicalRecord from "../AnsweredClinicalRecords/FindAnsweredClinicalRecord";
 
-export default function ClinicalRecordList() {
-  const { user } = useContext(AuthContext); // Obtener el usuario autenticado
+export default function ClinicalRecordList({ onResponseSubmitted }) {
+  const { user } = useContext(AuthContext);
   const [clinicalRecords, setClinicalRecords] = useState([]);
+  const [answeredRecords, setAnsweredRecords] = useState([]); // Para guardar las fichas respondidas
   const [patientData, setPatientData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -13,12 +16,10 @@ export default function ClinicalRecordList() {
   useEffect(() => {
     const fetchClinicalRecords = async () => {
       try {
-        // Obtener todas las fichas clínicas
         const response = await axios.get("http://localhost:5000/api/clinical-records");
         setClinicalRecords(response.data);
 
-        // Obtener los datos de los pacientes para cada ficha clínica
-        const patientDataMap = {}; // Para almacenar los datos de los pacientes por su RUN
+        const patientDataMap = {};
         for (let record of response.data) {
           if (!patientDataMap[record.patientRun]) {
             const patientResponse = await axios.get(`http://localhost:5000/api/patients/${record.patientRun}`);
@@ -36,8 +37,20 @@ export default function ClinicalRecordList() {
     fetchClinicalRecords();
   }, []);
 
+  const handleAnsweredStatusChange = (answeredRecords) => {
+    setAnsweredRecords(answeredRecords);
+  };
+
   const handleDelete = (recordId) => {
-    setClinicalRecords(clinicalRecords.filter((record) => record._id !== recordId)); // Eliminar de la lista local
+    setClinicalRecords(clinicalRecords.filter((record) => record._id !== recordId));
+  };
+
+  const handleSubmitAnswer = (clinicalRecordNumber) => {
+    onResponseSubmitted(); // Cierra el botón de mostrar fichas cuando se envía una respuesta
+  };
+
+  const isAnswered = (clinicalRecordNumber) => {
+    return answeredRecords.some(record => record.clinicalRecordNumber === clinicalRecordNumber);
   };
 
   if (loading) return <div>Cargando fichas clínicas...</div>;
@@ -46,35 +59,53 @@ export default function ClinicalRecordList() {
   return (
     <div className="bg-white p-6 rounded-lg shadow-md mt-6">
       <h2 className="text-xl font-bold mb-4">Fichas Clínicas</h2>
+
       {clinicalRecords.length === 0 ? (
         <p>No hay fichas clínicas disponibles.</p>
       ) : (
         <ul>
-          {clinicalRecords.map((record) => (
-            <li key={record._id} className="mb-4">
-              {/* Mostrar datos del paciente en una sola línea */}
-              {patientData[record.patientRun] && (
-                <div className="mb-2">
-                  <p className="flex items-center space-x-4">
-                    <span><strong>RUN:</strong> {record.patientRun}</span>
-                    <span><strong>Nombre:</strong> {patientData[record.patientRun].fullName}</span>
-                    <span><strong>Edad:</strong> {patientData[record.patientRun].age}</span>
-                    <span><strong>Género:</strong> {patientData[record.patientRun].gender}</span>
-                    <span><strong>Dirección:</strong> {patientData[record.patientRun].address}</span>
-                    <span><strong>Email:</strong> {patientData[record.patientRun].email}</span>
-                  </p>
-                </div>
-              )}
-              
-              {/* Mostrar la descripción de la ficha clínica debajo */}
-              <p><strong>Descripción:</strong> {record.content}</p>
+          {clinicalRecords
+            .filter(record => !isAnswered(record.clinicalRecordNumber)) // Filtrar las que ya fueron respondidas
+            .map((record) => (
+              <li key={record._id} className="mb-4">
+                <p><strong>N° Ficha clínica:</strong> {record.clinicalRecordNumber}</p>
 
-              {/* Mostrar el botón de eliminar solo si el rol es profesor */}
-              {user.role === "profesor" && (
-                <DeleteClinicalRecord recordId={record._id} onDelete={handleDelete} />
-              )}
-            </li>
-          ))}
+                {patientData[record.patientRun] && (
+                  <div className="mb-2">
+                    <p className="flex items-center space-x-4">
+                      <span><strong>RUN:</strong> {record.patientRun}</span>
+                      <span><strong>Nombre:</strong> {patientData[record.patientRun].fullName}</span>
+                      <span><strong>Edad:</strong> {patientData[record.patientRun].age}</span>
+                      <span><strong>Género:</strong> {patientData[record.patientRun].gender}</span>
+                      <span><strong>Dirección:</strong> {patientData[record.patientRun].address}</span>
+                      <span><strong>Email:</strong> {patientData[record.patientRun].email}</span>
+                    </p>
+                  </div>
+                )}
+
+                <p><strong>Descripción:</strong> {record.content}</p>
+
+                {user.role === "profesor" && (
+                  <DeleteClinicalRecord recordId={record._id} onDelete={handleDelete} />
+                )}
+
+                {user.role === "alumno" && (
+                  <div>
+                    <FindAnsweredClinicalRecord 
+                      userEmail={user.email} 
+                      onAnswered={handleAnsweredStatusChange} 
+                    />
+                    {/* Mostrar el botón solo si no está respondida */}
+                    {!isAnswered(record.clinicalRecordNumber) && (
+                      <CreateAnsweredClinicalRecords 
+                        clinicalRecordNumber={record.clinicalRecordNumber}
+                        onSubmit={handleSubmitAnswer} 
+                      />
+                    )}
+                  </div>
+                )}
+              </li>
+            ))}
         </ul>
       )}
     </div>

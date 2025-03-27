@@ -18,6 +18,16 @@ export default function StudentPage() {
 
   if (!user || user.role !== "alumno") return null;
 
+  const handleToggleClinicalRecords = () => {
+    setShowClinicalRecords(!showClinicalRecords);
+  };
+
+  const handleResponseSubmitted = () => {
+    // Cerrar el botón de mostrar fichas clínicas cuando se envía una respuesta
+    console.log("Respuesta enviada, ocultando fichas clínicas.");
+    setShowClinicalRecords(false);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <Header />
@@ -25,13 +35,15 @@ export default function StudentPage() {
       <div className="mt-6">
         <ToggleButton
           isVisible={showClinicalRecords}
-          onToggle={() => setShowClinicalRecords(!showClinicalRecords)}
+          onToggle={handleToggleClinicalRecords}
           showText="Mostrar Fichas Clínicas"
           hideText="Ocultar Fichas Clínicas"
           className="bg-blue-500 text-white"
         />
 
-        {showClinicalRecords && <ClinicalRecordList />}
+        {showClinicalRecords && (
+          <ClinicalRecordList onResponseSubmitted={handleResponseSubmitted} />
+        )}
       </div>
     </div>
   );
