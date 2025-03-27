@@ -1,13 +1,14 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../components/Auth/AuthProvider";
 import { useNavigate } from "react-router-dom";
-import UserProfile from "../components/Header";
+import Header from "../components/Header";
+import PatientList from "../components/Patients/PatientList";
 
 export default function StudentPage() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [showPatientList, setShowPatientList] = useState(false);
 
-  // Redirigir si el usuario no es alumno
   useEffect(() => {
     if (!user || user.role !== "alumno") {
       navigate("/");
@@ -18,12 +19,19 @@ export default function StudentPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-md mx-auto">
-        <UserProfile />
-        <div className="bg-white p-6 rounded-lg shadow-md mt-6">
-          <h1 className="text-2xl font-bold">Página del Alumno</h1>
-          <p className="mt-4 text-gray-600">Aquí los alumnos podrán ver y responder fichas técnicas.</p>
-        </div>
+      <Header />
+
+      {/* Botón para mostrar la lista de pacientes */}
+      <div className="max-w-md mx-auto mt-6">
+        <button
+          onClick={() => setShowPatientList(!showPatientList)}
+          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+        >
+          {showPatientList ? "Ocultar Lista de Pacientes" : "Ver Lista de Pacientes"}
+        </button>
+
+        {/* Renderizar la lista de pacientes solo si el botón está activo */}
+        {showPatientList && <PatientList />}
       </div>
     </div>
   );
