@@ -1,7 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import axios from "axios";
+import { AuthContext } from "../Auth/AuthProvider"; // Importar contexto de autenticación
+import DeleteClinicalRecord from "./DeleteClinicalRecord"; // Importar el componente DeleteClinicalRecord
 
 export default function ClinicalRecordList() {
+  const { user } = useContext(AuthContext); // Obtener el usuario autenticado
   const [clinicalRecords, setClinicalRecords] = useState([]);
   const [patientData, setPatientData] = useState({});
   const [loading, setLoading] = useState(true);
@@ -33,6 +36,10 @@ export default function ClinicalRecordList() {
     fetchClinicalRecords();
   }, []);
 
+  const handleDelete = (recordId) => {
+    setClinicalRecords(clinicalRecords.filter((record) => record._id !== recordId)); // Eliminar de la lista local
+  };
+
   if (loading) return <div>Cargando fichas clínicas...</div>;
   if (error) return <div>{error}</div>;
 
@@ -61,6 +68,11 @@ export default function ClinicalRecordList() {
               
               {/* Mostrar la descripción de la ficha clínica debajo */}
               <p><strong>Descripción:</strong> {record.content}</p>
+
+              {/* Mostrar el botón de eliminar solo si el rol es profesor */}
+              {user.role === "profesor" && (
+                <DeleteClinicalRecord recordId={record._id} onDelete={handleDelete} />
+              )}
             </li>
           ))}
         </ul>
