@@ -2,12 +2,13 @@ import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../components/Auth/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
-import PatientList from "../components/Patients/PatientList";
+import ClinicalRecordList from "../components/ClinicalRecords/ClinicalRecordList";
+import ToggleButton from "../components/ToggleButton"; // Importamos el nuevo componente
 
 export default function StudentPage() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [showPatientList, setShowPatientList] = useState(false);
+  const [showClinicalRecords, setShowClinicalRecords] = useState(false);
 
   useEffect(() => {
     if (!user || user.role !== "alumno") {
@@ -21,17 +22,16 @@ export default function StudentPage() {
     <div className="min-h-screen bg-gray-100 p-8">
       <Header />
 
-      {/* Botón para mostrar la lista de pacientes */}
-      <div className="max-w-md mx-auto mt-6">
-        <button
-          onClick={() => setShowPatientList(!showPatientList)}
-          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
-        >
-          {showPatientList ? "Ocultar Lista de Pacientes" : "Ver Lista de Pacientes"}
-        </button>
+      <div className="mt-6">
+        <ToggleButton
+          isVisible={showClinicalRecords}
+          onToggle={() => setShowClinicalRecords(!showClinicalRecords)}
+          showText="Mostrar Fichas Clínicas"
+          hideText="Ocultar Fichas Clínicas"
+          className="bg-blue-500 text-white"
+        />
 
-        {/* Renderizar la lista de pacientes solo si el botón está activo */}
-        {showPatientList && <PatientList />}
+        {showClinicalRecords && <ClinicalRecordList />}
       </div>
     </div>
   );
