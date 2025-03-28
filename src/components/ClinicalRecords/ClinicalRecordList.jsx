@@ -8,7 +8,7 @@ import FindAnsweredClinicalRecord from "../AnsweredClinicalRecords/FindAnsweredC
 export default function ClinicalRecordList({ onResponseSubmitted }) {
   const { user } = useContext(AuthContext);
   const [clinicalRecords, setClinicalRecords] = useState([]);
-  const [answeredRecords, setAnsweredRecords] = useState([]); // Para guardar las fichas respondidas
+  const [answeredRecords, setAnsweredRecords] = useState([]);
   const [patientData, setPatientData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -46,7 +46,7 @@ export default function ClinicalRecordList({ onResponseSubmitted }) {
   };
 
   const handleSubmitAnswer = (clinicalRecordNumber) => {
-    onResponseSubmitted(); // Cierra el botón de mostrar fichas cuando se envía una respuesta
+    onResponseSubmitted(); 
   };
 
   const isAnswered = (clinicalRecordNumber) => {
@@ -65,7 +65,7 @@ export default function ClinicalRecordList({ onResponseSubmitted }) {
       ) : (
         <ul>
           {clinicalRecords
-            .filter(record => !isAnswered(record.clinicalRecordNumber)) // Filtrar las que ya fueron respondidas
+            .filter(record => !isAnswered(record.clinicalRecordNumber))
             .map((record) => (
               <li key={record._id} className="mb-4">
                 <p><strong>N° Ficha clínica:</strong> {record.clinicalRecordNumber}</p>
@@ -85,6 +85,9 @@ export default function ClinicalRecordList({ onResponseSubmitted }) {
 
                 <p><strong>Descripción:</strong> {record.content}</p>
 
+                {/* Mostrar la fecha de creación */}
+                <p><strong>Fecha de creación:</strong> {new Date(record.createdAt).toLocaleString()}</p>
+
                 {user.role === "profesor" && (
                   <DeleteClinicalRecord recordId={record._id} onDelete={handleDelete} />
                 )}
@@ -95,7 +98,6 @@ export default function ClinicalRecordList({ onResponseSubmitted }) {
                       userEmail={user.email} 
                       onAnswered={handleAnsweredStatusChange} 
                     />
-                    {/* Mostrar el botón solo si no está respondida */}
                     {!isAnswered(record.clinicalRecordNumber) && (
                       <CreateAnsweredClinicalRecords 
                         clinicalRecordNumber={record.clinicalRecordNumber}

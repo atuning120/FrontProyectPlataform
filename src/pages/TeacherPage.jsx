@@ -2,7 +2,7 @@ import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../components/Auth/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import UserProfile from "../components/Header";
-import CreatePatientForm from "../components/Patients/CreatePatientForm";
+import CreatePatient from "../components/Patients/CreatePatient";
 import PatientList from "../components/Patients/PatientList";
 import CreateClinicalRecord from "../components/ClinicalRecords/CreateClinicalRecord"; 
 import ClinicalRecordList from "../components/ClinicalRecords/ClinicalRecordList"; // Importamos el componente de lista de fichas clínicas
@@ -23,6 +23,10 @@ export default function TeacherPage() {
   }, [user, navigate]);
 
   if (!user || user.role !== "profesor") return null;
+
+  const handleCloseClinicRecordForm = () => {
+    setShowClinicRecordForm(false); // Cerramos el formulario de ficha clínica
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -51,7 +55,9 @@ export default function TeacherPage() {
           {/* Botón para mostrar u ocultar formulario de crear ficha clínica */}
           <ToggleButton
             isVisible={showClinicRecordForm}
-            onToggle={() => setShowClinicRecordForm(!showClinicRecordForm)}
+            onToggle={() => {
+              setShowClinicRecordForm(!showClinicRecordForm);
+            }}
             showText="Crear Ficha Clínica"
             hideText="Cancelar Creación de Ficha"
             className={`bg-${showClinicRecordForm ? "red" : "green"}-500 text-white`}
@@ -67,9 +73,9 @@ export default function TeacherPage() {
           />
         </div>
 
-        {showForm && <CreatePatientForm onClose={() => setShowForm(false)} />}
+        {showForm && <CreatePatient onClose={() => setShowForm(false)} />}
         {showPatientList && <PatientList />}
-        {showClinicRecordForm && <CreateClinicalRecord onClose={() => setShowClinicRecordForm(false)} />}
+        {showClinicRecordForm && <CreateClinicalRecord onClose={handleCloseClinicRecordForm} />}
         
         {/* Mostrar la lista de fichas clínicas si está activado */}
         {showClinicalRecords && <ClinicalRecordList />}

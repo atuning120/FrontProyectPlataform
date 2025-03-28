@@ -1,6 +1,7 @@
 import { signInWithGoogle } from "../../services/firebase";
 import { FcGoogle } from "react-icons/fc";
 
+// Componente de botón para iniciar sesión con Google
 export default function GoogleButton() {
   return (
     <button

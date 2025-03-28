@@ -1,14 +1,22 @@
 import axios from "axios";
 
+// Botón para eliminar un paciente
 export default function DeletePatientButton({ patientId, onDelete }) {
   const handleDelete = async () => {
     try {
+      // Intentar eliminar el paciente
       const response = await axios.delete(`http://localhost:5000/api/patients/${patientId}`);
-      onDelete(patientId); // Llamamos a la función de actualización en PatientList
-      alert(response.data.message); // Mostramos mensaje de éxito
+      onDelete(patientId); // Llamada para actualizar la lista de pacientes tras la eliminación
+      alert(response.data.message);
     } catch (error) {
-      console.error("Error deleting patient:", error);
-      alert("Hubo un error al eliminar el paciente.");
+      console.error("Error eliminando el paciente:", error);
+
+      // Mostrar el mensaje de error
+      if (error.response && error.response.data && error.response.data.message) {
+        alert(error.response.data.message);
+      } else {
+        alert("Hubo un error al eliminar el paciente.");
+      }
     }
   };
 

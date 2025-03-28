@@ -4,30 +4,32 @@ import { AuthContext } from "../Auth/AuthProvider";
 import DeletePatientButton from "./DeletePatientButton";
 
 export default function PatientList() {
-  const [patients, setPatients] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const { user } = useContext(AuthContext);
+  const [patients, setPatients] = useState([]); // Estado para almacenar la lista de pacientes
+  const [loading, setLoading] = useState(true); // Estado para controlar el estado de carga
+  const { user } = useContext(AuthContext); // Obtener el usuario actual desde el contexto de autenticación
 
+  // Cargar pacientes desde la API cuando el componente se monta
   useEffect(() => {
     const fetchPatients = async () => {
       try {
         const response = await axios.get("http://localhost:5000/api/patients");
-        setPatients(response.data);
+        setPatients(response.data); // Almacenar los pacientes en el estado
       } catch (error) {
-        console.error("Error fetching patients:", error);
+        console.error("Error fetching patients:", error); // Manejar errores al obtener los pacientes
       } finally {
-        setLoading(false);
+        setLoading(false); // Finalizar el estado de carga
       }
     };
 
-    fetchPatients();
-  }, []);
+    fetchPatients(); // Ejecutar la función de carga de pacientes
+  }, []); // Se ejecuta una sola vez cuando el componente se monta
 
+  // Función para eliminar un paciente de la lista
   const handleDeletePatient = (id) => {
-    setPatients(patients.filter(patient => patient._id !== id));
+    setPatients(patients.filter(patient => patient._id !== id)); // Eliminar paciente con el id proporcionado
   };
 
-  if (loading) return <p>Cargando pacientes...</p>;
+  if (loading) return <p>Cargando pacientes...</p>; // Mostrar mensaje mientras se cargan los pacientes
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mt-6">
@@ -43,10 +45,11 @@ export default function PatientList() {
             <th className="px-4 py-2">Dirección</th>
             <th className="px-4 py-2">Teléfono</th>
             <th className="px-4 py-2">Correo</th>
-            {user.role === "profesor" && <th className="px-4 py-2">Acciones</th>}
+            {user.role === "profesor" && <th className="px-4 py-2">Acciones</th>} {/* Mostrar columna de acciones solo si el usuario es profesor */}
           </tr>
         </thead>
         <tbody>
+          {/* Iterar sobre la lista de pacientes y mostrar sus datos */}
           {patients.map((patient) => (
             <tr key={patient._id}>
               <td className="px-4 py-2">{patient.fullName}</td>
@@ -59,7 +62,7 @@ export default function PatientList() {
               <td className="px-4 py-2">{patient.email}</td>
               {user.role === "profesor" && (
                 <td className="px-4 py-2">
-                  <DeletePatientButton patientId={patient._id} onDelete={handleDeletePatient} />
+                  <DeletePatientButton patientId={patient._id} onDelete={handleDeletePatient} /> {/* Mostrar botón de eliminar solo para profesores */}
                 </td>
               )}
             </tr>

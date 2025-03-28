@@ -4,10 +4,11 @@ import { useNavigate } from "react-router-dom";
 import GoogleButton from "../components/Auth/GoogleButton";
 
 export default function Login() {
-  const { user, error } = useContext(AuthContext); // Obtener error
+  const { user, error } = useContext(AuthContext); // Obtener los datos de autenticación y el error
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Redirigir según el rol del usuario después de la autenticación
     if (user) {
       navigate(user.role === "profesor" ? "/teacher" : "/student");
     }
@@ -19,10 +20,10 @@ export default function Login() {
         <h1 className="text-2xl font-bold text-center mb-6">Iniciar Sesión</h1>
 
         {error && (
-          <div className="text-red-500 mb-4 text-center">{error}</div>
+          <div className="text-red-500 mb-4 text-center">{error}</div> // Mostrar error si hay uno
         )}
 
-        <GoogleButton />
+        <GoogleButton /> {/* Botón para iniciar sesión con Google */}
       </div>
     </div>
   );

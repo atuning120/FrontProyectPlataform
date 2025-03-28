@@ -1,10 +1,12 @@
 import { useState } from "react";
 import axios from "axios";
+import { usePatientForm } from "./usePatientForm";
 import InputField from "../InputField";
 import SelectField from "../SelectField";
 
+// Formulario para crear un paciente
 export default function CreatePatientForm({ onClose }) {
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     fullName: "",
     run: "",
     gender: "",
@@ -13,91 +15,25 @@ export default function CreatePatientForm({ onClose }) {
     address: "",
     mobileNumber: "",
     email: "",
-  });
+  };
 
-  const [errors, setErrors] = useState({});
+  const { formData, errors, validateForm, handleChange } = usePatientForm(initialFormData);
   const [loading, setLoading] = useState(false);
 
-  const validateForm = () => {
-    let newErrors = {};
-
-    if (!formData.fullName.trim()) newErrors.fullName = "El nombre es obligatorio.";
-    if (!formData.run.trim()) newErrors.run = "RUN es obligatorio.";
-    if (!["Masculino", "Femenino", "Otro"].includes(formData.gender)) newErrors.gender = "Seleccione un sexo válido.";
-    if (!/^\d+$/.test(formData.age) || parseInt(formData.age) < 0 || parseInt(formData.age) > 120) {
-      newErrors.age = "Edad inválida (debe ser un número entre 0 y 120).";
-    }
-    if (!["Fonasa", "Isapre"].includes(formData.insurance)) newErrors.insurance = "Previsión inválida (Fonasa o Isapre).";
-    if (!formData.address.trim()) newErrors.address = "La dirección es obligatoria.";
-    if (!/^\d{9}$/.test(formData.mobileNumber.replace(/\s/g, ""))) newErrors.mobileNumber = "Número móvil inválido (9 dígitos).";
-    if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Correo inválido.";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    if (name === "run") {
-      // Limpiar todo lo que no sea número o "K"
-      let cleanedValue = value.replace(/[^0-9kK]/g, "");
-
-      // Formateamos el RUN
-      if (cleanedValue.length > 8) {
-        cleanedValue = cleanedValue.slice(0, 8) + "-" + cleanedValue[8];
-      }
-
-      // Insertar puntos después de cada 3 dígitos
-      if (cleanedValue.length <= 8) {
-        cleanedValue = cleanedValue.replace(/(\d{1,3})(?=\d)/g, "$1.");
-      }
-
-      // Limitar la longitud a 12 caracteres
-      if (cleanedValue.length > 12) {
-        cleanedValue = cleanedValue.slice(0, 12);
-      }
-
-      setFormData({ ...formData, run: cleanedValue });
-    } else if (name === "mobileNumber") {
-      // Limitar a solo números y máximo 9 dígitos
-      let cleanedValue = value.replace(/\D/g, "");
-
-      // Limitar a 9 dígitos
-      if (cleanedValue.length > 9) {
-        cleanedValue = cleanedValue.slice(0, 9);
-      }
-
-      // Formatear el número con un espacio después del primer dígito y luego cada 4 dígitos
-      cleanedValue = cleanedValue.replace(/(\d{1})(\d{4})(\d{4})/, "$1 $2 $3");
-
-      setFormData({ ...formData, mobileNumber: cleanedValue });
-    } else if (name === "age") {
-      // Solo permitir números para la edad
-      let cleanedValue = value.replace(/\D/g, "");
-
-      setFormData({ ...formData, age: cleanedValue });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
-
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: null }));
-  };
-
+  // Enviar el formulario al servidor
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validateForm()) {
       alert("Por favor, corrige los errores antes de continuar.");
       return;
     }
-
+    
     setLoading(true);
 
     try {
       await axios.post("https://backproyectplataform.onrender.com/api/patients", formData);
       alert("Paciente guardado con éxito!");
-      onClose();
+      onClose(); // Cerrar el formulario al guardar
     } catch (error) {
       console.error("Error al guardar el paciente:", error);
       alert("Hubo un error al guardar el paciente.");
