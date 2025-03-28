@@ -4,9 +4,10 @@ import { useNavigate } from "react-router-dom";
 import UserProfile from "../components/Header";
 import CreatePatient from "../components/Patients/CreatePatient";
 import PatientList from "../components/Patients/PatientList";
-import CreateClinicalRecord from "../components/ClinicalRecords/CreateClinicalRecord"; 
-import ClinicalRecordList from "../components/ClinicalRecords/ClinicalRecordList"; // Importamos el componente de lista de fichas clínicas
-import ToggleButton from "../components/ToggleButton"; // Importamos el nuevo componente de botón
+import CreateClinicalRecord from "../components/ClinicalRecords/CreateClinicalRecord";
+import ClinicalRecordList from "../components/ClinicalRecords/ClinicalRecordList";
+import ToggleButton from "../components/ToggleButton";
+import AnsweredClinicalRecordList from "../components/AnsweredClinicalRecords/AnsweredClinicalRecordList";
 
 export default function TeacherPage() {
   const { user } = useContext(AuthContext);
@@ -14,7 +15,8 @@ export default function TeacherPage() {
   const [showForm, setShowForm] = useState(false);
   const [showPatientList, setShowPatientList] = useState(false);
   const [showClinicRecordForm, setShowClinicRecordForm] = useState(false);
-  const [showClinicalRecords, setShowClinicalRecords] = useState(false); // Nuevo estado para fichas clínicas
+  const [showClinicalRecords, setShowClinicalRecords] = useState(false);
+  const [showAnsweredRecords, setShowAnsweredRecords] = useState(false);
 
   useEffect(() => {
     if (!user || user.role !== "profesor") {
@@ -24,8 +26,13 @@ export default function TeacherPage() {
 
   if (!user || user.role !== "profesor") return null;
 
+  const handleCloseAnsweredRecords = () => {
+    setShowAnsweredRecords(false); 
+    alert("Retroalimentación guardada con éxito.");
+  };
+
   const handleCloseClinicRecordForm = () => {
-    setShowClinicRecordForm(false); // Cerramos el formulario de ficha clínica
+    setShowClinicRecordForm(false);
   };
 
   return (
@@ -34,7 +41,6 @@ export default function TeacherPage() {
         <UserProfile />
 
         <div className="space-y-4 mb-6">
-          {/* Botón para mostrar o cancelar formulario de paciente */}
           <ToggleButton
             isVisible={showForm}
             onToggle={() => setShowForm(!showForm)}
@@ -43,7 +49,6 @@ export default function TeacherPage() {
             className={`bg-${showForm ? "red" : "blue"}-500 text-white`}
           />
 
-          {/* Botón para ver/ocultar lista de pacientes */}
           <ToggleButton
             isVisible={showPatientList}
             onToggle={() => setShowPatientList(!showPatientList)}
@@ -52,18 +57,14 @@ export default function TeacherPage() {
             className="bg-blue-500 text-white"
           />
 
-          {/* Botón para mostrar u ocultar formulario de crear ficha clínica */}
           <ToggleButton
             isVisible={showClinicRecordForm}
-            onToggle={() => {
-              setShowClinicRecordForm(!showClinicRecordForm);
-            }}
+            onToggle={() => setShowClinicRecordForm(!showClinicRecordForm)}
             showText="Crear Ficha Clínica"
             hideText="Cancelar Creación de Ficha"
             className={`bg-${showClinicRecordForm ? "red" : "green"}-500 text-white`}
           />
 
-          {/* Botón para mostrar u ocultar la lista de fichas clínicas */}
           <ToggleButton
             isVisible={showClinicalRecords}
             onToggle={() => setShowClinicalRecords(!showClinicalRecords)}
@@ -71,14 +72,23 @@ export default function TeacherPage() {
             hideText="Ocultar Fichas Clínicas"
             className="bg-blue-500 text-white"
           />
+
+          <ToggleButton
+            isVisible={showAnsweredRecords}
+            onToggle={() => setShowAnsweredRecords(!showAnsweredRecords)}
+            showText="Ver Respuestas de Fichas"
+            hideText="Ocultar Respuestas"
+            className="bg-blue-500 text-white"
+          />
         </div>
 
         {showForm && <CreatePatient onClose={() => setShowForm(false)} />}
         {showPatientList && <PatientList />}
         {showClinicRecordForm && <CreateClinicalRecord onClose={handleCloseClinicRecordForm} />}
-        
-        {/* Mostrar la lista de fichas clínicas si está activado */}
         {showClinicalRecords && <ClinicalRecordList />}
+        {showAnsweredRecords && (
+          <AnsweredClinicalRecordList onFeedbackSaved={handleCloseAnsweredRecords} />
+        )}
       </div>
     </div>
   );

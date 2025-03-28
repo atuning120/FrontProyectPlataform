@@ -3,7 +3,7 @@ import axios from "axios";
 import { AuthContext } from "../Auth/AuthProvider";
 import DeleteClinicalRecord from "./DeleteClinicalRecord";
 import CreateAnsweredClinicalRecords from "../AnsweredClinicalRecords/CreateAnsweredClinicalRecord";
-import FindAnsweredClinicalRecord from "../AnsweredClinicalRecords/FindAnsweredClinicalRecord";
+import FindAnsweredClinicalRecordByEmail from "../AnsweredClinicalRecords/FindAnsweredClinicalRecordByEmail";
 
 export default function ClinicalRecordList({ onResponseSubmitted }) {
   const { user } = useContext(AuthContext);
@@ -46,7 +46,7 @@ export default function ClinicalRecordList({ onResponseSubmitted }) {
   };
 
   const handleSubmitAnswer = (clinicalRecordNumber) => {
-    onResponseSubmitted(); 
+    onResponseSubmitted();
   };
 
   const isAnswered = (clinicalRecordNumber) => {
@@ -68,10 +68,11 @@ export default function ClinicalRecordList({ onResponseSubmitted }) {
             .filter(record => !isAnswered(record.clinicalRecordNumber))
             .map((record) => (
               <li key={record._id} className="mb-4">
-                <p><strong>N° Ficha clínica:</strong> {record.clinicalRecordNumber}</p>
-
+                {/* Datos de la ficha clínica y paciente */}
                 {patientData[record.patientRun] && (
                   <div className="mb-2">
+                    {/* Cambié el orden para que "N° Ficha Clínica" esté arriba */}
+                    <p><strong>N° Ficha Clínica:</strong> {record.clinicalRecordNumber}</p>
                     <p className="flex items-center space-x-4">
                       <span><strong>RUN:</strong> {record.patientRun}</span>
                       <span><strong>Nombre:</strong> {patientData[record.patientRun].fullName}</span>
@@ -83,10 +84,10 @@ export default function ClinicalRecordList({ onResponseSubmitted }) {
                   </div>
                 )}
 
-                <p><strong>Descripción:</strong> {record.content}</p>
+                {/* Mostrar la fecha de creación arriba con los datos del paciente */}
+                <p><strong>Fecha de Creación:</strong> {new Date(record.createdAt).toLocaleString()}</p>
 
-                {/* Mostrar la fecha de creación */}
-                <p><strong>Fecha de creación:</strong> {new Date(record.createdAt).toLocaleString()}</p>
+                <p><strong>Descripción:</strong> {record.content}</p>
 
                 {user.role === "profesor" && (
                   <DeleteClinicalRecord recordId={record._id} onDelete={handleDelete} />
@@ -94,7 +95,7 @@ export default function ClinicalRecordList({ onResponseSubmitted }) {
 
                 {user.role === "alumno" && (
                   <div>
-                    <FindAnsweredClinicalRecord 
+                    <FindAnsweredClinicalRecordByEmail 
                       userEmail={user.email} 
                       onAnswered={handleAnsweredStatusChange} 
                     />

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const FindAnsweredClinicalRecord = ({ userEmail, onAnswered }) => {
+const FindAnsweredClinicalRecordByEmail = ({ userEmail, onAnswered }) => {
   const [answeredRecords, setAnsweredRecords] = useState([]);
   const [error, setError] = useState(null);
 
@@ -26,4 +26,4 @@ const FindAnsweredClinicalRecord = ({ userEmail, onAnswered }) => {
   return null;
 };
 
-export default FindAnsweredClinicalRecord;
+export default FindAnsweredClinicalRecordByEmail;
