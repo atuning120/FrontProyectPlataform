@@ -11,6 +11,7 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showFeedback, setShowFeedback] = useState({});
+  const [filter, setFilter] = useState("all"); // Estado para el filtro (todos, con feedback, sin feedback)
   
   const { user } = useContext(AuthContext);
   const userEmail = user?.email;
@@ -35,9 +36,23 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
           return false;
         });
 
-        setAnsweredRecords(filteredRecords);
+        // Filtrar según la opción de filtro seleccionada
+        const finalFilteredRecords = filteredRecords.filter(record => {
+          if (filter === "all") {
+            return true; // Mostrar todos los registros
+          }
+          if (filter === "with-feedback") {
+            return record.feedback; // Mostrar solo con retroalimentación
+          }
+          if (filter === "without-feedback") {
+            return !record.feedback; // Mostrar solo sin retroalimentación
+          }
+          return false;
+        });
 
-        for (const record of filteredRecords) {
+        setAnsweredRecords(finalFilteredRecords);
+
+        for (const record of finalFilteredRecords) {
           try {
             const clinicalRecordResponse = await axios.get(`http://localhost:5000/api/clinical-records/${record.clinicalRecordNumber}`);
             const clinicalRecord = clinicalRecordResponse.data;
@@ -66,7 +81,7 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
     };
 
     fetchAnsweredRecords();
-  }, [userEmail, userRole]);
+  }, [userEmail, userRole, filter]); // Añadimos `filter` a las dependencias para que se recargue cuando cambie el filtro
 
   const toggleFeedback = (recordId) => {
     setShowFeedback((prev) => ({
@@ -87,9 +102,27 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
     }
   };
 
+  // Función para manejar el cambio de filtro
+  const handleFilterChange = (event) => {
+    setFilter(event.target.value);
+  };
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-md mt-6">
       <h2 className="text-xl font-bold mb-4">Respuestas de Fichas Clínicas</h2>
+
+      {/* Filtro */}
+      <div className="mb-4">
+        <select 
+          className="p-2 border rounded"
+          value={filter} 
+          onChange={handleFilterChange}
+        >
+          <option value="all">Todas</option>
+          <option value="with-feedback">Con Retroalimentación</option>
+          <option value="without-feedback">Sin Retroalimentación</option>
+        </select>
+      </div>
 
       {answeredRecords.length === 0 ? (
         <p>No hay respuestas registradas.</p>
@@ -116,13 +149,14 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
                 )}
               </div>
 
-              {userRole === "profesor" && (
+              {userRole === "profesor" && !record.feedback && ( // Solo mostrar el botón si no tiene retroalimentación
                 <ToggleButton
                   isVisible={showFeedback[record._id]}
                   onToggle={() => toggleFeedback(record._id)}
                   showText="Dar Retroalimentación"
                   hideText="Cancelar"
                   className={`mt-2 w-full ${showFeedback[record._id] ? "bg-red-500" : "bg-blue-500"} text-white py-2 rounded-lg`}
+                  disabled={Boolean(record.feedback)} // Deshabilitar si ya tiene retroalimentación
                 />
               )}
 
