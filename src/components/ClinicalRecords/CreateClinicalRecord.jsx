@@ -4,7 +4,8 @@ import { useClinicalRecordForm } from "./useClinicalRecordForm";
 
 export default function CreateClinicalRecord({ onClose }) {
   const initialFormData = {
-    patientRun: "",
+    patientRunDigits: "",
+    patientRunVerifier: "",
     content: "",
   };
 
@@ -29,10 +30,13 @@ export default function CreateClinicalRecord({ onClose }) {
     setLoading(true);
     setErrorMessage("");
 
+    // Concatenar el RUN en el formato correcto
+    const formattedRun = `${formData.patientRunDigits}-${formData.patientRunVerifier}`;
+
     try {
       const response = await axios.post(
         "http://localhost:5000/api/clinical-records",
-        formData
+        { ...formData, patientRun: formattedRun }
       );
       alert("Ficha creada exitosamente");
       setFormData(initialFormData); // Limpiar el formulario
@@ -68,16 +72,33 @@ export default function CreateClinicalRecord({ onClose }) {
         )}
         <div className="mb-4">
           <label className="block text-gray-700">RUN del Paciente</label>
-          <input
-            type="text"
-            name="patientRun"
-            value={formData.patientRun}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-lg"
-            required
-          />
-          {errors.patientRun && (
-            <div className="text-red-600 text-sm">{errors.patientRun}</div>
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              name="patientRunDigits"
+              value={formData.patientRunDigits}
+              onChange={handleChange}
+              className="w-3/4 p-2 border rounded-lg"
+              placeholder="Ej: 12.345.678"
+              required
+            />
+            <span className="text-gray-700">-</span>
+            <input
+              type="text"
+              name="patientRunVerifier"
+              value={formData.patientRunVerifier}
+              onChange={handleChange}
+              className="w-1/4 p-2 border rounded-lg"
+              placeholder="K o dígito"
+              maxLength="1"
+              required
+            />
+          </div>
+          {errors.patientRunDigits && (
+            <div className="text-red-600 text-sm">{errors.patientRunDigits}</div>
+          )}
+          {errors.patientRunVerifier && (
+            <div className="text-red-600 text-sm">{errors.patientRunVerifier}</div>
           )}
         </div>
         <div className="mb-4">

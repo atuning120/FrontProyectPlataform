@@ -8,7 +8,8 @@ import SelectField from "../SelectField";
 export default function CreatePatientForm({ onClose }) {
   const initialFormData = {
     fullName: "",
-    run: "",
+    runDigits: "",
+    runVerifier: "",
     gender: "",
     age: "",
     insurance: "",
@@ -23,15 +24,22 @@ export default function CreatePatientForm({ onClose }) {
   // Enviar el formulario al servidor
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) {
+    const isValid = validateForm();
+    if (!isValid) {
       alert("Por favor, corrige los errores antes de continuar.");
       return;
     }
-    
+
     setLoading(true);
 
     try {
-      await axios.post("https://backproyectplataform.onrender.com/api/patients", formData);
+      // Combinar RUN y dígito verificador para enviar al servidor
+      const fullRun = `${formData.runDigits}-${formData.runVerifier}`; // Mantener puntos y concatenar con guion
+
+      await axios.post("https://backproyectplataform.onrender.com/api/patients", {
+        ...formData,
+        run: fullRun, // Enviar el RUN completo con el dígito verificador
+      });
       alert("Paciente guardado con éxito!");
       onClose(); // Cerrar el formulario al guardar
     } catch (error) {
@@ -53,13 +61,37 @@ export default function CreatePatientForm({ onClose }) {
           onChange={handleChange}
           error={errors.fullName}
         />
-        <InputField
-          label="RUN"
-          name="run"
-          value={formData.run}
-          onChange={handleChange}
-          error={errors.run}
-        />
+        <div>
+          <label className="block text-gray-700">RUN</label>
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              name="runDigits"
+              value={formData.runDigits}
+              onChange={handleChange} // Delegar a usePatientForm
+              className="flex-1 p-2 border rounded-lg"
+              placeholder="12.345.678"
+              required
+            />
+            <span className="text-gray-500">-</span>
+            <input
+              type="text"
+              name="runVerifier"
+              value={formData.runVerifier}
+              onChange={handleChange} // Delegar a usePatientForm
+              className="w-12 p-2 border rounded-lg text-center uppercase"
+              placeholder="K"
+              maxLength="1"
+              required
+            />
+          </div>
+          {errors.runDigits && (
+            <div className="text-red-600 text-sm">{errors.runDigits}</div>
+          )}
+          {errors.runVerifier && (
+            <div className="text-red-600 text-sm">{errors.runVerifier}</div>
+          )}
+        </div>
         <SelectField
           label="Sexo"
           name="gender"
@@ -81,7 +113,7 @@ export default function CreatePatientForm({ onClose }) {
           name="insurance"
           value={formData.insurance}
           onChange={handleChange}
-          options={["Fonasa", "Isapre"]}
+          options={["Fonasa", "Isapre", "Particular"]}
           error={errors.insurance}
         />
         <InputField
@@ -92,22 +124,23 @@ export default function CreatePatientForm({ onClose }) {
           error={errors.address}
         />
         <InputField
-          label="Número móvil"
+          label="Teléfono móvil"
           name="mobileNumber"
           value={formData.mobileNumber}
           onChange={handleChange}
           error={errors.mobileNumber}
         />
         <InputField
-          label="Correo"
+          label="Correo electrónico"
           name="email"
           value={formData.email}
           onChange={handleChange}
           error={errors.email}
+          type="email"
         />
         <button
           type="submit"
-          className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition"
+          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
           disabled={loading}
         >
           {loading ? "Guardando..." : "Guardar Paciente"}
