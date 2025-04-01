@@ -3,7 +3,7 @@ import { AuthProvider } from "./components/Auth/AuthProvider";
 import Login from "./pages/Login";
 import TeacherPage from "./pages/TeacherPage";
 import StudentPage from "./pages/StudentPage";
-import "./index.css";
+//import "./index.css"; //habilitar o desabilitar tailwind
 
 
 export default function App() {
