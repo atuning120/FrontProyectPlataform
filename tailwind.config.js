@@ -1,16 +1,9 @@
-/** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
   content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+    "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {
-      colors: {
-        'firebase-blue': '#4285F4', // Color típico de Firebase
-        'firebase-yellow': '#FFCA28',
-      },
-    },
+    extend: {},
   },
   plugins: [],
-}
+};

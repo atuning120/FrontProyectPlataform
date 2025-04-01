@@ -4,26 +4,28 @@ import { useNavigate } from "react-router-dom";
 import GoogleButton from "../components/Auth/GoogleButton";
 
 export default function Login() {
-  const { user, error } = useContext(AuthContext); // Obtener los datos de autenticación y el error
+  const { user, error } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Redirigir según el rol del usuario después de la autenticación
     if (user) {
       navigate(user.role === "profesor" ? "/teacher" : "/student");
     }
   }, [user, navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h1 className="text-2xl font-bold text-center mb-6">Iniciar Sesión</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 p-6">
+      <div className="bg-white p-10 rounded-3xl shadow-2xl w-96 text-center transform transition-all duration-300 hover:shadow-3xl hover:scale-105">
+        <h1 className="text-4xl font-extrabold text-gray-800 mb-6">Bienvenido</h1>
+        <p className="text-gray-600 mb-4">Inicia sesión para continuar</p>
 
         {error && (
-          <div className="text-red-500 mb-4 text-center">{error}</div> // Mostrar error si hay uno
+          <div className="text-red-600 bg-red-100 p-3 rounded-md mb-4 border border-red-400 animate-pulse">
+            {error}
+          </div>
         )}
 
-        <GoogleButton /> {/* Botón para iniciar sesión con Google */}
+        <GoogleButton className="w-full transition-all duration-300 hover:scale-110 hover:shadow-md" />
       </div>
     </div>
   );
