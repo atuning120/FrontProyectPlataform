@@ -14,5 +14,5 @@ export default function InputField({ label, name, value, onChange, error, type =
         {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
       </div>
     );
-  }
+}
   
