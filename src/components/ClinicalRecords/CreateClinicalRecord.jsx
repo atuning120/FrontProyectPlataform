@@ -79,7 +79,6 @@ export default function CreateClinicalRecord({ onClose }) {
               value={formData.patientRunDigits}
               onChange={handleChange}
               className="w-3/4 p-2 border rounded-lg"
-              placeholder="Ej: 12.345.678"
               required
             />
             <span className="text-gray-700">-</span>
@@ -89,7 +88,6 @@ export default function CreateClinicalRecord({ onClose }) {
               value={formData.patientRunVerifier}
               onChange={handleChange}
               className="w-1/4 p-2 border rounded-lg"
-              placeholder="K o dígito"
               maxLength="1"
               required
             />

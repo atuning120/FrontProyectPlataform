@@ -25,7 +25,7 @@ export const usePatientForm = (initialState) => {
     }
 
     // Validación de correo electrónico
-    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Correo inválido.";
     }
 

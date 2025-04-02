@@ -33,18 +33,30 @@ export default function CreatePatientForm({ onClose }) {
     setLoading(true);
 
     try {
-      // Combinar RUN y dígito verificador para enviar al servidor
-      const fullRun = `${formData.runDigits}-${formData.runVerifier}`; // Mantener puntos y concatenar con guion
-
-      await axios.post("https://backproyectplataform.onrender.com/api/patients", {
+      // Crear el objeto con los datos del paciente
+      const patientData = {
         ...formData,
-        run: fullRun, // Enviar el RUN completo con el dígito verificador
-      });
+        run: `${formData.runDigits}-${formData.runVerifier}`,
+      };
+
+      // Eliminar el email si está vacío
+      if (!patientData.email) {
+        delete patientData.email;
+      }
+
+      // Intentar guardar el paciente
+      await axios.post("http://localhost:5000/api/patients", patientData);
       alert("Paciente guardado con éxito!");
-      onClose(); // Cerrar el formulario al guardar
+      onClose();
     } catch (error) {
       console.error("Error al guardar el paciente:", error);
-      alert("Hubo un error al guardar el paciente.");
+
+      // Verificar si el error tiene un mensaje específico de backend
+      if (error.response?.data?.message) {
+        alert(error.response.data.message);  // Mostrar el mensaje de error del backend
+      } else {
+        alert("Hubo un error al guardar el paciente.");
+      }
     }
 
     setLoading(false);
@@ -70,7 +82,6 @@ export default function CreatePatientForm({ onClose }) {
               value={formData.runDigits}
               onChange={handleChange} // Delegar a usePatientForm
               className="flex-1 p-2 border rounded-lg"
-              placeholder="12.345.678"
               required
             />
             <span className="text-gray-500">-</span>
@@ -80,7 +91,6 @@ export default function CreatePatientForm({ onClose }) {
               value={formData.runVerifier}
               onChange={handleChange} // Delegar a usePatientForm
               className="w-12 p-2 border rounded-lg text-center uppercase"
-              placeholder="K"
               maxLength="1"
               required
             />
