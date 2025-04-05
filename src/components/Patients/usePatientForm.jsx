@@ -4,7 +4,7 @@ export const usePatientForm = (initialState) => {
   const [formData, setFormData] = useState(initialState);
   const [errors, setErrors] = useState({});
 
-  // Función para validar el formulario
+  // Valida los campos del formulario antes de enviarlo
   const validateForm = () => {
     let newErrors = {};
 
@@ -13,8 +13,11 @@ export const usePatientForm = (initialState) => {
       newErrors.fullName = "El nombre completo es obligatorio (debe contener al menos un espacio).";
     }
 
+    // Obtiene el RUN sin puntos
+    let runDigits = formData.runDigits || "";
+    runDigits = runDigits.replace(/\./g, "");
+    
     // Validación de RUN (runDigits)
-    const runDigits = formData.runDigits?.replace(/\./g, ""); // Eliminar puntos para validación
     if (!runDigits || runDigits.length < 7 || runDigits.length > 8) {
       newErrors.runDigits = "El RUN debe tener entre 7 y 8 dígitos.";
     }
@@ -29,7 +32,7 @@ export const usePatientForm = (initialState) => {
       newErrors.email = "Correo inválido.";
     }
 
-    // Validación de número móvil
+    // Validación de número móvil (9 dígitos sin espacios)
     if (!/^\d{9}$/.test(formData.mobileNumber.replace(/\s/g, ""))) {
       newErrors.mobileNumber = "Número móvil inválido (9 dígitos).";
     }
@@ -38,42 +41,42 @@ export const usePatientForm = (initialState) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Función para manejar los cambios en los campos
+  // Maneja los cambios en los campos del formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     if (name === "runDigits") {
-      // Extraer solo dígitos
-      let cleanedValue = value.replace(/\D/g, "").slice(0, 8); // Limitar a 8 dígitos
+      let cleanedValue = value.replace(/\D/g, "").slice(0, 8);
 
-      // Formatear con puntos
       let formattedValue = "";
-      if (cleanedValue.length <= 3) {
-        formattedValue = cleanedValue;
-      } else if (cleanedValue.length <= 6) {
+      if (cleanedValue.length > 6) {
+        formattedValue = `${cleanedValue.slice(0, cleanedValue.length - 6)}.${cleanedValue.slice(cleanedValue.length - 6, cleanedValue.length - 3)}.${cleanedValue.slice(cleanedValue.length - 3)}`;
+      } else if (cleanedValue.length > 3) {
         formattedValue = `${cleanedValue.slice(0, 3)}.${cleanedValue.slice(3)}`;
       } else {
-        formattedValue = `${cleanedValue.slice(0, cleanedValue.length - 6)}.${cleanedValue.slice(cleanedValue.length - 6, cleanedValue.length - 3)}.${cleanedValue.slice(cleanedValue.length - 3)}`;
+        formattedValue = cleanedValue;
       }
 
       setFormData({ ...formData, runDigits: formattedValue });
-    } else if (name === "runVerifier") {
-      // Solo permitir un dígito (número o K/k)
+    } 
+    
+    else if (name === "runVerifier") {
       const cleanedValue = value.replace(/[^0-9kK]/g, "").slice(0, 1).toUpperCase();
       setFormData({ ...formData, runVerifier: cleanedValue });
-    } else if (name === "mobileNumber") {
-      let cleanedValue = value.replace(/\D/g, "");
-      if (cleanedValue.length > 9) {
-        cleanedValue = cleanedValue.slice(0, 9);
-      }
+    } 
+    
+    else if (name === "mobileNumber") {
+      let cleanedValue = value.replace(/\D/g, "").slice(0, 9);
       cleanedValue = cleanedValue.replace(/(\d{1})(\d{4})(\d{4})/, "$1 $2 $3");
       setFormData({ ...formData, mobileNumber: cleanedValue });
-    } else if (name === "age") {
-      let cleanedValue = value.replace(/\D/g, "");
-      if (cleanedValue.length <= 3) {
-        setFormData({ ...formData, age: cleanedValue });
-      }
-    } else {
+    } 
+    
+    else if (name === "age") {
+      let cleanedValue = value.replace(/\D/g, "").slice(0, 3);
+      setFormData({ ...formData, age: cleanedValue });
+    } 
+    
+    else {
       setFormData({ ...formData, [name]: value });
     }
 

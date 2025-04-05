@@ -1,5 +1,6 @@
 import React from "react";
 
+// Botón que alterna entre dos estados de visibilidad con texto dinámico
 export default function ToggleButton({
   isVisible,
   onToggle,

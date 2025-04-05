@@ -1,3 +1,4 @@
+// Componente de tabla reutilizable con encabezados dinámicos y datos
 export default function TableComponent({ columns, data }) {
     return (
       <div className="overflow-x-auto">

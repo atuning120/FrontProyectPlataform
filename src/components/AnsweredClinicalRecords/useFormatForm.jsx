@@ -6,20 +6,24 @@ export function useFormatForm(formats) {
 
   const handleFormatChange = (formatId) => {
     const format = formats.find((f) => f.id === formatId);
+    if (!format || format === selectedFormat) return;
 
-    if (!format) return;
-
-    // Aplanar los campos desde sections (para facilitar acceso si se necesita)
-    const allFields = format.sections?.flatMap((section) => section.fields) || [];
+    // Inicializar respuestas vacías con los campos del formato
+    const initialResponses = {};
+    format.sections?.forEach((section) => {
+      section.fields.forEach((field) => {
+        initialResponses[field.key] = "";
+      });
+    });
 
     setSelectedFormat(format);
-    setResponses({}); // Limpiar respuestas anteriores
+    setResponses(initialResponses);
   };
 
   const handleInputChange = (key, value) => {
     setResponses((prevResponses) => ({
       ...prevResponses,
-      [key]: value
+      [key]: value,
     }));
   };
 
@@ -27,6 +31,6 @@ export function useFormatForm(formats) {
     selectedFormat,
     responses,
     handleFormatChange,
-    handleInputChange
+    handleInputChange,
   };
 }

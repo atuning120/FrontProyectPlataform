@@ -1,3 +1,4 @@
+// Componente de selección con opciones y validación de error
 export default function SelectField({ label, name, value, onChange, options, error }) {
     return (
       <div>

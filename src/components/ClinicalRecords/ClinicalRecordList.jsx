@@ -16,26 +16,32 @@ export default function ClinicalRecordList({ onResponseSubmitted }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Obtener fichas clínicas
-        const recordsResponse = await axios.get("http://localhost:5000/api/clinical-records");
-        setClinicalRecords(recordsResponse.data);
+        const [recordsResponse, answeredResponse] = await Promise.all([
+          axios.get("http://localhost:5000/api/clinical-records"),
+          axios.get(`http://localhost:5000/api/answered-clinical-records/${user.email}`)
+        ]);
 
-        // Obtener respuestas del usuario actual (alumno o profesor)
-        const answeredResponse = await axios.get(`http://localhost:5000/api/answered-clinical-records/${user.email}`);
+        setClinicalRecords(recordsResponse.data);
         setAnsweredRecords(answeredResponse.data);
 
-        // Obtener datos de pacientes
         const patientRuns = [...new Set(recordsResponse.data.map(record => record.patientRun))];
-        const patientsData = {};
-        await Promise.all(
-          patientRuns.map(async (run) => {
-            const patientResponse = await axios.get(`http://localhost:5000/api/patients/${run}`);
-            patientsData[run] = patientResponse.data;
-          })
+
+        const patientRequests = patientRuns.map(run =>
+          axios.get(`http://localhost:5000/api/patients/${run}`).catch(() => null)
         );
+
+        const patientResponses = await Promise.allSettled(patientRequests);
+
+        const patientsData = {};
+        patientResponses.forEach((response, index) => {
+          if (response.status === "fulfilled" && response.value) {
+            patientsData[patientRuns[index]] = response.value.data;
+          }
+        });
+
         setPatientData(patientsData);
       } catch (err) {
-        setError("No se pudieron obtener las fichas clínicas o los datos de los pacientes.");
+        setError("Error al obtener fichas clínicas o datos de pacientes.");
       } finally {
         setLoading(false);
       }
@@ -44,17 +50,16 @@ export default function ClinicalRecordList({ onResponseSubmitted }) {
     fetchData();
   }, [user.email]);
 
-  // Filtrar fichas que el usuario aún no ha respondido
-  const recordsToShow = clinicalRecords.filter(
-    record => !answeredRecords.some(answered => answered.clinicalRecordNumber === record.clinicalRecordNumber)
-  );
-
   const handleDelete = (recordId) => {
-    setClinicalRecords(prevRecords => prevRecords.filter(record => record._id !== recordId));
+    setClinicalRecords(prev => prev.filter(record => record._id !== recordId));
   };
 
   if (loading) return <div>Cargando fichas clínicas...</div>;
   if (error) return <div>{error}</div>;
+
+  const recordsToShow = clinicalRecords.filter(
+    record => !answeredRecords.some(answered => answered.clinicalRecordNumber === record.clinicalRecordNumber)
+  );
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md mt-6">

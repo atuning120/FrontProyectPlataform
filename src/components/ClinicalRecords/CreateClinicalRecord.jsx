@@ -10,13 +10,8 @@ export default function CreateClinicalRecord({ onClose }) {
     content: "",
   };
 
-  const {
-    formData,
-    setFormData,
-    errors,
-    validateForm,
-    handleChange,
-  } = useClinicalRecordForm(initialFormData);
+  const { formData, setFormData, errors, validateForm, handleChange } =
+    useClinicalRecordForm(initialFormData);
 
   const [loading, setLoading] = useState(false);
 
@@ -28,8 +23,6 @@ export default function CreateClinicalRecord({ onClose }) {
     }
 
     setLoading(true);
-
-    // Concatenar el RUN en el formato correcto
     const formattedRun = `${formData.patientRunDigits}-${formData.patientRunVerifier}`;
 
     try {
@@ -38,17 +31,11 @@ export default function CreateClinicalRecord({ onClose }) {
         patientRun: formattedRun,
       });
       alert("Ficha creada exitosamente");
-      setFormData(initialFormData); // Limpiar el formulario
-      onClose(); // Cerrar el formulario después de la creación
+      setFormData(initialFormData);
+      onClose();
     } catch (error) {
-      if (error.response) {
-        alert(error.response.data.message || "Error inesperado al crear la ficha.");
-      } else if (error.request) {
-        alert("No se pudo conectar al servidor.");
-      } else {
-        alert("Error al realizar la solicitud.");
-      }
       console.error("Error creando ficha clínica:", error);
+      alert(error.response?.data?.message || "Error inesperado al crear la ficha.");
     } finally {
       setLoading(false);
     }
@@ -83,9 +70,6 @@ export default function CreateClinicalRecord({ onClose }) {
           {errors.patientRunDigits && (
             <div className="text-red-600 text-sm">{errors.patientRunDigits}</div>
           )}
-          {errors.patientRunVerifier && (
-            <div className="text-red-600 text-sm">{errors.patientRunVerifier}</div>
-          )}
         </div>
         <InputField
           label="Contenido (Motivo de consulta)"
@@ -97,7 +81,7 @@ export default function CreateClinicalRecord({ onClose }) {
         />
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition disabled:opacity-50"
           disabled={loading}
         >
           {loading ? "Creando..." : "Crear Ficha"}

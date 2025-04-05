@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../Auth/AuthProvider";
-import DeletePatientButton from "./DeletePatientButton";
+import DeletePatient from "./DeletePatient";
 import TableComponent from "../TableComponent";
 
 export default function PatientList() {
@@ -15,7 +15,7 @@ export default function PatientList() {
         const response = await axios.get("http://localhost:5000/api/patients");
         setPatients(response.data);
       } catch (error) {
-        console.error("Error fetching patients:", error);
+        console.error("Error al obtener pacientes:", error);
       } finally {
         setLoading(false);
       }
@@ -25,7 +25,7 @@ export default function PatientList() {
   }, []);
 
   const handleDeletePatient = (id) => {
-    setPatients((prevPatients) => prevPatients.filter((patient) => patient._id !== id));
+    setPatients((prev) => prev.filter((patient) => patient._id !== id));
   };
 
   if (loading) return <p>Cargando pacientes...</p>;
@@ -47,7 +47,9 @@ export default function PatientList() {
           user.role === "profesor" && {
             key: "actions",
             label: "Acciones",
-            render: (row) => <DeletePatientButton patientId={row._id} onDelete={handleDeletePatient} />,
+            render: (row) => (
+              <DeletePatient patientId={row._id} onDelete={handleDeletePatient} />
+            ),
           },
         ].filter(Boolean)}
         data={patients}

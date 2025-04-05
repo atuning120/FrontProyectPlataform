@@ -5,32 +5,26 @@ export default function DeleteClinicalRecord({ recordId, onDelete }) {
   const [loading, setLoading] = useState(false);
 
   const handleDelete = async () => {
-    setLoading(true);  // Deshabilitar el botón al inicio
+    if (!window.confirm("¿Estás seguro de que deseas eliminar esta ficha clínica?")) return;
 
+    setLoading(true);
     try {
-      // Intentar eliminar la ficha clínica
       await axios.delete(`http://localhost:5000/api/clinical-records/${recordId}`);
-      onDelete(recordId); // Llamada para actualizar el estado tras la eliminación
+      onDelete(recordId);
       alert("Ficha clínica eliminada con éxito!");
     } catch (error) {
       console.error("Error eliminando la ficha clínica:", error);
-
-      // Mostrar el mensaje de error específico si existe
-      if (error.response && error.response.data && error.response.data.message) {
-        alert(error.response.data.message);
-      } else {
-        alert("Hubo un error al eliminar la ficha clínica.");
-      }
+      alert(error.response?.data?.message || "Hubo un error al eliminar la ficha clínica.");
     } finally {
-      setLoading(false);  // Habilitar el botón nuevamente cuando se complete la solicitud
+      setLoading(false);
     }
   };
 
   return (
     <button
       onClick={handleDelete}
-      className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-      disabled={loading}  // Deshabilitar el botón mientras carga
+      className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 disabled:opacity-50"
+      disabled={loading}
     >
       {loading ? "Eliminando..." : "Eliminar"}
     </button>

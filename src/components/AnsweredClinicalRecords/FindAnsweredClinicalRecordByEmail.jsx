@@ -1,29 +1,35 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-const FindAnsweredClinicalRecordByEmail = ({ userEmail, onAnswered }) => {
+export default function FindAnsweredClinicalRecordByEmail({ userEmail, onAnswered }) {
   const [answeredRecords, setAnsweredRecords] = useState([]);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (userEmail) {
-      const fetchAnsweredRecords = async () => {
-        try {
-          const response = await axios.get(`http://localhost:5000/api/answered-clinical-records/${userEmail}`);
-          setAnsweredRecords(response.data);
-          onAnswered(response.data); // Pasamos los registros respondidos al padre
-        } catch (err) {
-          setError('Error al cargar los registros');
-        }
-      };
+    if (!userEmail) return;
 
-      fetchAnsweredRecords();
-    }
+    const fetchAnsweredRecords = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const { data } = await axios.get(`http://localhost:5000/api/answered-clinical-records/${userEmail}`);
+        setAnsweredRecords(data);
+        onAnswered(data);
+      } catch (err) {
+        console.error("Error al cargar los registros:", err);
+        setError("No se pudieron cargar los registros.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnsweredRecords();
   }, [userEmail, onAnswered]);
 
-  if (error) return <div>{error}</div>;
+  if (loading) return <div>Cargando registros...</div>;
+  if (error) return <div className="text-red-500">{error}</div>;
 
   return null;
-};
-
-export default FindAnsweredClinicalRecordByEmail;
+}

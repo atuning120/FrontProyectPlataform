@@ -3,6 +3,7 @@ import { AuthContext } from "../components/Auth/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import GoogleButton from "../components/Auth/GoogleButton";
 
+// Página de inicio de sesión con Google
 export default function Login() {
   const { user, error } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ export default function Login() {
         <h1 className="text-4xl font-extrabold text-gray-800 mb-6">Bienvenido</h1>
         <p className="text-gray-600 mb-4">Inicia sesión para continuar</p>
 
+        {/* Mensaje de error en caso de fallo al iniciar sesión */}
         {error && (
           <div className="text-red-600 bg-red-100 p-3 rounded-md mb-4 border border-red-400 animate-pulse">
             {error}

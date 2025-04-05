@@ -1,42 +1,40 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useCallback } from "react";
 import axios from "axios";
 import { AuthContext } from "../Auth/AuthProvider";
 
 export default function Feedback({ recordId, initialFeedback, onSave }) {
-  const { user } = useContext(AuthContext); // Obtenemos el email del profesor
+  const { user } = useContext(AuthContext);
   const [feedback, setFeedback] = useState(initialFeedback || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  // Maneja el cambio en el textarea
-  const handleFeedbackChange = (e) => {
+  // Evita re-render innecesario
+  const handleFeedbackChange = useCallback((e) => {
     setFeedback(e.target.value);
-  };
+  }, []);
 
-  // Función para enviar la retroalimentación al backend
   const handleSubmit = async () => {
-    if (!feedback.trim()) {
+    const trimmedFeedback = feedback.trim();
+    if (!trimmedFeedback) {
       setError("La retroalimentación no puede estar vacía.");
       return;
     }
 
     setIsSubmitting(true);
-    setError(""); // Reseteamos el error
+    setError("");
 
     try {
-      // Realizamos la solicitud PUT para actualizar el feedback
       await axios.put(`http://localhost:5000/api/answered-clinical-records/${recordId}`, {
-        feedback,
-        teacherEmail: user?.email, // Enviamos el email del profesor
+        feedback: trimmedFeedback,
+        teacherEmail: user?.email,
       });
 
-      setIsSubmitting(false); // Indicamos que la operación ha terminado
       onSave(); // Llamamos a la función onSave después de guardar la retroalimentación
-
     } catch (err) {
-      setIsSubmitting(false);
       setError("Error al actualizar la retroalimentación.");
       console.error("Error al actualizar la retroalimentación:", err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -51,8 +49,8 @@ export default function Feedback({ recordId, initialFeedback, onSave }) {
       <div className="flex justify-between mt-2">
         <button
           onClick={handleSubmit}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-          disabled={isSubmitting}
+          className={`bg-blue-500 text-white px-4 py-2 rounded-lg ${(!feedback.trim() || isSubmitting) ? "opacity-50 cursor-not-allowed" : ""}`}
+          disabled={!feedback.trim() || isSubmitting}
         >
           {isSubmitting ? "Enviando..." : "Guardar Retroalimentación"}
         </button>

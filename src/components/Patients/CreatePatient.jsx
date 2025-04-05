@@ -4,7 +4,6 @@ import { usePatientForm } from "./usePatientForm";
 import InputField from "../InputField";
 import SelectField from "../SelectField";
 
-// Formulario para crear un paciente
 export default function CreatePatientForm({ onClose }) {
   const initialFormData = {
     fullName: "",
@@ -21,9 +20,9 @@ export default function CreatePatientForm({ onClose }) {
   const { formData, errors, validateForm, handleChange } = usePatientForm(initialFormData);
   const [loading, setLoading] = useState(false);
 
-  // Enviar el formulario al servidor
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     const isValid = validateForm();
     if (!isValid) {
       alert("Por favor, corrige los errores antes de continuar.");
@@ -33,27 +32,23 @@ export default function CreatePatientForm({ onClose }) {
     setLoading(true);
 
     try {
-      // Crear el objeto con los datos del paciente
       const patientData = {
         ...formData,
         run: `${formData.runDigits}-${formData.runVerifier}`,
       };
 
-      // Eliminar el email si está vacío
       if (!patientData.email) {
         delete patientData.email;
       }
 
-      // Intentar guardar el paciente
       await axios.post("http://localhost:5000/api/patients", patientData);
       alert("Paciente guardado con éxito!");
       onClose();
     } catch (error) {
       console.error("Error al guardar el paciente:", error);
-
-      // Verificar si el error tiene un mensaje específico de backend
+      
       if (error.response?.data?.message) {
-        alert(error.response.data.message);  // Mostrar el mensaje de error del backend
+        alert(error.response.data.message);
       } else {
         alert("Hubo un error al guardar el paciente.");
       }
@@ -66,93 +61,27 @@ export default function CreatePatientForm({ onClose }) {
     <div className="bg-white rounded-lg shadow-md p-6 mt-6">
       <h1 className="text-2xl font-bold mb-4">Administración - Crear Paciente</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <InputField
-          label="Nombre completo"
-          name="fullName"
-          value={formData.fullName}
-          onChange={handleChange}
-          error={errors.fullName}
-        />
+        <InputField label="Nombre completo" name="fullName" value={formData.fullName} onChange={handleChange} error={errors.fullName} />
+        
         <div>
           <label className="block text-gray-700">RUN</label>
           <div className="flex items-center gap-2">
-            <input
-              type="text"
-              name="runDigits"
-              value={formData.runDigits}
-              onChange={handleChange} // Delegar a usePatientForm
-              className="flex-1 p-2 border rounded-lg"
-              required
-            />
+            <input type="text" name="runDigits" value={formData.runDigits} onChange={handleChange} className="flex-1 p-2 border rounded-lg" required />
             <span className="text-gray-500">-</span>
-            <input
-              type="text"
-              name="runVerifier"
-              value={formData.runVerifier}
-              onChange={handleChange} // Delegar a usePatientForm
-              className="w-12 p-2 border rounded-lg text-center uppercase"
-              maxLength="1"
-              required
-            />
+            <input type="text" name="runVerifier" value={formData.runVerifier} onChange={handleChange} className="w-12 p-2 border rounded-lg text-center uppercase" maxLength="1" required />
           </div>
-          {errors.runDigits && (
-            <div className="text-red-600 text-sm">{errors.runDigits}</div>
-          )}
-          {errors.runVerifier && (
-            <div className="text-red-600 text-sm">{errors.runVerifier}</div>
-          )}
+          {errors.runDigits && <div className="text-red-600 text-sm">{errors.runDigits}</div>}
+          {errors.runVerifier && <div className="text-red-600 text-sm">{errors.runVerifier}</div>}
         </div>
-        <SelectField
-          label="Sexo"
-          name="gender"
-          value={formData.gender}
-          onChange={handleChange}
-          options={["Masculino", "Femenino", "Otro"]}
-          error={errors.gender}
-        />
-        <InputField
-          label="Edad"
-          name="age"
-          value={formData.age}
-          onChange={handleChange}
-          error={errors.age}
-          type="text"
-        />
-        <SelectField
-          label="Previsión"
-          name="insurance"
-          value={formData.insurance}
-          onChange={handleChange}
-          options={["Fonasa", "Isapre", "Particular"]}
-          error={errors.insurance}
-        />
-        <InputField
-          label="Dirección"
-          name="address"
-          value={formData.address}
-          onChange={handleChange}
-          error={errors.address}
-        />
-        <InputField
-          label="Teléfono móvil"
-          name="mobileNumber"
-          value={formData.mobileNumber}
-          onChange={handleChange}
-          error={errors.mobileNumber}
-        />
-        <InputField
-          label="Correo electrónico"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          error={errors.email}
-          type="email"
-        />
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
-          disabled={loading}
-        >
+        
+        <SelectField label="Sexo" name="gender" value={formData.gender} onChange={handleChange} options={["Masculino", "Femenino", "Otro"]} error={errors.gender} />
+        <InputField label="Edad" name="age" value={formData.age} onChange={handleChange} error={errors.age} type="text" />
+        <SelectField label="Previsión" name="insurance" value={formData.insurance} onChange={handleChange} options={["Fonasa", "Isapre", "Particular"]} error={errors.insurance} />
+        <InputField label="Dirección" name="address" value={formData.address} onChange={handleChange} error={errors.address} />
+        <InputField label="Teléfono móvil" name="mobileNumber" value={formData.mobileNumber} onChange={handleChange} error={errors.mobileNumber} />
+        <InputField label="Correo electrónico" name="email" value={formData.email} onChange={handleChange} error={errors.email} type="email" />
+        
+        <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition" disabled={loading}>
           {loading ? "Guardando..." : "Guardar Paciente"}
         </button>
       </form>

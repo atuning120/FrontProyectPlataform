@@ -1,3 +1,4 @@
+// Componente de entrada de texto reutilizable con validación de error
 export default function InputField({ label, name, value, onChange, error, type = "text" }) {
     return (
       <div>

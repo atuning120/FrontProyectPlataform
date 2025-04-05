@@ -3,15 +3,16 @@ import { AuthContext } from "../components/Auth/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import ClinicalRecordList from "../components/ClinicalRecords/ClinicalRecordList";
-import AnsweredClinicalRecordList from "../components/AnsweredClinicalRecords/AnsweredClinicalRecordList"; // Importamos el nuevo componente
-import ToggleButton from "../components/ToggleButton"; // Importamos el nuevo componente
+import AnsweredClinicalRecordList from "../components/AnsweredClinicalRecords/AnsweredClinicalRecordList"; 
+import ToggleButton from "../components/ToggleButton"; 
 
 export default function StudentPage() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [showClinicalRecords, setShowClinicalRecords] = useState(false);
-  const [showAnsweredRecords, setShowAnsweredRecords] = useState(false); // Nuevo estado para controlar la visibilidad de las respuestas
+  const [showAnsweredRecords, setShowAnsweredRecords] = useState(false);
 
+  // Redirección si el usuario no es un alumno
   useEffect(() => {
     if (!user || user.role !== "alumno") {
       navigate("/");
@@ -20,16 +21,14 @@ export default function StudentPage() {
 
   if (!user || user.role !== "alumno") return null;
 
-  const handleToggleClinicalRecords = () => {
-    setShowClinicalRecords(!showClinicalRecords);
-  };
+  // Alternar la visibilidad de las fichas clínicas
+  const handleToggleClinicalRecords = () => setShowClinicalRecords(!showClinicalRecords);
 
-  const handleToggleAnsweredRecords = () => {
-    setShowAnsweredRecords(!showAnsweredRecords); // Alterna la visibilidad de las respuestas enviadas
-  };
+  // Alternar la visibilidad de las respuestas enviadas
+  const handleToggleAnsweredRecords = () => setShowAnsweredRecords(!showAnsweredRecords);
 
+  // Ocultar las fichas clínicas cuando se envía una respuesta
   const handleResponseSubmitted = () => {
-    // Cerrar el botón de mostrar fichas clínicas cuando se envía una respuesta
     console.log("Respuesta enviada, ocultando fichas clínicas.");
     setShowClinicalRecords(false);
   };
@@ -38,7 +37,7 @@ export default function StudentPage() {
     <div className="min-h-screen bg-gray-100 p-8">
       <Header />
 
-      {/* Sección fija con los botones para mostrar/ocultar las fichas clínicas y respuestas enviadas */}
+      {/* Barra fija con botones para alternar las secciones */}
       <div className="fixed top-0 left-0 right-0 bg-white shadow-md p-4 z-10">
         <ToggleButton
           isVisible={showClinicalRecords}
@@ -57,14 +56,9 @@ export default function StudentPage() {
         />
       </div>
 
-      {/* Espacio para evitar que el contenido debajo de la barra fija se solape */}
+      {/* Margen superior para evitar solapamiento con la barra fija */}
       <div className="pt-24">
-        {/* Mostrar las fichas clínicas cuando el estado es true */}
-        {showClinicalRecords && (
-          <ClinicalRecordList onResponseSubmitted={handleResponseSubmitted} />
-        )}
-
-        {/* Mostrar las respuestas enviadas cuando el estado es true */}
+        {showClinicalRecords && <ClinicalRecordList onResponseSubmitted={handleResponseSubmitted} />}
         {showAnsweredRecords && <AnsweredClinicalRecordList />}
       </div>
     </div>
