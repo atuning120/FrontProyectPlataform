@@ -43,7 +43,7 @@ export default function StudentPage() {
         <ToggleButton
           isVisible={showClinicalRecords}
           onToggle={handleToggleClinicalRecords}
-          showText="Mostrar Fichas Clínicas"
+          showText="Ver Fichas Clínicas"
           hideText="Ocultar Fichas Clínicas"
           className="bg-blue-500 text-white w-full"
         />
