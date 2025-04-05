@@ -81,20 +81,24 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
                 label: "Profesor", 
                 render: row => row.teacherEmail || "N/A" // Si no hay profesor, mostrar "N/A"
               },
+              { 
+                key: "updatedAt", 
+                label: "Última Actualización",
+                render: row => new Date(row.updatedAt).toLocaleString() // Formatea la fecha
+              },
               {
                 key: "actions",
                 label: "Acciones",
-                render: row =>
-                  userRole === "profesor" && (
-                    <ToggleButton
-                      isVisible={selectedRecord?.clinicalRecordNumber === row.clinicalRecordNumber}
-                      onToggle={() => handleFeedbackToggle(row)}
-                      showText="Detalle"
-                      hideText="Cancelar"
-                      className="bg-blue-500 text-white"
-                    />
-                  ),
-              },
+                render: row => (
+                  <ToggleButton
+                    isVisible={selectedRecord?.clinicalRecordNumber === row.clinicalRecordNumber}
+                    onToggle={() => handleFeedbackToggle(row)}
+                    showText="Detalle"
+                    hideText="Cancelar"
+                    className="bg-blue-500 text-white"
+                  />
+                ),
+              }              
             ]}
             data={answeredRecords}
           />
