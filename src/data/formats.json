@@ -4,20 +4,67 @@
     "name": "Ficha Nutricional",
     "sections": [
       {
-        "section": "Datos Generales del Paciente",
-        "fields": [
-          { "key": "nombre_completo", "label": "Nombre completo" },
-          { "key": "fecha_nacimiento_edad", "label": "Fecha de nacimiento / Edad" },
-          { "key": "genero", "label": "Género" },
-          { "key": "motivo_consulta", "label": "Motivo de consulta" }
-        ]
-      },
-      {
         "section": "Historia Clínica y Alimentaria",
         "fields": [
           { "key": "anamnesis_clinica", "label": "Anamnesis clínica" },
           { "key": "anamnesis_alimentaria", "label": "Anamnesis alimentaria" },
           { "key": "factores_psicosociales", "label": "Factores psicosociales" }
+        ]
+      },
+      {
+        "section": "Evaluación Antropométrica",
+        "fields": [
+          { "key": "peso_actual", "label": "Peso actual" },
+          { "key": "talla", "label": "Talla" },
+          { "key": "imc", "label": "Índice de Masa Corporal (IMC)" },
+          { "key": "circunferencia_cintura", "label": "Circunferencia de cintura desde los 5 años" },
+          { "key": "circunferencia_craneana", "label": "Circunferencia craneana hasta los 2 años" },
+          { "key": "pliegues_cutaneos", "label": "Pliegues cutáneos" },
+          { "key": "composicion_corporal", "label": "Evaluación de la composición corporal" }
+        ]
+      },
+      {
+        "section": "Evaluación Bioquímica (si aplica)",
+        "fields": [
+          { "key": "glucosa_sangre", "label": "Glucosa en sangre" },
+          { "key": "perfil_lipidico", "label": "Perfil lipídico" },
+          { "key": "hemoglobina_hematocrito", "label": "Hemoglobina y hematocrito" },
+          { "key": "proteinas_sericas", "label": "Proteínas séricas" },
+          { "key": "parametros_renales_hepaticos", "label": "Parámetros renales y hepáticos" }
+        ]
+      },
+      {
+        "section": "Evaluación Clínica y de Signos Nutricionales",
+        "fields": [
+          { "key": "presion_arterial", "label": "Presión arterial" },
+          { "key": "estado_hidratacion", "label": "Estado de hidratación" },
+          { "key": "signos_deficiencias", "label": "Presencia de signos clínicos de deficiencias nutricionales" },
+          { "key": "salud_digestiva", "label": "Estado de salud digestiva" }
+        ]
+      },
+      {
+        "section": "Diagnóstico Nutricional",
+        "fields": [
+          { "key": "diagnostico_nutricional", "label": "Diagnóstico basado en la clasificación de la OMS/MINSAL" }
+        ]
+      },
+      {
+        "section": "Plan de Intervención Nutricional",
+        "fields": [
+          { "key": "objetivos_tratamiento", "label": "Objetivos del tratamiento" },
+          { "key": "requerimientos_energeticos", "label": "Requerimientos energéticos y de macronutrientes" },
+          { "key": "plan_alimentacion", "label": "Plan de alimentación o recomendaciones dietéticas" },
+          { "key": "pauta_alimentaria", "label": "Pauta alimentaria" }
+        ]
+      },
+      {
+        "section": "Seguimiento y Evaluación",
+        "fields": [
+          { "key": "registro_evolucion", "label": "Registro de evolución del paciente" },
+          { "key": "cumplimiento_plan", "label": "Cumplimiento del plan nutricional" },
+          { "key": "ajustes_intervencion", "label": "Ajustes en la intervención" },
+          { "key": "proximo_control", "label": "Próximo control" },
+          { "key": "derivaciones", "label": "Derivaciones" }
         ]
       }
     ]

@@ -16,13 +16,19 @@ export default function PatientList() {
         setPatients(response.data);
       } catch (error) {
         console.error("Error al obtener pacientes:", error);
+        
+        if (error.response?.data?.message) {
+          alert(error.response.data.message); // 🔹 Usa el mensaje del backend si existe
+        } else {
+          alert("Error de conexión con el servidor."); // 🔹 Si el backend está caído
+        }
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchPatients();
-  }, []);
+  }, []);  
 
   const handleDeletePatient = (id) => {
     setPatients((prev) => prev.filter((patient) => patient._id !== id));
@@ -32,7 +38,7 @@ export default function PatientList() {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mt-6">
-      <h1 className="text-2xl font-bold mb-4">Lista de Pacientes</h1>
+      <h2 className="text-2xl font-bold mb-4">Lista de Pacientes</h2>
 
       <TableComponent
         columns={[

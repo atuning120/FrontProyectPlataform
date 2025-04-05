@@ -9,9 +9,9 @@ export default function DeleteClinicalRecord({ recordId, onDelete }) {
 
     setLoading(true);
     try {
-      await axios.delete(`http://localhost:5000/api/clinical-records/${recordId}`);
-      onDelete(recordId);
-      alert("Ficha clínica eliminada con éxito!");
+      const response = await axios.delete(`http://localhost:5000/api/clinical-records/${recordId}`);
+      alert(response.data.message); // Mensaje del backend
+      onDelete(recordId); // Solo eliminar de la UI si fue exitoso
     } catch (error) {
       console.error("Error eliminando la ficha clínica:", error);
       alert(error.response?.data?.message || "Hubo un error al eliminar la ficha clínica.");

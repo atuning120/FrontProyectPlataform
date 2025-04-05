@@ -4,12 +4,13 @@ import { AuthContext } from "../Auth/AuthProvider";
 import DeleteClinicalRecord from "./DeleteClinicalRecord";
 import CreateAnsweredClinicalRecords from "../AnsweredClinicalRecords/CreateAnsweredClinicalRecord";
 import TableComponent from "../TableComponent";
+import ToggleButton from "../ToggleButton";
 
 export default function ClinicalRecordList({ onResponseSubmitted }) {
   const { user } = useContext(AuthContext);
   const [clinicalRecords, setClinicalRecords] = useState([]);
   const [answeredRecords, setAnsweredRecords] = useState([]);
-  const [patientData, setPatientData] = useState({});
+  const [selectedRecord, setSelectedRecord] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -23,25 +24,8 @@ export default function ClinicalRecordList({ onResponseSubmitted }) {
 
         setClinicalRecords(recordsResponse.data);
         setAnsweredRecords(answeredResponse.data);
-
-        const patientRuns = [...new Set(recordsResponse.data.map(record => record.patientRun))];
-
-        const patientRequests = patientRuns.map(run =>
-          axios.get(`http://localhost:5000/api/patients/${run}`).catch(() => null)
-        );
-
-        const patientResponses = await Promise.allSettled(patientRequests);
-
-        const patientsData = {};
-        patientResponses.forEach((response, index) => {
-          if (response.status === "fulfilled" && response.value) {
-            patientsData[patientRuns[index]] = response.value.data;
-          }
-        });
-
-        setPatientData(patientsData);
       } catch (err) {
-        setError("Error al obtener fichas clínicas o datos de pacientes.");
+        setError("Error al obtener fichas clínicas.");
       } finally {
         setLoading(false);
       }
@@ -52,6 +36,10 @@ export default function ClinicalRecordList({ onResponseSubmitted }) {
 
   const handleDelete = (recordId) => {
     setClinicalRecords(prev => prev.filter(record => record._id !== recordId));
+  };
+
+  const toggleRecord = (record) => {
+    setSelectedRecord(prev => (prev?._id === record._id ? null : record));
   };
 
   if (loading) return <div>Cargando fichas clínicas...</div>;
@@ -72,12 +60,7 @@ export default function ClinicalRecordList({ onResponseSubmitted }) {
           columns={[
             { key: "clinicalRecordNumber", label: "N° Ficha Clínica" },
             { key: "patientRun", label: "RUN" },
-            { key: "fullName", label: "Nombre", render: (row) => patientData[row.patientRun]?.fullName || "Desconocido" },
-            { key: "age", label: "Edad", render: (row) => patientData[row.patientRun]?.age || "N/A" },
-            { key: "gender", label: "Género", render: (row) => patientData[row.patientRun]?.gender || "N/A" },
-            { key: "address", label: "Dirección", render: (row) => patientData[row.patientRun]?.address || "N/A" },
-            { key: "email", label: "Email", render: (row) => patientData[row.patientRun]?.email || "N/A" },
-            { key: "createdAt", label: "Fecha de Creación", render: (row) => new Date(row.createdAt).toLocaleString() },
+            { key: "updatedAt", label: "Fecha", render: (row) => new Date(row.updatedAt).toLocaleDateString() },
             { key: "content", label: "Descripción" },
             {
               key: "actions",
@@ -86,12 +69,29 @@ export default function ClinicalRecordList({ onResponseSubmitted }) {
                 user.role === "profesor" ? (
                   <DeleteClinicalRecord recordId={row._id} onDelete={handleDelete} />
                 ) : (
-                  <CreateAnsweredClinicalRecords clinicalRecordNumber={row.clinicalRecordNumber} onSubmit={onResponseSubmitted} />
+                  <ToggleButton
+                    isVisible={selectedRecord?._id === row._id}
+                    onToggle={() => toggleRecord(row)}
+                    showText="Ingresar"
+                    hideText="Cancelar"
+                    className="p-2 bg-blue-500 text-white rounded-md"
+                  />
                 ),
             },
           ]}
           data={recordsToShow}
         />
+      )}
+
+      {selectedRecord && (
+        <div className="mt-10 p-6 bg-gray-100 rounded-lg shadow-md">
+          <h3 className="text-lg font-bold">Respondiendo Ficha Clínica #{selectedRecord.clinicalRecordNumber}</h3>
+          <CreateAnsweredClinicalRecords 
+            clinicalRecordNumber={selectedRecord.clinicalRecordNumber} 
+            patientRun={selectedRecord.patientRun} 
+            onSubmit={onResponseSubmitted} 
+          />
+        </div>
       )}
     </div>
   );

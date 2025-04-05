@@ -22,44 +22,44 @@ export default function CreatePatientForm({ onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+  
     const isValid = validateForm();
     if (!isValid) {
       alert("Por favor, corrige los errores antes de continuar.");
       return;
     }
-
+  
     setLoading(true);
-
+  
     try {
       const patientData = {
         ...formData,
         run: `${formData.runDigits}-${formData.runVerifier}`,
       };
-
+  
       if (!patientData.email) {
         delete patientData.email;
       }
-
+  
       await axios.post("http://localhost:5000/api/patients", patientData);
       alert("Paciente guardado con éxito!");
       onClose();
     } catch (error) {
       console.error("Error al guardar el paciente:", error);
-      
+  
       if (error.response?.data?.message) {
         alert(error.response.data.message);
       } else {
-        alert("Hubo un error al guardar el paciente.");
+        alert("Error de conexión con el servidor. Intente nuevamente.");
       }
     }
-
+  
     setLoading(false);
-  };
+  };  
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mt-6">
-      <h1 className="text-2xl font-bold mb-4">Administración - Crear Paciente</h1>
+      <h2 className="text-2xl font-bold mb-4">Crear Paciente</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <InputField label="Nombre completo" name="fullName" value={formData.fullName} onChange={handleChange} error={errors.fullName} />
         
