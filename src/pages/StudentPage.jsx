@@ -34,17 +34,16 @@ export default function StudentPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div>
       <Header />
 
       {/* Barra fija con botones para alternar las secciones */}
-      <div className="fixed top-0 left-0 right-0 bg-white shadow-md p-4 z-10">
+      <div className="">
         <ToggleButton
           isVisible={showClinicalRecords}
           onToggle={handleToggleClinicalRecords}
           showText="Ver Fichas Clínicas"
           hideText="Ocultar Fichas Clínicas"
-          className="bg-blue-500 text-white w-full"
         />
 
         <ToggleButton
@@ -52,12 +51,12 @@ export default function StudentPage() {
           onToggle={handleToggleAnsweredRecords}
           showText="Ver Fichas Enviadas"
           hideText="Ocultar Fichas Enviadas"
-          className="bg-green-500 text-white mt-4 w-full"
+          className=""
         />
       </div>
 
       {/* Margen superior para evitar solapamiento con la barra fija */}
-      <div className="pt-24">
+      <div className="">
         {showClinicalRecords && <ClinicalRecordList onResponseSubmitted={handleResponseSubmitted} />}
         {showAnsweredRecords && <AnsweredClinicalRecordList />}
       </div>

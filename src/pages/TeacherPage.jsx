@@ -35,11 +35,11 @@ export default function TeacherPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="">
       <Header />
 
       {/* Barra fija con los botones de navegación */}
-      <div className="fixed top-0 left-0 right-0 bg-white shadow-md p-4 z-10">
+      <div className="">
         <ToggleButton
           isVisible={showForm}
           onToggle={() => setShowForm(!showForm)}
