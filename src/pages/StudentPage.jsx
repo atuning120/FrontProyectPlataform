@@ -1,10 +1,13 @@
+// src/pages/StudentPage.jsx
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../components/Auth/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
+import MenuExample from "../components/ExampleMenu";
 import ClinicalRecordList from "../components/ClinicalRecords/ClinicalRecordList";
-import AnsweredClinicalRecordList from "../components/AnsweredClinicalRecords/AnsweredClinicalRecordList"; 
-import ToggleButton from "../components/ToggleButton"; 
+import AnsweredClinicalRecordList from "../components/AnsweredClinicalRecords/AnsweredClinicalRecordList";
+import ToggleButton from "../components/ToggleButton";
+import ExampleMenu from "../components/ExampleMenu";
 
 export default function StudentPage() {
   const { user } = useContext(AuthContext);
@@ -21,45 +24,45 @@ export default function StudentPage() {
 
   if (!user || user.role !== "alumno") return null;
 
-  // Alternar la visibilidad de las fichas clínicas
-  const handleToggleClinicalRecords = () => setShowClinicalRecords(!showClinicalRecords);
+  const handleToggleClinicalRecords = () =>
+    setShowClinicalRecords(!showClinicalRecords);
 
-  // Alternar la visibilidad de las respuestas enviadas
-  const handleToggleAnsweredRecords = () => setShowAnsweredRecords(!showAnsweredRecords);
+  const handleToggleAnsweredRecords = () =>
+    setShowAnsweredRecords(!showAnsweredRecords);
 
-  // Ocultar las fichas clínicas cuando se envía una respuesta
   const handleResponseSubmitted = () => {
     console.log("Respuesta enviada, ocultando fichas clínicas.");
     setShowClinicalRecords(false);
   };
 
   return (
-    <div>
+    <>
+      <ExampleMenu/>
       <Header />
 
-      {/* Barra fija con botones para alternar las secciones */}
-      <div className="">
-        <ToggleButton
-          isVisible={showClinicalRecords}
-          onToggle={handleToggleClinicalRecords}
-          showText="Ver Fichas Clínicas"
-          hideText="Ocultar Fichas Clínicas"
-        />
+      <div className="pt-20 px-4 max-w-4xl mx-auto">
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <ToggleButton
+            isVisible={showClinicalRecords}
+            onToggle={handleToggleClinicalRecords}
+            showText="Ver Fichas Clínicas"
+            hideText="Ocultar Fichas Clínicas"
+          />
+          <ToggleButton
+            isVisible={showAnsweredRecords}
+            onToggle={handleToggleAnsweredRecords}
+            showText="Ver Fichas Enviadas"
+            hideText="Ocultar Fichas Enviadas"
+          />
+        </div>
 
-        <ToggleButton
-          isVisible={showAnsweredRecords}
-          onToggle={handleToggleAnsweredRecords}
-          showText="Ver Fichas Enviadas"
-          hideText="Ocultar Fichas Enviadas"
-          className=""
-        />
+        <div className="space-y-6">
+          {showClinicalRecords && (
+            <ClinicalRecordList onResponseSubmitted={handleResponseSubmitted} />
+          )}
+          {showAnsweredRecords && <AnsweredClinicalRecordList />}
+        </div>
       </div>
-
-      {/* Margen superior para evitar solapamiento con la barra fija */}
-      <div className="">
-        {showClinicalRecords && <ClinicalRecordList onResponseSubmitted={handleResponseSubmitted} />}
-        {showAnsweredRecords && <AnsweredClinicalRecordList />}
-      </div>
-    </div>
+    </>
   );
 }
