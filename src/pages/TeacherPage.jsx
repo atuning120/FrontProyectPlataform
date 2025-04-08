@@ -1,3 +1,4 @@
+// src/pages/TeacherPage.jsx
 import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../components/Auth/AuthProvider";
 import { useNavigate } from "react-router-dom";
@@ -36,61 +37,64 @@ export default function TeacherPage() {
   };
 
   return (
-    <div className="">
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-blue-950 to-blue-900">
+      {/* Header */}
       <Header />
 
-      {/* Barra fija con los botones de navegación */}
-      <div className="">
-        <ToggleButton
-          isVisible={showForm}
-          onToggle={() => setShowForm(!showForm)}
-          showText="Crear Nuevo Paciente"
-          hideText="Cancelar Creación de Paciente"
-          className="bg-blue-500 text-white w-full"
-        />
+      {/* Contenido principal con efecto glassmorphism */}
+      <main className="flex-1 px-4 pt-20 max-w-4xl w-full mx-auto">
+        <div className="bg-white/30 backdrop-blur-md rounded-xl shadow-lg border border-white/40 p-6">
+          {/* Botones de navegación */}
+          <div className="flex flex-col sm:flex-row flex-wrap gap-4 mb-6">
+            <ToggleButton
+              isVisible={showForm}
+              onToggle={() => setShowForm(!showForm)}
+              showText="Crear Nuevo Paciente"
+              hideText="Cancelar Creación de Paciente"
+            />
+            <ToggleButton
+              isVisible={showPatientList}
+              onToggle={() => setShowPatientList(!showPatientList)}
+              showText="Ver Lista de Pacientes"
+              hideText="Ocultar Lista de Pacientes"
+            />
+            <ToggleButton
+              isVisible={showClinicRecordForm}
+              onToggle={() => setShowClinicRecordForm(!showClinicRecordForm)}
+              showText="Crear Ficha Clínica"
+              hideText="Cancelar Creación de Ficha"
+            />
+            <ToggleButton
+              isVisible={showClinicalRecords}
+              onToggle={() => setShowClinicalRecords(!showClinicalRecords)}
+              showText="Ver Fichas Clínicas"
+              hideText="Ocultar Fichas Clínicas"
+            />
+            <ToggleButton
+              isVisible={showAnsweredRecords}
+              onToggle={() => setShowAnsweredRecords(!showAnsweredRecords)}
+              showText="Ver Respuestas de Fichas"
+              hideText="Ocultar Respuestas"
+            />
+          </div>
 
-        <ToggleButton
-          isVisible={showPatientList}
-          onToggle={() => setShowPatientList(!showPatientList)}
-          showText="Ver Lista de Pacientes"
-          hideText="Ocultar Lista de Pacientes"
-          className="bg-blue-500 text-white mt-4 w-full"
-        />
+          {/* Componentes condicionales */}
+          <div className="space-y-6">
+            {showForm && <CreatePatient onClose={() => setShowForm(false)} />}
+            {showPatientList && <PatientList />}
+            {showClinicRecordForm && (
+              <CreateClinicalRecord onClose={() => setShowClinicRecordForm(false)} />
+            )}
+            {showClinicalRecords && <ClinicalRecordList />}
+            {showAnsweredRecords && (
+              <AnsweredClinicalRecordList onFeedbackSaved={handleCloseAnsweredRecords} />
+            )}
+          </div>
+        </div>
+      </main>
 
-        <ToggleButton
-          isVisible={showClinicRecordForm}
-          onToggle={() => setShowClinicRecordForm(!showClinicRecordForm)}
-          showText="Crear Ficha Clínica"
-          hideText="Cancelar Creación de Ficha"
-          className="bg-green-500 text-white mt-4 w-full"
-        />
-
-        <ToggleButton
-          isVisible={showClinicalRecords}
-          onToggle={() => setShowClinicalRecords(!showClinicalRecords)}
-          showText="Ver Fichas Clínicas"
-          hideText="Ocultar Fichas Clínicas"
-          className="bg-blue-500 text-white mt-4 w-full"
-        />
-
-        <ToggleButton
-          isVisible={showAnsweredRecords}
-          onToggle={() => setShowAnsweredRecords(!showAnsweredRecords)}
-          showText="Ver Respuestas de Fichas"
-          hideText="Ocultar Respuestas"
-          className="bg-green-500 text-white mt-4 w-full"
-        />
-      </div>
-
-      {/* Margen superior para evitar solapamiento con la barra fija */}
-      <div className="pt-32">
-        {showForm && <CreatePatient onClose={() => setShowForm(false)} />}
-        {showPatientList && <PatientList />}
-        {showClinicRecordForm && <CreateClinicalRecord onClose={() => setShowClinicRecordForm(false)} />}
-        {showClinicalRecords && <ClinicalRecordList />}
-        {showAnsweredRecords && <AnsweredClinicalRecordList onFeedbackSaved={handleCloseAnsweredRecords} />}
-      </div>
-      <Footer/>
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }
