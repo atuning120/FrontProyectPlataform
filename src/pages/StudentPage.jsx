@@ -3,11 +3,11 @@ import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../components/Auth/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
-import MenuExample from "../components/ExampleMenu";
 import ClinicalRecordList from "../components/ClinicalRecords/ClinicalRecordList";
 import AnsweredClinicalRecordList from "../components/AnsweredClinicalRecords/AnsweredClinicalRecordList";
 import ToggleButton from "../components/ToggleButton";
-import ExampleMenu from "../components/ExampleMenu";
+import HeaderStudent from "../components/HeaderStudent";
+import Footer from "../components/Footer";
 
 export default function StudentPage() {
   const { user } = useContext(AuthContext);
@@ -36,11 +36,12 @@ export default function StudentPage() {
   };
 
   return (
-    <>
-      <ExampleMenu/>
-      <Header />
+    <div className="flex flex-col min-h-screen">
+      {/* Header */}
+      <HeaderStudent />
 
-      <div className="pt-20 px-4 max-w-4xl mx-auto">
+      {/* Contenido principal que crece según el contenido */}
+      <main className="flex-1 pt-20 px-4 max-w-4xl w-full mx-auto">
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <ToggleButton
             isVisible={showClinicalRecords}
@@ -62,7 +63,11 @@ export default function StudentPage() {
           )}
           {showAnsweredRecords && <AnsweredClinicalRecordList />}
         </div>
-      </div>
-    </>
+      </main>
+
+      {/* Footer */}
+      <Footer />
+    </div>
   );
+
 }
