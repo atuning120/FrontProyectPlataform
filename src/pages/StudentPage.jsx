@@ -36,38 +36,41 @@ export default function StudentPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-blue-950 to-blue-900">
       {/* Header */}
       <HeaderStudent />
 
-      {/* Contenido principal que crece según el contenido */}
-      <main className="flex-1 pt-20 px-4 max-w-4xl w-full mx-auto">
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <ToggleButton
-            isVisible={showClinicalRecords}
-            onToggle={handleToggleClinicalRecords}
-            showText="Ver Fichas Clínicas"
-            hideText="Ocultar Fichas Clínicas"
-          />
-          <ToggleButton
-            isVisible={showAnsweredRecords}
-            onToggle={handleToggleAnsweredRecords}
-            showText="Ver Fichas Enviadas"
-            hideText="Ocultar Fichas Enviadas"
-          />
-        </div>
+      {/* Contenido principal con efecto glassmorphism */}
+      <main className="flex-1 px-4 pt-20 max-w-4xl w-full mx-auto">
+        <div className="bg-white/30 backdrop-blur-md rounded-xl shadow-lg border border-white/40 p-6">
+          <div className="flex flex-col sm:flex-row gap-4 mb-6">
+            <ToggleButton
+              isVisible={showClinicalRecords}
+              onToggle={handleToggleClinicalRecords}
+              showText="Ver Fichas Clínicas"
+              hideText="Ocultar Fichas Clínicas"
+            />
+            <ToggleButton
+              isVisible={showAnsweredRecords}
+              onToggle={handleToggleAnsweredRecords}
+              showText="Ver Fichas Enviadas"
+              hideText="Ocultar Fichas Enviadas"
+            />
+          </div>
 
-        <div className="space-y-6">
-          {showClinicalRecords && (
-            <ClinicalRecordList onResponseSubmitted={handleResponseSubmitted} />
-          )}
-          {showAnsweredRecords && <AnsweredClinicalRecordList />}
+          <div className="space-y-6">
+            {showClinicalRecords && (
+              <ClinicalRecordList onResponseSubmitted={handleResponseSubmitted} />
+            )}
+            {showAnsweredRecords && <AnsweredClinicalRecordList />}
+          </div>
         </div>
       </main>
 
-      {/* Footer */}
+      {/* Footer siempre al fondo */}
       <Footer />
     </div>
   );
+
 
 }

@@ -38,11 +38,12 @@ export default function App() {
     { label: "Cerrar sesión", action: logout },
   ];
   return (
-    <Navbar>
-      <NavbarBrand>
+    <Navbar className="border-white/40 border shadow-lg bg-white">
+      <NavbarBrand className="flex w-full sm:w-auto justify-center sm:justify-start items-center gap-2">
         <img src={logo} alt="Logo SIMICODE" className="w-24 h-auto" />
         <p className="font-bold text-inherit">SIMICODE</p>
       </NavbarBrand>
+
 
       {/* Contenido centrado con flex-1 */}
       <NavbarContent className="hidden sm:flex gap-4 flex-1 justify-center">
@@ -78,20 +79,20 @@ export default function App() {
             />
 
           </DropdownTrigger>
-          <DropdownMenu aria-label="Profile Actions" variant="flat">
+          <DropdownMenu aria-label="Profile Actions" variant="flat" className="bg-black/20 rounded-lg">
             <DropdownItem key="profile" className="h-14 gap-2">
-              <p className="font-semibold">{user?.displayName}</p>
-              <p className="font-semibold">{user?.email}</p>
-              <p className="font-semibold">Rol: Estudiante</p>
+              <p className="font-semibold text-white">{user?.displayName}</p>
+              <p className="font-semibold text-white">{user?.email}</p>
+              <p className="font-semibold text-white">Rol: Estudiante</p>
             </DropdownItem>
             <DropdownItem key="logout" className="py-2">
-  <button
-    onClick={logout}
-    className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded text-sm"
-  >
-    Cerrar sesión
-  </button>
-</DropdownItem>
+              <button
+                onClick={logout}
+                className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded text-sm"
+              >
+                Cerrar sesión
+              </button>
+            </DropdownItem>
           </DropdownMenu>
         </Dropdown>
       </NavbarContent>

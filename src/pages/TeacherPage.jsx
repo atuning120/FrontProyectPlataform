@@ -8,6 +8,7 @@ import CreateClinicalRecord from "../components/ClinicalRecords/CreateClinicalRe
 import ClinicalRecordList from "../components/ClinicalRecords/ClinicalRecordList";
 import ToggleButton from "../components/ToggleButton";
 import AnsweredClinicalRecordList from "../components/AnsweredClinicalRecords/AnsweredClinicalRecordList";
+import Footer from "../components/Footer";
 
 export default function TeacherPage() {
   const { user } = useContext(AuthContext);
@@ -89,6 +90,7 @@ export default function TeacherPage() {
         {showClinicalRecords && <ClinicalRecordList />}
         {showAnsweredRecords && <AnsweredClinicalRecordList onFeedbackSaved={handleCloseAnsweredRecords} />}
       </div>
+      <Footer/>
     </div>
   );
 }
