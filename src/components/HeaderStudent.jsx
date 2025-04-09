@@ -38,11 +38,11 @@ export default function App() {
 
   return (
     <div className="bg-blue-950">
-      <Navbar className="bg-white/10 backdrop-blur-md border border-white/20 shadow-md rounded-b-xl px-4 py-2">
-        <NavbarBrand className="flex w-full sm:w-auto justify-center sm:justify-start items-center gap-2">
+<Navbar className="bg-white/10 backdrop-blur-md border border-white/20 shadow-md rounded-b-xl px-4 py-2">
+<NavbarBrand className="flex w-full sm:w-auto justify-center sm:justify-start items-center gap-2">
           <img src={logo} alt="Logo SIMICODE" className="w-24 h-auto" />
           <p className="text-xl sm:text-2xl font-semibold text-white tracking-wide">FISIM</p>
-        </NavbarBrand>
+          </NavbarBrand>
 
         {/* Botones solo para estudiantes */}
         {user?.role === "alumno" && (
@@ -53,7 +53,7 @@ export default function App() {
               showText="Ver Fichas Clínicas"
               hideText="Ocultar Fichas Clínicas"
               className="bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-md px-4 py-2 rounded-xl shadow-md transition duration-300 font-medium"
-            />
+              />
 
             <ToggleButton
               isVisible={showAnsweredRecords}
@@ -61,7 +61,7 @@ export default function App() {
               showText="Ver Fichas Enviadas"
               hideText="Ocultar Fichas Enviadas"
               className="bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-md px-4 py-2 rounded-xl shadow-md transition duration-300 font-medium"
-            />
+              />
 
           </NavbarContent>
         )}
@@ -100,6 +100,7 @@ export default function App() {
     </button>
   </DropdownItem>
 </DropdownMenu>
+
 
           </Dropdown>
         </NavbarContent>
