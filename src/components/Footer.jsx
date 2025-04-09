@@ -1,18 +1,20 @@
 import React from 'react'
 import { BiChevronRight } from 'react-icons/bi';
+import logoUCN from "../../public/logoUCNblancoNegro.png";
+
 
 const Footer = () => {
   return  <footer className='py-16 bg-gray-950 px-12 flex justify-between gap-10 text-slate-200 text-sm flex-wrap md:flex-nowrap'>
     <div  className={`text-2x1 font-bold tracking-tighter transition-all text-white flex-1`}>
-        SIMICODE
+        FISIM
     </div>
 
     <div className="flex flex-col gap-4 flex-1">
         <p className="font-semibold uppercase tracking-tighter">
-            Suscribete
+            Contacto
         </p>
         <p className="text-xs font-medium">
-            Recibe ofertas exclusivas y novedades
+            sugerencias
         </p>
         <div className="border border-gray-80 flex items-center gap-2 px-3 py-2 rounded-full">
             <input 
@@ -30,18 +32,14 @@ const Footer = () => {
             Politicas
         </p>
         <nav className="flex flex-col gap-2 text-xs font-medium">
-            <div>Cursos</div>
             <div className='text-slate-300 hover:text-white'>Politicas de privacidad</div>
             <div className='text-slate-300 hover:text-white'>Terminos de uso</div>
         </nav>
     </div>
     <div className="flex flex-col gap-4 flex-1">
-        <p className='font-semibold uppercase tracking-tighter'>
-            Siguenos
-        </p>
-        <p className='text-xs leading-6'>
-            No te pierdas de nuestras novedades y ofertas exclusivas
-        </p>
+    <div className="w-full flex justify-normal mt-8">
+            <img src={logoUCN} alt="Logo UCN" className="w-20 h-auto" />
+        </div>
     </div>
   </footer>
 }

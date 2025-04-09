@@ -14,6 +14,8 @@ import { logout } from "../services/firebase";
 import { useStudentView } from "../context/StudentViewContext"; // 👈 contexto
 import ToggleButton from "./ToggleButton";
 import logo from "../../public/logoPaginaBlanco.png";
+import { Button } from "@heroui/react";
+
 
 export default function App() {
   const { user } = useContext(AuthContext);
@@ -36,10 +38,10 @@ export default function App() {
 
   return (
     <div className="bg-blue-950">
-      <Navbar className="border-white/40 border shadow-lg bg-white/20">
+      <Navbar className="bg-white/10 backdrop-blur-md border border-white/20 shadow-md rounded-b-xl px-4 py-2">
         <NavbarBrand className="flex w-full sm:w-auto justify-center sm:justify-start items-center gap-2">
           <img src={logo} alt="Logo SIMICODE" className="w-24 h-auto" />
-          <p className="font-bold text-white">SIMICODE</p>
+          <p className="text-xl sm:text-2xl font-semibold text-white tracking-wide">FISIM</p>
         </NavbarBrand>
 
         {/* Botones solo para estudiantes */}
@@ -50,13 +52,17 @@ export default function App() {
               onToggle={handleToggleClinicalRecords}
               showText="Ver Fichas Clínicas"
               hideText="Ocultar Fichas Clínicas"
+              className="bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-md px-4 py-2 rounded-xl shadow-md transition duration-300 font-medium"
             />
+
             <ToggleButton
               isVisible={showAnsweredRecords}
               onToggle={handleToggleAnsweredRecords}
               showText="Ver Fichas Enviadas"
               hideText="Ocultar Fichas Enviadas"
+              className="bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-md px-4 py-2 rounded-xl shadow-md transition duration-300 font-medium"
             />
+
           </NavbarContent>
         )}
 
@@ -67,28 +73,34 @@ export default function App() {
               <img
                 src={user?.photoURL}
                 alt="Foto de usuario"
-                className="w-16 h-16 rounded-full border-secondary object-cover"
-              />
+                className="w-16 h-16 rounded-full border-2 border-white/40 object-cover hover:ring-2 hover:ring-white/50 transition"
+                />
             </DropdownTrigger>
             <DropdownMenu
-              aria-label="Profile Actions"
-              variant="flat"
-              className="bg-black/20 rounded-lg"
-            >
-              <DropdownItem key="profile" className="h-14 gap-2">
-                <p className="font-semibold text-white">{user?.displayName}</p>
-                <p className="font-semibold text-white">{user?.email}</p>
-                <p className="font-semibold text-white">Rol: Estudiante</p>
-              </DropdownItem>
-              <DropdownItem key="logout" className="py-2">
-                <button
-                  onClick={logout}
-                  className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded text-sm"
-                >
-                  Cerrar sesión
-                </button>
-              </DropdownItem>
-            </DropdownMenu>
+  aria-label="Profile Actions"
+  variant="flat"
+  className="bg-white/10 backdrop-blur-md border border-white/20 shadow-lg rounded-xl px-4 py-3 space-y-3"
+>
+  <DropdownItem
+    key="profile"
+    className="flex flex-col items-start gap-0 px-0 py-1 cursor-default"
+  >
+    <p className="text-sm text-white/80">Bienvenido,</p>
+    <p className="text-base font-semibold text-white">{user?.displayName}</p>
+    <p className="text-sm text-white/70">{user?.email}</p>
+    <p className="text-xs text-white/60 italic">Rol: Estudiante</p>
+  </DropdownItem>
+
+  <DropdownItem key="logout" className="px-0 py-1">
+    <button
+      onClick={logout}
+      className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm transition"
+    >
+      Cerrar sesión
+    </button>
+  </DropdownItem>
+</DropdownMenu>
+
           </Dropdown>
         </NavbarContent>
       </Navbar>
