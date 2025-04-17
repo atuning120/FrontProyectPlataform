@@ -2,91 +2,106 @@ import {
   Navbar,
   NavbarBrand,
   NavbarContent,
-  NavbarItem,
-  Link,
   DropdownItem,
   DropdownTrigger,
   Dropdown,
   DropdownMenu,
-  Avatar,
 } from "@heroui/react";
 import { useContext } from "react";
 import { AuthContext } from "./Auth/AuthProvider";
 import { logout } from "../services/firebase";
-import logo from "../../public/logoPaginaBlanco.png"
+import logo from "../../public/logoPaginaBlanco.png";
+import ToggleButton from "./ToggleButton";
+import { useTeacherView } from "../context/TeacherViewContext";
 
-
-
-export const AcmeLogo = () => {
-  return (
-    <svg fill="none" height="36" viewBox="0 0 32 32" width="36">
-      <path
-        clipRule="evenodd"
-        d="M17.6482 10.1305L15.8785 7.02583L7.02979 22.5499H10.5278L17.6482 10.1305ZM19.8798 14.0457L18.11 17.1983L19.394 19.4511H16.8453L15.1056 22.5499H24.7272L19.8798 14.0457Z"
-        fill="currentColor"
-        fillRule="evenodd"
-      />
-    </svg>
-  );
-};
-
-export default function App() {
+export default function Header() {
   const { user } = useContext(AuthContext);
-  const menuItems = [
-    { label: "Mi perfil", href: "#" },
-    { label: "Configuración", href: "#" },
-    { label: "Cerrar sesión", action: logout },
-  ];
+
+  const {
+    showForm, setShowForm,
+    showPatientList, setShowPatientList,
+    showClinicRecordForm, setShowClinicRecordForm,
+    showClinicalRecords, setShowClinicalRecords,
+    showAnsweredRecords, setShowAnsweredRecords,
+  } = useTeacherView();
+
   return (
     <div className="bg-blue-950">
-      <Navbar className="border-white/40 border shadow-lg bg-white/20">
+      <Navbar className="bg-white/10 backdrop-blur-md border border-white/20 shadow-md rounded-b-xl px-4 py-2">
+        {/* Logo y título */}
         <NavbarBrand className="flex w-full sm:w-auto justify-center sm:justify-start items-center gap-2">
           <img src={logo} alt="Logo SIMICODE" className="w-24 h-auto" />
-          <p className="font-bold text-white">SIMICODE</p>
+          <p className="text-xl sm:text-2xl font-semibold text-white tracking-wide">FISIM</p>
         </NavbarBrand>
 
-
-        {/* Contenido centrado con flex-1 */}
+        {/* Botones al centro */}
         <NavbarContent className="hidden sm:flex gap-4 flex-1 justify-center">
-          <NavbarItem>
-            <Link color="foreground" href="#">
-              Features
-            </Link>
-          </NavbarItem>
-          <NavbarItem isActive>
-            <Link aria-current="page" color="secondary" href="#">
-              Customers
-            </Link>
-          </NavbarItem>
-          <NavbarItem>
-            <Link color="foreground" href="#">
-              Integrations
-            </Link>
-          </NavbarItem>
+          <ToggleButton
+            isVisible={showForm}
+            onToggle={() => setShowForm(!showForm)}
+            showText="Crear Paciente"
+            hideText="Cancelar Paciente"
+            className="bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-md px-4 py-2 rounded-xl shadow-md transition font-medium"
+          />
+          <ToggleButton
+            isVisible={showPatientList}
+            onToggle={() => setShowPatientList(!showPatientList)}
+            showText="Ver Pacientes"
+            hideText="Ocultar Pacientes"
+            className="bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-md px-4 py-2 rounded-xl shadow-md transition font-medium"
+          />
+          <ToggleButton
+            isVisible={showClinicRecordForm}
+            onToggle={() => setShowClinicRecordForm(!showClinicRecordForm)}
+            showText="Crear Ficha"
+            hideText="Cancelar Ficha"
+            className="bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-md px-4 py-2 rounded-xl shadow-md transition font-medium"
+          />
+          <ToggleButton
+            isVisible={showClinicalRecords}
+            onToggle={() => setShowClinicalRecords(!showClinicalRecords)}
+            showText="Ver Fichas"
+            hideText="Ocultar Fichas"
+            className="bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-md px-4 py-2 rounded-xl shadow-md transition font-medium"
+          />
+          <ToggleButton
+            isVisible={showAnsweredRecords}
+            onToggle={() => setShowAnsweredRecords(!showAnsweredRecords)}
+            showText="Ver Respuestas"
+            hideText="Ocultar Respuestas"
+            className="bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-md px-4 py-2 rounded-xl shadow-md transition font-medium"
+          />
         </NavbarContent>
 
-        {/* Avatar a la derecha */}
+        {/* Avatar y menú de usuario */}
         <NavbarContent as="div" justify="end">
           <Dropdown placement="bottom-end">
             <DropdownTrigger className="flex gap-4 items-center">
               <img
                 src={user?.photoURL}
                 alt="Foto de usuario"
-                className="w-16 h-16 rounded-full  border-secondary object-cover"
+                className="w-16 h-16 rounded-full border-2 border-white/40 object-cover hover:ring-2 hover:ring-white/50 transition"
               />
-
-
             </DropdownTrigger>
-            <DropdownMenu aria-label="Profile Actions" variant="flat" className="bg-black/20 rounded-lg">
-              <DropdownItem key="profile" className="h-14 gap-2">
-                <p className="font-semibold text-white">{user?.displayName}</p>
-                <p className="font-semibold text-white">{user?.email}</p>
-                <p className="font-semibold text-white">Rol: Estudiante</p>
+            <DropdownMenu
+              aria-label="Profile Actions"
+              variant="flat"
+              className="bg-white/10 backdrop-blur-md border border-white/20 shadow-lg rounded-xl px-4 py-3 space-y-3"
+            >
+              <DropdownItem
+                key="profile"
+                className="flex flex-col items-start gap-0 px-0 py-1 cursor-default"
+              >
+                <p className="text-sm text-white/80">Bienvenido,</p>
+                <p className="text-base font-semibold text-white">{user?.displayName}</p>
+                <p className="text-sm text-white/70">{user?.email}</p>
+                <p className="text-xs text-white/60 italic">Rol: Profesor</p>
               </DropdownItem>
-              <DropdownItem key="logout" className="py-2">
+
+              <DropdownItem key="logout" className="px-0 py-1">
                 <button
                   onClick={logout}
-                  className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded text-sm"
+                  className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm transition"
                 >
                   Cerrar sesión
                 </button>
@@ -96,6 +111,5 @@ export default function App() {
         </NavbarContent>
       </Navbar>
     </div>
-
   );
 }

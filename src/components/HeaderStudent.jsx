@@ -14,7 +14,6 @@ import { logout } from "../services/firebase";
 import { useStudentView } from "../context/StudentViewContext"; // 👈 contexto
 import ToggleButton from "./ToggleButton";
 import logo from "../../public/logoPaginaBlanco.png";
-import { Button } from "@heroui/react";
 
 
 export default function App() {
