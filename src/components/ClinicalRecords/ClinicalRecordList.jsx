@@ -60,36 +60,60 @@ export default function ClinicalRecordList({ onResponseSubmitted }) {
           columns={[
             { key: "clinicalRecordNumber", label: "N° Ficha Clínica" },
             { key: "patientRun", label: "RUN" },
-            { key: "updatedAt", label: "Fecha", render: (row) => new Date(row.updatedAt).toLocaleDateString() },
-            { key: "content", label: "Descripción" },
             {
-              key: "actions",
-              label: "Acciones",
-              render: (row) =>
-                user.role === "profesor" ? (
-                  <DeleteClinicalRecord recordId={row._id} onDelete={handleDelete} />
-                ) : (
-                  <ToggleButton
-                    isVisible={selectedRecord?._id === row._id}
-                    onToggle={() => toggleRecord(row)}
-                    showText="Ingresar"
-                    hideText="Cancelar"
-                    className="p-2 bg-blue-500 text-white rounded-md"
-                  />
-                ),
+              key: "updatedAt",
+              label: "Fecha",
+              render: (row) => new Date(row.updatedAt).toLocaleDateString(),
             },
+            { key: "content", label: "Descripción" },
+            // 👇 Solo agregar columna de acciones si NO es admin
+            ...(user.role !== "admin"
+              ? [
+                  {
+                    key: "actions",
+                    label: "Acciones",
+                    render: (row) => {
+                      if (user.role === "profesor") {
+                        return (
+                          <DeleteClinicalRecord
+                            recordId={row._id}
+                            onDelete={handleDelete}
+                          />
+                        );
+                      }
+
+                      if (user.role === "alumno") {
+                        return (
+                          <ToggleButton
+                            isVisible={selectedRecord?._id === row._id}
+                            onToggle={() => toggleRecord(row)}
+                            showText="Ingresar"
+                            hideText="Cancelar"
+                            className="p-2 bg-blue-500 text-white rounded-md"
+                          />
+                        );
+                      }
+
+                      return null;
+                    },
+                  },
+                ]
+              : []),
           ]}
           data={recordsToShow}
         />
       )}
 
-      {selectedRecord && (
+      {/* 👇 Mostrar formulario solo a alumnos */}
+      {selectedRecord && user.role === "alumno" && (
         <div className="mt-10 p-6 bg-gray-100 rounded-lg shadow-md">
-          <h3 className="text-lg font-bold">Respondiendo Ficha Clínica #{selectedRecord.clinicalRecordNumber}</h3>
-          <CreateAnsweredClinicalRecords 
-            clinicalRecordNumber={selectedRecord.clinicalRecordNumber} 
-            patientRun={selectedRecord.patientRun} 
-            onSubmit={onResponseSubmitted} 
+          <h3 className="text-lg font-bold">
+            Respondiendo Ficha Clínica #{selectedRecord.clinicalRecordNumber}
+          </h3>
+          <CreateAnsweredClinicalRecords
+            clinicalRecordNumber={selectedRecord.clinicalRecordNumber}
+            patientRun={selectedRecord.patientRun}
+            onSubmit={onResponseSubmitted}
           />
         </div>
       )}

@@ -22,15 +22,14 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
       try {
         const { data: records } = await axios.get("http://localhost:5000/api/answered-clinical-records");
 
+        // Filtrado por rol
         const filteredRecords = records
-          .filter(record =>
-            userRole === "alumno"
-              ? record.email === userEmail
-              : userRole === "profesor"
-              ? record.email !== userEmail
-              : false
-          )
-          .filter(record =>
+          .filter((record) => {
+            if (userRole === "alumno") return record.email === userEmail;
+            if (userRole === "profesor") return record.email !== userEmail;
+            return true; // admin u otro: ver todo
+          })
+          .filter((record) =>
             filter === "all"
               ? true
               : filter === "with-feedback"
@@ -51,7 +50,9 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
   }, [userEmail, userRole, filter]);
 
   const handleFeedbackToggle = (record) => {
-    setSelectedRecord(selectedRecord?.clinicalRecordNumber === record.clinicalRecordNumber ? null : record);
+    setSelectedRecord(
+      selectedRecord?.clinicalRecordNumber === record.clinicalRecordNumber ? null : record
+    );
   };
 
   return (
@@ -59,7 +60,11 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
       <h2 className="text-xl font-bold mb-4">Respuestas de Fichas Clínicas</h2>
 
       <div className="mb-4">
-        <select className="p-2 border rounded" value={filter} onChange={e => setFilter(e.target.value)}>
+        <select
+          className="p-2 border rounded"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+        >
           <option value="all">Todas</option>
           <option value="with-feedback">Con Retroalimentación</option>
           <option value="without-feedback">Sin Retroalimentación</option>
@@ -76,36 +81,48 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
             columns={[
               { key: "clinicalRecordNumber", label: "N° Ficha Clínica" },
               { key: "email", label: "Alumno" },
-              { 
-                key: "teacherEmail", 
-                label: "Profesor", 
-                render: row => row.teacherEmail || "N/A" // Si no hay profesor, mostrar "N/A"
-              },
-              { 
-                key: "updatedAt", 
-                label: "Última Actualización",
-                render: row => new Date(row.updatedAt).toLocaleString() // Formatea la fecha
+              {
+                key: "teacherEmail",
+                label: "Profesor",
+                render: (row) => row.teacherEmail || "N/A",
               },
               {
-                key: "actions",
-                label: "Acciones",
-                render: row => (
-                  <ToggleButton
-                    isVisible={selectedRecord?.clinicalRecordNumber === row.clinicalRecordNumber}
-                    onToggle={() => handleFeedbackToggle(row)}
-                    showText="Detalle"
-                    hideText="Cancelar"
-                    className="bg-blue-500 text-white"
-                  />
-                ),
-              }              
+                key: "updatedAt",
+                label: "Última Actualización",
+                render: (row) => new Date(row.updatedAt).toLocaleString(),
+              },
+              // 👇 Mostrar acciones solo si no es admin
+              ...(userRole !== "admin"
+                ? [
+                    {
+                      key: "actions",
+                      label: "Acciones",
+                      render: (row) => (
+                        <ToggleButton
+                          isVisible={
+                            selectedRecord?.clinicalRecordNumber ===
+                            row.clinicalRecordNumber
+                          }
+                          onToggle={() => handleFeedbackToggle(row)}
+                          showText="Detalle"
+                          hideText="Cancelar"
+                          className="bg-blue-500 text-white"
+                        />
+                      ),
+                    },
+                  ]
+                : []),
             ]}
             data={answeredRecords}
           />
 
-          {selectedRecord && (
+          {/* Mostrar feedback solo si no es admin */}
+          {selectedRecord && userRole !== "admin" && (
             <div className="mt-6 p-6 bg-gray-100 rounded-lg shadow-md">
-              <h3 className="text-lg font-bold">Ficha Clínica #{selectedRecord.clinicalRecordNumber} de {selectedRecord.email}</h3>
+              <h3 className="text-lg font-bold">
+                Ficha Clínica #{selectedRecord.clinicalRecordNumber} de{" "}
+                {selectedRecord.email}
+              </h3>
               <Feedback
                 recordId={selectedRecord._id}
                 initialFeedback={selectedRecord.feedback}

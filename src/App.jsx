@@ -3,7 +3,8 @@ import { AuthProvider } from "./components/Auth/AuthProvider";
 import Login from "./pages/Login";
 import TeacherPage from "./pages/TeacherPage";
 import StudentPage from "./pages/StudentPage";
-import "./index.css"; //habilitar o desabilitar tailwind
+import AdminPage from "./pages/AdminPage"; 
+import "./index.css";
 import { StudentViewProvider } from "./context/StudentViewContext";
 import { TeacherViewProvider } from "./context/TeacherViewContext";
 
@@ -23,6 +24,7 @@ export default function App() {
               <StudentPage />
             </StudentViewProvider>
           } />
+          <Route path="/admin" element={<AdminPage />} /> 
         </Routes>
       </BrowserRouter>
     </AuthProvider>
