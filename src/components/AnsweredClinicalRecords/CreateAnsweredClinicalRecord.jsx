@@ -4,7 +4,7 @@ import { AuthContext } from "../Auth/AuthProvider";
 import { useFormatForm } from "./useFormatForm";
 import formats from "../../data/formats.json";
 
-export default function CreateAnsweredClinicalRecords({ clinicalRecordNumber, patientRun, onSubmit }) {
+export default function CreateAnsweredClinicalRecords({ clinicalRecordNumber, patientRun, onSubmit, onPatientLoaded }) {
   const { user } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -17,6 +17,9 @@ export default function CreateAnsweredClinicalRecords({ clinicalRecordNumber, pa
       try {
         const response = await axios.get(`http://localhost:5000/api/patients/${patientRun}`);
         setPatientData(response.data);
+        if (onPatientLoaded) {
+          onPatientLoaded(response.data.fullName); // 👈 Aquí se pasa el nombre al padre
+        }
       } catch (err) {
         setError("Error obteniendo los datos del paciente.");
         console.error("Error obteniendo datos del paciente:", err);

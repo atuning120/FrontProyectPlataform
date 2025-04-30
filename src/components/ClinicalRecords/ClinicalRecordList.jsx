@@ -11,6 +11,7 @@ export default function ClinicalRecordList({ onResponseSubmitted }) {
   const [clinicalRecords, setClinicalRecords] = useState([]);
   const [answeredRecords, setAnsweredRecords] = useState([]);
   const [selectedRecord, setSelectedRecord] = useState(null);
+  const [patientName, setPatientName] = useState(""); // Nuevo estado
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -40,6 +41,7 @@ export default function ClinicalRecordList({ onResponseSubmitted }) {
 
   const toggleRecord = (record) => {
     setSelectedRecord(prev => (prev?._id === record._id ? null : record));
+    setPatientName(""); // Limpia el nombre al cambiar de ficha
   };
 
   if (loading) return <div>Cargando fichas clínicas...</div>;
@@ -51,7 +53,7 @@ export default function ClinicalRecordList({ onResponseSubmitted }) {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md mt-6">
-      <h2 className="text-xl font-bold mb-4">Fichas Clínicas</h2>
+      <h2 className="text-xl font-bold mb-4"> Clínicas</h2>
 
       {recordsToShow.length === 0 ? (
         <p>No hay fichas clínicas disponibles para responder.</p>
@@ -66,7 +68,6 @@ export default function ClinicalRecordList({ onResponseSubmitted }) {
               render: (row) => new Date(row.updatedAt).toLocaleDateString(),
             },
             { key: "content", label: "Descripción" },
-            // 👇 Solo agregar columna de acciones si NO es admin
             ...(user.role !== "admin"
               ? [
                   {
@@ -104,16 +105,17 @@ export default function ClinicalRecordList({ onResponseSubmitted }) {
         />
       )}
 
-      {/* 👇 Mostrar formulario solo a alumnos */}
       {selectedRecord && user.role === "alumno" && (
         <div className="mt-10 p-6 bg-gray-100 rounded-lg shadow-md">
           <h3 className="text-lg font-bold">
-            Respondiendo Ficha Clínica #{selectedRecord.clinicalRecordNumber}
+            Atención Clínica 
+            {patientName && ` - ${patientName}`}
           </h3>
           <CreateAnsweredClinicalRecords
             clinicalRecordNumber={selectedRecord.clinicalRecordNumber}
             patientRun={selectedRecord.patientRun}
             onSubmit={onResponseSubmitted}
+            onPatientLoaded={setPatientName} // Nuevo prop
           />
         </div>
       )}
