@@ -25,6 +25,46 @@ export default function Header() {
     showAnsweredRecords, setShowAnsweredRecords,
   } = useTeacherView();
 
+  const handleToggleForm= () =>{
+    setShowForm(!showForm);
+    setShowPatientList(false);
+    setShowClinicRecordForm(false);
+    setShowClinicalRecords(false);
+    setShowAnsweredRecords(false);
+  };
+
+  const handleTogglePatientList= () =>{
+    setShowPatientList(!showPatientList);
+    setShowForm(false);
+    setShowClinicRecordForm(false);
+    setShowClinicalRecords(false);
+    setShowAnsweredRecords(false);
+  };
+
+  const handleToggleClinicalRecordsForm = () => {
+    setShowClinicRecordForm(!showClinicRecordForm);
+    setShowForm(false);
+    setShowPatientList(false);
+    setShowClinicalRecords(false);
+    setShowAnsweredRecords(false);
+  };
+
+  const handleToggleClinicalRecords = () => {
+    setShowClinicalRecords(!showClinicalRecords);
+    setShowForm(false);
+    setShowPatientList(false);
+    setShowClinicRecordForm(false);
+    setShowAnsweredRecords(false);
+  };
+
+  const handleToggleAnsweredRecords = () => { 
+    setShowAnsweredRecords(!showAnsweredRecords);
+    setShowForm(false);
+    setShowPatientList(false);
+    setShowClinicRecordForm(false);
+    setShowClinicalRecords(false);
+  };
+
   return (
     <div className="bg-blue-950">
       <Navbar className="bg-white/10 backdrop-blur-md border border-white/20 shadow-md rounded-b-xl px-4 py-2">
@@ -38,35 +78,35 @@ export default function Header() {
         <NavbarContent className="hidden sm:flex gap-4 flex-1 justify-center">
           <ToggleButton
             isVisible={showForm}
-            onToggle={() => setShowForm(!showForm)}
+            onToggle={handleToggleForm}
             showText="Crear Paciente"
             hideText="Cancelar Paciente"
             className="bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-md px-4 py-2 rounded-xl shadow-md transition font-medium"
           />
           <ToggleButton
             isVisible={showPatientList}
-            onToggle={() => setShowPatientList(!showPatientList)}
+            onToggle={handleTogglePatientList}
             showText="Ver Pacientes"
             hideText="Ocultar Pacientes"
             className="bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-md px-4 py-2 rounded-xl shadow-md transition font-medium"
           />
           <ToggleButton
             isVisible={showClinicRecordForm}
-            onToggle={() => setShowClinicRecordForm(!showClinicRecordForm)}
+            onToggle={handleToggleClinicalRecordsForm}
             showText="Crear Ficha"
             hideText="Cancelar Ficha"
             className="bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-md px-4 py-2 rounded-xl shadow-md transition font-medium"
           />
           <ToggleButton
             isVisible={showClinicalRecords}
-            onToggle={() => setShowClinicalRecords(!showClinicalRecords)}
+            onToggle={handleToggleClinicalRecords}
             showText="Ver Fichas"
             hideText="Ocultar Fichas"
             className="bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-md px-4 py-2 rounded-xl shadow-md transition font-medium"
           />
           <ToggleButton
             isVisible={showAnsweredRecords}
-            onToggle={() => setShowAnsweredRecords(!showAnsweredRecords)}
+            onToggle={handleToggleAnsweredRecords}
             showText="Ver Respuestas"
             hideText="Ocultar Respuestas"
             className="bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-md px-4 py-2 rounded-xl shadow-md transition font-medium"
