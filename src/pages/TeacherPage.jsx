@@ -19,6 +19,7 @@ export default function TeacherPage() {
     setShowForm,
     showPatientList,
     showClinicRecordForm,
+    setShowClinicRecordForm,
     showClinicalRecords,
     showAnsweredRecords,
     setShowAnsweredRecords,

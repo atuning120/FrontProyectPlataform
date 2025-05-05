@@ -115,7 +115,7 @@ export default function ClinicalRecordList({ onResponseSubmitted }) {
             clinicalRecordNumber={selectedRecord.clinicalRecordNumber}
             patientRun={selectedRecord.patientRun}
             onSubmit={onResponseSubmitted}
-            onPatientLoaded={setPatientName} // Nuevo prop
+            onPatientLoaded={setPatientName} 
           />
         </div>
       )}

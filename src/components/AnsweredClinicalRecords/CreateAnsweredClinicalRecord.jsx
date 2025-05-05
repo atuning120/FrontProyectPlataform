@@ -18,7 +18,7 @@ export default function CreateAnsweredClinicalRecords({ clinicalRecordNumber, pa
         const response = await axios.get(`http://localhost:5000/api/patients/${patientRun}`);
         setPatientData(response.data);
         if (onPatientLoaded) {
-          onPatientLoaded(response.data.fullName); // 👈 Aquí se pasa el nombre al padre
+          onPatientLoaded(response.data.fullName);
         }
       } catch (err) {
         setError("Error obteniendo los datos del paciente.");
@@ -41,6 +41,7 @@ export default function CreateAnsweredClinicalRecords({ clinicalRecordNumber, pa
         clinicalRecordNumber,
         email: user.email,
         answer: responses,
+        formatId: selectedFormat?.id, 
       });
 
       alert("Respuesta enviada con éxito.");

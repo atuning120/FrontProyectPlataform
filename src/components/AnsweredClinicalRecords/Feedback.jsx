@@ -1,13 +1,13 @@
-import { useState, useEffect, useContext, useCallback } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../Auth/AuthProvider";
+import formats from "../../data/formats.json";
 
 export default function Feedback({ recordId, initialFeedback, onSave, clinicalRecordNumber, answer }) {
   const { user } = useContext(AuthContext);
-  const [feedback, setFeedback] = useState(initialFeedback || "");
+  const [feedback, setFeedback] = useState(initialFeedback || { retroGeneral: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
-
   const [clinicalRecord, setClinicalRecord] = useState(null);
   const [patientData, setPatientData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -34,10 +34,21 @@ export default function Feedback({ recordId, initialFeedback, onSave, clinicalRe
     fetchData();
   }, [clinicalRecordNumber]);
 
-  const handleFeedbackChange = useCallback((e) => setFeedback(e.target.value), []);
+  const matchedFormat = formats.find((format) =>
+    format.sections.every((section) =>
+      section.fields.every((field) => Object.keys(answer || {}).includes(field.key))
+    )
+  );
+
+  const retroFields = matchedFormat?.retroFields || [];
 
   const handleSubmit = async () => {
-    if (!feedback.trim()) {
+    const isEmpty =
+      typeof feedback === "string"
+        ? !feedback.trim()
+        : retroFields.every((key) => !feedback[key]?.trim()) && !feedback.retroGeneral?.trim();
+
+    if (isEmpty) {
       setError("La retroalimentación no puede estar vacía.");
       return;
     }
@@ -46,8 +57,19 @@ export default function Feedback({ recordId, initialFeedback, onSave, clinicalRe
     setError("");
 
     try {
+      const fullFeedback =
+        retroFields.length > 0
+          ? {
+              ...retroFields.reduce((obj, key) => {
+                obj[key] = feedback[key] || "";
+                return obj;
+              }, {}),
+              retroGeneral: feedback.retroGeneral || "",
+            }
+          : feedback.retroGeneral?.trim() || "";
+
       await axios.put(`http://localhost:5000/api/answered-clinical-records/${recordId}`, {
-        feedback: feedback.trim(),
+        feedback: fullFeedback,
         teacherEmail: user?.email,
       });
 
@@ -60,52 +82,50 @@ export default function Feedback({ recordId, initialFeedback, onSave, clinicalRe
     }
   };
 
+  const formatLabel = (key) =>
+    key
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+
   return (
     <div className="bg-gray-100 p-4 rounded-lg shadow-md">
-      {/* Datos del Paciente */}
       {loading ? (
         <p className="text-gray-500">Cargando datos...</p>
       ) : (
         <>
-          {patientData ? (
+          {patientData && (
             <div className="mb-4">
               <h3 className="text-lg font-bold">Datos del Paciente</h3>
               <p className="text-gray-700">
-                <strong>RUN:</strong> {patientData.run},  
-                <strong> Nombre:</strong> {patientData.fullName},  
-                <strong> Género:</strong> {patientData.gender},  
-                <strong> Edad:</strong> {patientData.age},  
-                <strong> Seguro:</strong> {patientData.insurance},  
-                <strong> Dirección:</strong> {patientData.address},  
-                <strong> Teléfono:</strong> {patientData.mobileNumber},  
-                <strong> Email:</strong> {patientData.email}
+                <strong>RUN:</strong> {patientData.run},{" "}
+                <strong>Nombre:</strong> {patientData.fullName},{" "}
+                <strong>Género:</strong> {patientData.gender},{" "}
+                <strong>Edad:</strong> {patientData.age},{" "}
+                <strong>Seguro:</strong> {patientData.insurance},{" "}
+                <strong>Dirección:</strong> {patientData.address},{" "}
+                <strong>Teléfono:</strong> {patientData.mobileNumber},{" "}
+                <strong>Email:</strong> {patientData.email}
               </p>
             </div>
-          ) : (
-            <p className="text-red-500">No se pudieron obtener los datos del paciente.</p>
           )}
 
-          {/* Datos de la Ficha Clínica */}
-          {clinicalRecord ? (
+          {clinicalRecord && (
             <div className="mb-4">
               <h3 className="text-lg font-bold">Ficha Clínica #{clinicalRecordNumber}</h3>
               <p className="text-gray-700">
-                <strong>Motivo de consulta:</strong> {clinicalRecord.content}  
-                <strong> Fecha:</strong> {new Date(clinicalRecord.updatedAt).toLocaleDateString()}
+                <strong>Motivo de consulta:</strong> {clinicalRecord.content}{" "}
+                <strong>Fecha:</strong> {new Date(clinicalRecord.updatedAt).toLocaleDateString()}
               </p>
             </div>
-          ) : (
-            <p className="text-red-500">No se pudo obtener la ficha clínica.</p>
           )}
 
-          {/* Respuesta */}
           <div className="mb-4">
             <h3 className="text-lg font-bold">Respuesta</h3>
             {answer ? (
               <div className="bg-white p-4 rounded-lg shadow">
                 {Object.entries(answer).map(([key, value], index) => (
                   <p key={index} className="mb-2">
-                    <strong className="capitalize">{key.replace(/_/g, " ")}:</strong> {value}
+                    <strong className="capitalize">{formatLabel(key)}:</strong> {value}
                   </p>
                 ))}
               </div>
@@ -114,23 +134,51 @@ export default function Feedback({ recordId, initialFeedback, onSave, clinicalRe
             )}
           </div>
 
-          {/* Retroalimentación */}
           <h3 className="text-lg font-bold">Retroalimentación</h3>
-          {initialFeedback ? (
-            <p className="text-gray-700 bg-white p-4 rounded-lg shadow">{initialFeedback}</p>
+          {initialFeedback && typeof initialFeedback === "object" ? (
+            <div className="bg-white p-4 rounded-lg shadow">
+              {Object.entries(initialFeedback).map(([key, val], idx) => (
+                <p key={idx}><strong>{formatLabel(key)}:</strong> {val}</p>
+              ))}
+            </div>
           ) : user?.role === "profesor" ? (
-            <div className="flex flex-col space-y-2">
-              <textarea
-                className="w-full p-2 border rounded-lg"
-                value={feedback}
-                onChange={handleFeedbackChange}
-              />
+            <div className="flex flex-col space-y-4">
+              {retroFields.map((fieldKey, index) => (
+                <div key={index}>
+                  <label className="block font-semibold capitalize">{formatLabel(fieldKey)}</label>
+                  <textarea
+                    className="w-full p-2 border rounded-lg"
+                    value={feedback[fieldKey] || ""}
+                    onChange={(e) =>
+                      setFeedback((prev) => ({
+                        ...prev,
+                        [fieldKey]: e.target.value,
+                      }))
+                    }
+                    placeholder={`Retroalimentación sobre ${formatLabel(fieldKey)}`}
+                  />
+                </div>
+              ))}
+
+              <div>
+                <label className="block font-semibold">Retroalimentación General</label>
+                <textarea
+                  className="w-full p-2 border rounded-lg"
+                  value={feedback.retroGeneral || ""}
+                  onChange={(e) =>
+                    setFeedback((prev) => ({
+                      ...prev,
+                      retroGeneral: e.target.value,
+                    }))
+                  }
+                  placeholder="Observaciones generales..."
+                />
+              </div>
+
               <button
                 onClick={handleSubmit}
-                className={`bg-blue-500 text-white px-4 py-2 rounded-lg ${
-                  (!feedback.trim() || isSubmitting) ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-                disabled={!feedback.trim() || isSubmitting}
+                className={`bg-blue-500 text-white px-4 py-2 rounded-lg ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
+                disabled={isSubmitting}
               >
                 {isSubmitting ? "Enviando..." : "Guardar Retroalimentación"}
               </button>
@@ -138,6 +186,7 @@ export default function Feedback({ recordId, initialFeedback, onSave, clinicalRe
           ) : (
             <p className="text-gray-700">Aún no se ha realizado una retroalimentación.</p>
           )}
+
           {error && <p className="text-red-500">{error}</p>}
         </>
       )}
