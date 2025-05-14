@@ -3,6 +3,8 @@ import axios from "axios";
 import { AuthContext } from "../Auth/AuthProvider";
 import formats from "../../data/formats.json";
 
+const COMMON_RETRO_FIELDS = ["motivo_consulta", "anamnesis", "exploracion", "diagnostico"];
+
 export default function Feedback({ recordId, initialFeedback, onSave, clinicalRecordNumber, answer }) {
   const { user } = useContext(AuthContext);
   const [feedback, setFeedback] = useState(initialFeedback || { retroGeneral: "" });
@@ -40,7 +42,12 @@ export default function Feedback({ recordId, initialFeedback, onSave, clinicalRe
     )
   );
 
-  const retroFields = matchedFormat?.retroFields || [];
+  const retroFields = Array.from(
+    new Set([
+      ...COMMON_RETRO_FIELDS,
+      ...(matchedFormat?.retroFields || [])
+    ])
+  );
 
   const handleSubmit = async () => {
     const isEmpty =

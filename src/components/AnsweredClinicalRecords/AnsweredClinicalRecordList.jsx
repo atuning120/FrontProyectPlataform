@@ -27,7 +27,7 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
           .filter((record) => {
             if (userRole === "alumno") return record.email === userEmail;
             if (userRole === "profesor") return record.email !== userEmail;
-            return true; // admin u otro: ver todo
+            return true; 
           })
           .filter((record) =>
             filter === "all"
@@ -91,7 +91,6 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
                 label: "Última Actualización",
                 render: (row) => new Date(row.updatedAt).toLocaleString(),
               },
-              // 👇 Mostrar acciones solo si no es admin
               ...(userRole !== "admin"
                 ? [
                     {
