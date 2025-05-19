@@ -12,7 +12,6 @@ export default function CreateAnsweredClinicalRecords({ clinicalRecordNumber, pa
 
   // Nuevas preguntas obligatorias
   const [baseFields, setBaseFields] = useState({
-    motivoConsulta: "",
     anamnesis: "",
     exploracion: "",
     diagnostico: "",
@@ -33,7 +32,7 @@ export default function CreateAnsweredClinicalRecords({ clinicalRecordNumber, pa
     };
 
     if (patientRun) fetchPatientData();
-  }, [patientRun]);
+  }, [patientRun, onPatientLoaded]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -89,7 +88,6 @@ export default function CreateAnsweredClinicalRecords({ clinicalRecordNumber, pa
       {/* Preguntas obligatorias */}
       <div className="mb-4 space-y-4">
         {[
-          { key: "motivoConsulta", label: "Motivo de Consulta" },
           { key: "anamnesis", label: "Anamnesis" },
           { key: "exploracion", label: "Exploración" },
           { key: "diagnostico", label: "Diagnóstico" },
