@@ -9,8 +9,8 @@ export default function CreateAnsweredClinicalRecords({ clinicalRecordNumber, pa
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [patientData, setPatientData] = useState(null);
+  const [startTime, setStartTime] = useState(null);
 
-  // Nuevas preguntas obligatorias
   const [baseFields, setBaseFields] = useState({
     anamnesis: "",
     exploracion: "",
@@ -20,6 +20,8 @@ export default function CreateAnsweredClinicalRecords({ clinicalRecordNumber, pa
   const { selectedFormat, responses, handleFormatChange, handleInputChange } = useFormatForm(formats);
 
   useEffect(() => {
+    setStartTime(Date.now());
+
     const fetchPatientData = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/api/patients/${patientRun}`);
@@ -31,8 +33,18 @@ export default function CreateAnsweredClinicalRecords({ clinicalRecordNumber, pa
       }
     };
 
-    if (patientRun) fetchPatientData();
-  }, [patientRun, onPatientLoaded]);
+    if (patientRun) {
+      fetchPatientData();
+    }
+  }, [patientRun, onPatientLoaded, clinicalRecordNumber]);
+
+  const formatDuration = (ms) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600).toString().padStart(2, "0");
+    const minutes = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, "0");
+    const seconds = (totalSeconds % 60).toString().padStart(2, "0");
+    return `${hours}:${minutes}:${seconds}`;
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -40,6 +52,10 @@ export default function CreateAnsweredClinicalRecords({ clinicalRecordNumber, pa
     setError("");
 
     try {
+      const endTime = Date.now();
+      const durationMs = endTime - startTime;
+      const responseTime = formatDuration(durationMs);
+
       const fullAnswer = {
         ...baseFields,
         ...responses,
@@ -50,6 +66,7 @@ export default function CreateAnsweredClinicalRecords({ clinicalRecordNumber, pa
         email: user.email,
         answer: fullAnswer,
         formatId: selectedFormat?.id,
+        responseTime, // ahora como HH:mm:ss
       });
 
       alert("Respuesta enviada con éxito.");
@@ -85,7 +102,6 @@ export default function CreateAnsweredClinicalRecords({ clinicalRecordNumber, pa
         </div>
       )}
 
-      {/* Preguntas obligatorias */}
       <div className="mb-4 space-y-4">
         {[
           { key: "anamnesis", label: "Anamnesis" },
@@ -105,7 +121,6 @@ export default function CreateAnsweredClinicalRecords({ clinicalRecordNumber, pa
         ))}
       </div>
 
-      {/* Solo mostrar el selector si las preguntas están completas */}
       {allBaseFieldsFilled && (
         <div className="mb-4">
           <select

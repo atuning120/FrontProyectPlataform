@@ -27,7 +27,7 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
           .filter((record) => {
             if (userRole === "alumno") return record.email === userEmail;
             if (userRole === "profesor") return record.email !== userEmail;
-            return true; 
+            return true;
           })
           .filter((record) =>
             filter === "all"
@@ -73,8 +73,10 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
 
       {loading ? (
         <p>Cargando respuestas...</p>
+      ) : error ? (
+        <p className="text-red-500">{error}</p>
       ) : answeredRecords.length === 0 ? (
-        <p>No hay respuestas registradas.</p>
+        <p>No hay respuestas registradas que coincidan con el filtro.</p>
       ) : (
         <>
           <TableComponent
@@ -85,6 +87,19 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
                 key: "teacherEmail",
                 label: "Profesor",
                 render: (row) => row.teacherEmail || "N/A",
+              },
+              {
+                key: "responseTime",
+                label: "Tiempo Invertido",
+                render: (row) =>
+                  row.responseTime !== undefined && row.responseTime !== null
+                    ? `${row.responseTime} `
+                    : "N/A",
+              },
+              {
+                key: "createdAt",
+                label: "Hora de Envío",
+                render: (row) => new Date(row.createdAt).toLocaleString(),
               },
               {
                 key: "updatedAt",
@@ -99,8 +114,7 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
                       render: (row) => (
                         <ToggleButton
                           isVisible={
-                            selectedRecord?.clinicalRecordNumber ===
-                            row.clinicalRecordNumber
+                            selectedRecord?.clinicalRecordNumber === row.clinicalRecordNumber
                           }
                           onToggle={() => handleFeedbackToggle(row)}
                           showText="Detalle"
@@ -115,12 +129,10 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
             data={answeredRecords}
           />
 
-          {/* Mostrar feedback solo si no es admin */}
           {selectedRecord && userRole !== "admin" && (
             <div className="mt-6 p-6 bg-gray-100 rounded-lg shadow-md">
               <h3 className="text-lg font-bold">
-                Ficha Clínica #{selectedRecord.clinicalRecordNumber} de{" "}
-                {selectedRecord.email}
+                Ficha Clínica #{selectedRecord.clinicalRecordNumber} de {selectedRecord.email}
               </h3>
               <Feedback
                 recordId={selectedRecord._id}
@@ -130,6 +142,32 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
                 onSave={() => {
                   setSelectedRecord(null);
                   onFeedbackSaved?.();
+                  const fetchRecordsAgain = async () => {
+                    setLoading(true);
+                    try {
+                      const { data: records } = await axios.get("http://localhost:5000/api/answered-clinical-records");
+                      const filteredRecords = records
+                        .filter((record) => {
+                          if (userRole === "alumno") return record.email === userEmail;
+                          if (userRole === "profesor") return record.email !== userEmail;
+                          return true;
+                        })
+                        .filter((record) =>
+                          filter === "all"
+                            ? true
+                            : filter === "with-feedback"
+                            ? !!record.feedback
+                            : !record.feedback
+                        );
+                      setAnsweredRecords(filteredRecords);
+                    } catch (err) {
+                      setError("Error al recargar las respuestas.");
+                      console.error(err);
+                    } finally {
+                      setLoading(false);
+                    }
+                  };
+                  fetchRecordsAgain();
                 }}
               />
             </div>
