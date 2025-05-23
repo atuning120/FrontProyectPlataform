@@ -14,40 +14,12 @@ function AdminContent() {
     showDashboard,
     showPatientList,
     showClinicalRecords,
-    showAnsweredRecords,
-    setShowDashboard,
-    setShowPatientList,
-    setShowClinicalRecords,
-    setShowAnsweredRecords,
+    showAnsweredRecords
   } = useAdminView();
-
-  const handleChangeView = (view) => {
-    setShowDashboard(view === "dashboard");
-    setShowPatientList(view === "patients");
-    setShowClinicalRecords(view === "clinical");
-    setShowAnsweredRecords(view === "answered");
-  };
 
   return (
     <main className="flex-1 px-4 pt-20 max-w-6xl w-full mx-auto">
       <div className="bg-white/30 backdrop-blur-md rounded-xl shadow-lg border border-white/40 p-6 space-y-8">
-
-        {/*  Menú de navegación interno */}
-        <div className="flex flex-wrap gap-4 justify-center">
-          <button onClick={() => handleChangeView("dashboard")} className="px-4 py-2 bg-blue-700 text-white rounded hover:bg-blue-600">
-            Dashboard
-          </button>
-          <button onClick={() => handleChangeView("patients")} className="px-4 py-2 bg-blue-700 text-white rounded hover:bg-blue-600">
-            Pacientes
-          </button>
-          <button onClick={() => handleChangeView("clinical")} className="px-4 py-2 bg-blue-700 text-white rounded hover:bg-blue-600">
-            Fichas clínicas
-          </button>
-          <button onClick={() => handleChangeView("answered")} className="px-4 py-2 bg-blue-700 text-white rounded hover:bg-blue-600">
-            Fichas respondidas
-          </button>
-        </div>
-
         {/*  Secciones dinámicas */}
         {showDashboard && <DashboardAdmin />}
 
