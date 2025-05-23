@@ -13,10 +13,11 @@ import { logout } from "../services/firebase";
 import logo from "../../public/logoPaginaBlanco.png";
 import ToggleButton from "./ToggleButton";
 import { useTeacherView } from "../context/TeacherViewContext";
+import { useState } from "react";
 
 export default function Header() {
   const { user } = useContext(AuthContext);
-
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const {
     showForm, setShowForm,
     showPatientList, setShowPatientList,
@@ -25,7 +26,7 @@ export default function Header() {
     showAnsweredRecords, setShowAnsweredRecords,
   } = useTeacherView();
 
-  const handleToggleForm= () =>{
+  const handleToggleForm = () => {
     setShowForm(!showForm);
     setShowPatientList(false);
     setShowClinicRecordForm(false);
@@ -33,7 +34,7 @@ export default function Header() {
     setShowAnsweredRecords(false);
   };
 
-  const handleTogglePatientList= () =>{
+  const handleTogglePatientList = () => {
     setShowPatientList(!showPatientList);
     setShowForm(false);
     setShowClinicRecordForm(false);
@@ -57,7 +58,7 @@ export default function Header() {
     setShowAnsweredRecords(false);
   };
 
-  const handleToggleAnsweredRecords = () => { 
+  const handleToggleAnsweredRecords = () => {
     setShowAnsweredRecords(!showAnsweredRecords);
     setShowForm(false);
     setShowPatientList(false);
@@ -68,6 +69,14 @@ export default function Header() {
   return (
     <div className="bg-blue-950">
       <Navbar className="bg-white/10 backdrop-blur-md border border-white/20 shadow-md rounded-b-xl px-4 py-2">
+
+        {/* Botón de menú */}
+        <button
+          className="sm:hidden text-white focus:outline-none"
+          onClick={() => setIsSidebarOpen(true)}
+        >
+          ☰
+        </button>
         {/* Logo y título */}
         <NavbarBrand className="flex w-full sm:w-auto justify-center sm:justify-start items-center gap-2">
           <img src={logo} alt="Logo SIMICODE" className="w-24 h-auto" />
@@ -150,6 +159,78 @@ export default function Header() {
           </Dropdown>
         </NavbarContent>
       </Navbar>
+      {/* Sidebar móvil con animación */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-black bg-opacity-50 backdrop-blur-sm sm:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        >
+          <div
+            className={`bg-blue-900 w-64 h-full p-6 shadow-lg transform transition-transform duration-300 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+              }`}
+            onClick={(e) => e.stopPropagation()} // evita cerrar si clic dentro del panel
+          >
+            <button
+              className="text-white text-2xl mb-6"
+              onClick={() => setIsSidebarOpen(false)}
+            >
+              ✕
+            </button>
+
+            <div className="flex flex-col gap-4">
+              <button
+                onClick={() => {
+                  handleToggleForm();
+                  setIsSidebarOpen(false);
+                }}
+                className="text-white text-lg text-left"
+              >
+                {showForm ? "Cancelar Paciente" : "Crear Paciente"}
+              </button>
+
+              <button
+                onClick={() => {
+                  handleTogglePatientList();
+                  setIsSidebarOpen(false);
+                }}
+                className="text-white text-lg text-left"
+              >
+                {showPatientList ? "Ocultar Pacientes" : "Ver Pacientes"}
+              </button>
+
+              <button
+                onClick={() => {
+                  handleToggleClinicalRecordsForm();
+                  setIsSidebarOpen(false);
+                }}
+                className="text-white text-lg text-left"
+              >
+                {showClinicRecordForm ? "Cancelar Ficha" : "Crear Ficha"}
+              </button>
+
+              <button
+                onClick={() => {
+                  handleToggleClinicalRecords();
+                  setIsSidebarOpen(false);
+                }}
+                className="text-white text-lg text-left"
+              >
+                {showClinicalRecords ? "Ocultar Fichas" : "Ver Fichas"}
+              </button>
+              <button
+                onClick={() => {
+                  handleToggleAnsweredRecords();
+                  setIsSidebarOpen(false);
+                }}
+                className="text-white text-lg text-left"
+              >
+                {showAnsweredRecords ? "Ocultar Respuestas" : "Ver Respuestas"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

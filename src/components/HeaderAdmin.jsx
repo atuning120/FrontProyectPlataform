@@ -13,8 +13,11 @@ import { logout } from "../services/firebase";
 import logo from "../../public/logoPaginaBlanco.png";
 import ToggleButton from "./ToggleButton";
 import { useAdminView } from "../context/AdminViewContext";
+import { useState } from "react";
 
 export default function HeaderAdmin() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   const { user } = useContext(AuthContext);
   const {
     setShowDashboard,
@@ -25,7 +28,6 @@ export default function HeaderAdmin() {
 
 
   const handleChangeView = (view) => {
-    +
     setShowDashboard(view === "dashboard");
     setShowPatientList(view === "patients");
     setShowClinicalRecords(view === "clinical");
@@ -35,8 +37,18 @@ export default function HeaderAdmin() {
   return (
     <div className="bg-blue-950">
 
+
       {/* Logo FISIM */}
       <Navbar className="bg-white/10 backdrop-blur-md border border-white/20 shadow-md rounded-b-xl px-4 py-2">
+
+        {/* Botón de menú */}
+        <button
+          className="sm:hidden text-white focus:outline-none"
+          onClick={() => setIsSidebarOpen(true)}
+        >
+          ☰
+        </button>
+
         <NavbarBrand className="flex w-full sm:w-auto justify-center sm:justify-start items-center gap-2">
           <img src={logo} alt="Logo SIMICODE" className="w-24 h-auto" />
           <p className="text-xl sm:text-2xl font-semibold text-white tracking-wide">FISIM</p>
@@ -88,6 +100,7 @@ export default function HeaderAdmin() {
             >
               <DropdownItem
                 key="profile"
+                textValue="Perfil de usuario"
                 className="flex flex-col items-start gap-0 px-0 py-1 cursor-default"
               >
                 <p className="text-sm text-white/80">Bienvenido,</p>
@@ -96,7 +109,7 @@ export default function HeaderAdmin() {
                 <p className="text-xs text-white/60 italic">Rol: Administrador</p>
               </DropdownItem>
 
-              <DropdownItem key="logout" className="px-0 py-1">
+              <DropdownItem key="logout" className="px-0 py-1" textValue="Cerrar sesión">
                 <button
                   onClick={logout}
                   className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm transition"
@@ -108,6 +121,67 @@ export default function HeaderAdmin() {
           </Dropdown>
         </NavbarContent>
       </Navbar>
+      {/* Sidebar móvil con animación */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-black bg-opacity-50 backdrop-blur-sm sm:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        >
+          <div
+            className={`bg-blue-900 w-64 h-full p-6 shadow-lg transform transition-transform duration-300 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+              }`}
+            onClick={(e) => e.stopPropagation()} // evita cerrar si clic dentro del panel
+          >
+            <button
+              className="text-white text-2xl mb-6"
+              onClick={() => setIsSidebarOpen(false)}
+            >
+              ✕
+            </button>
+
+            <div className="flex flex-col gap-4">
+              <button
+                onClick={() => {
+                  handleChangeView("dashboard");
+                  setIsSidebarOpen(false);
+                }}
+                className="text-white text-lg text-left"
+              >
+                Dashboard
+              </button>
+              <button
+                onClick={() => {
+                  handleChangeView("patients");
+                  setIsSidebarOpen(false);
+                }}
+                className="text-white text-lg text-left"
+              >
+                Pacientes
+              </button>
+              <button
+                onClick={() => {
+                  handleChangeView("clinical");
+                  setIsSidebarOpen(false);
+                }}
+                className="text-white text-lg text-left"
+              >
+                Fichas clínicas
+              </button>
+              <button
+                onClick={() => {
+                  handleChangeView("answered");
+                  setIsSidebarOpen(false);
+                }}
+                className="text-white text-lg text-left"
+              >
+                Fichas respondidas
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
     </div>
   );
 }
