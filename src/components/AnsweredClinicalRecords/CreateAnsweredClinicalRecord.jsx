@@ -206,6 +206,9 @@ export default function CreateAnsweredClinicalRecords({ clinicalRecordNumber, pa
                           <span>{minLabel}</span>
                           <span>{maxLabel}</span>
                         </div>
+                        <div className="mt-1">
+                          Valor: <strong>{responses[key] ?? min}</strong>
+                        </div>
                       </div>
                     ) : (
                       <textarea
