@@ -46,10 +46,39 @@ export default function CreateAnsweredClinicalRecords({ clinicalRecordNumber, pa
     return `${hours}:${minutes}:${seconds}`;
   };
 
+  const allBaseFieldsFilled = Object.values(baseFields).every((v) => v.trim() !== "");
+
+  const validateAnswers = () => {
+    if (!allBaseFieldsFilled) return false;
+
+    if (selectedFormat?.sections?.length) {
+      for (const section of selectedFormat.sections) {
+        for (const field of section.fields || []) {
+          const value = responses[field.key];
+          if (field.type === "checkbox_group") {
+            if (!value || value.length === 0) return false;
+          } else if (field.type === "evaluation_scale") {
+            if (value === null || value === undefined) return false;
+          } else {
+            if (!value || value.trim() === "") return false;
+          }
+        }
+      }
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
     setError("");
+
+    if (!validateAnswers()) {
+      setError("Por favor, completa todos los campos antes de enviar.");
+      setLoading(false);
+      return;
+    }
 
     try {
       const endTime = Date.now();
@@ -66,7 +95,7 @@ export default function CreateAnsweredClinicalRecords({ clinicalRecordNumber, pa
         email: user.email,
         answer: fullAnswer,
         formatId: selectedFormat?.id,
-        responseTime, // ahora como HH:mm:ss
+        responseTime,
       });
 
       alert("Respuesta enviada con éxito.");
@@ -80,8 +109,6 @@ export default function CreateAnsweredClinicalRecords({ clinicalRecordNumber, pa
       setLoading(false);
     }
   };
-
-  const allBaseFieldsFilled = Object.values(baseFields).every((v) => v.trim() !== "");
 
   return (
     <div className="p-4 bg-gray-100 rounded-lg shadow-md">
@@ -103,11 +130,9 @@ export default function CreateAnsweredClinicalRecords({ clinicalRecordNumber, pa
       )}
 
       <div className="mb-4 space-y-4">
-        {[
-          { key: "anamnesis", label: "Anamnesis" },
+        {[{ key: "anamnesis", label: "Anamnesis" },
           { key: "exploracion", label: "Exploración" },
-          { key: "diagnostico", label: "Diagnóstico" },
-        ].map(({ key, label }) => (
+          { key: "diagnostico", label: "Diagnóstico" }].map(({ key, label }) => (
           <div key={key}>
             <label className="block mb-1 font-medium">{label}</label>
             <textarea
@@ -141,19 +166,59 @@ export default function CreateAnsweredClinicalRecords({ clinicalRecordNumber, pa
         <form onSubmit={handleSubmit}>
           {selectedFormat.sections.map((section, idx) => (
             <div key={idx} className="mb-6">
-              <h3 className="text-lg font-semibold mb-2">{section.section}</h3>
-              {section.fields.map(({ key, label }) => (
-                <div key={key} className="mb-4">
-                  <label className="block mb-1 font-medium">{label}</label>
-                  <textarea
-                    value={responses[key] || ""}
-                    onChange={(e) => handleInputChange(key, e.target.value)}
-                    required
-                    rows="3"
-                    className="w-full p-2 border rounded-md"
-                  />
-                </div>
-              ))}
+              {section.section && (
+                <h3 className="text-lg font-semibold mb-2">{section.section}</h3>
+              )}
+
+              {section.fields?.map((field) => {
+                const { key, label, type, options = [], min, max, minLabel, maxLabel } = field;
+
+                return (
+                  <div key={key} className="mb-4">
+                    <label className="block mb-1 font-medium">{label}</label>
+
+                    {type === "checkbox_group" ? (
+                      <div className="space-y-1">
+                        {options.map((option) => (
+                          <label key={option} className="block">
+                            <input
+                              type="radio"
+                              name={key}
+                              className="mr-2"
+                              checked={responses[key] === option}
+                              onChange={() => handleInputChange(key, option)}
+                            />
+                            {option}
+                          </label>
+                        ))}
+                      </div>
+                    ) : type === "evaluation_scale" ? (
+                      <div>
+                        <input
+                          type="range"
+                          min={min}
+                          max={max}
+                          value={responses[key] ?? min}
+                          onChange={(e) => handleInputChange(key, Number(e.target.value))}
+                          className="w-full"
+                        />
+                        <div className="flex justify-between text-sm text-gray-600">
+                          <span>{minLabel}</span>
+                          <span>{maxLabel}</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <textarea
+                        value={responses[key] || ""}
+                        onChange={(e) => handleInputChange(key, e.target.value)}
+                        required
+                        rows="3"
+                        className="w-full p-2 border rounded-md"
+                      />
+                    )}
+                  </div>
+                );
+              })}
             </div>
           ))}
 

@@ -3,86 +3,373 @@
     "id": 1,
     "name": "Ficha Nutricional",
     "retroFields": [
-    "anamnesis_clinica",
-    "anamnesis_alimentaria",
-    "factores_psicosociales"
-     ],
+      "anamnesis_clinica",
+      "anamnesis_alimentaria",
+      "factores_psicosociales"
+    ],
     "sections": [
       {
         "section": "Historia Clínica y Alimentaria",
         "fields": [
-          { "key": "anamnesis_clinica", "label": "Anamnesis clínica" },
-          { "key": "anamnesis_alimentaria", "label": "Anamnesis alimentaria" },
-          { "key": "factores_psicosociales", "label": "Factores psicosociales" }
+          {
+            "key": "anamnesis_clinica",
+            "label": "Anamnesis clínica"
+          },
+          {
+            "key": "anamnesis_alimentaria",
+            "label": "Anamnesis alimentaria"
+          },
+          {
+            "key": "factores_psicosociales",
+            "label": "Factores psicosociales"
+          }
         ]
       },
       {
         "section": "Evaluación Antropométrica",
         "fields": [
-          { "key": "peso_actual", "label": "Peso actual" },
-          { "key": "talla", "label": "Talla" },
-          { "key": "IMC", "label": "Índice de Masa Corporal (IMC)" },
-          { "key": "circunferencia_cintura", "label": "Circunferencia de cintura desde los 5 años" },
-          { "key": "circunferencia_craneana", "label": "Circunferencia craneana hasta los 2 años" },
-          { "key": "pliegues_cutaneos", "label": "Pliegues cutáneos" },
-          { "key": "composicion_corporal", "label": "Evaluación de la composición corporal" }
+          {
+            "key": "peso_actual",
+            "label": "Peso actual"
+          },
+          {
+            "key": "talla",
+            "label": "Talla"
+          },
+          {
+            "key": "IMC",
+            "label": "Índice de Masa Corporal (IMC)"
+          },
+          {
+            "key": "circunferencia_cintura",
+            "label": "Circunferencia de cintura desde los 5 años"
+          },
+          {
+            "key": "circunferencia_craneana",
+            "label": "Circunferencia craneana hasta los 2 años"
+          },
+          {
+            "key": "pliegues_cutaneos",
+            "label": "Pliegues cutáneos"
+          },
+          {
+            "key": "composicion_corporal",
+            "label": "Evaluación de la composición corporal"
+          }
         ]
       },
       {
         "section": "Evaluación Bioquímica (si aplica)",
         "fields": [
-          { "key": "glucosa_sangre", "label": "Glucosa en sangre" },
-          { "key": "perfil_lipidico", "label": "Perfil lipídico" },
-          { "key": "hemoglobina_hematocrito", "label": "Hemoglobina y hematocrito" },
-          { "key": "proteinas_sericas", "label": "Proteínas séricas" },
-          { "key": "parametros_renales_hepaticos", "label": "Parámetros renales y hepáticos" }
+          {
+            "key": "glucosa_sangre",
+            "label": "Glucosa en sangre"
+          },
+          {
+            "key": "perfil_lipidico",
+            "label": "Perfil lipídico"
+          },
+          {
+            "key": "hemoglobina_hematocrito",
+            "label": "Hemoglobina y hematocrito"
+          },
+          {
+            "key": "proteinas_sericas",
+            "label": "Proteínas séricas"
+          },
+          {
+            "key": "parametros_renales_hepaticos",
+            "label": "Parámetros renales y hepáticos"
+          }
         ]
       },
       {
         "section": "Evaluación Clínica y de Signos Nutricionales",
         "fields": [
-          { "key": "presion_arterial", "label": "Presión arterial" },
-          { "key": "estado_hidratacion", "label": "Estado de hidratación" },
-          { "key": "signos_deficiencias", "label": "Presencia de signos clínicos de deficiencias nutricionales" },
-          { "key": "salud_digestiva", "label": "Estado de salud digestiva" }
+          {
+            "key": "presion_arterial",
+            "label": "Presión arterial"
+          },
+          {
+            "key": "estado_hidratacion",
+            "label": "Estado de hidratación"
+          },
+          {
+            "key": "signos_deficiencias",
+            "label": "Presencia de signos clínicos de deficiencias nutricionales"
+          },
+          {
+            "key": "salud_digestiva",
+            "label": "Estado de salud digestiva"
+          }
         ]
       },
       {
         "section": "Diagnóstico Nutricional",
         "fields": [
-          { "key": "diagnostico_nutricional", "label": "Diagnóstico basado en la clasificación de la OMS/MINSAL" }
+          {
+            "key": "diagnostico_nutricional",
+            "label": "Diagnóstico basado en la clasificación de la OMS/MINSAL"
+          }
         ]
       },
       {
         "section": "Plan de Intervención Nutricional",
         "fields": [
-          { "key": "objetivos_tratamiento", "label": "Objetivos del tratamiento" },
-          { "key": "requerimientos_energeticos", "label": "Requerimientos energéticos y de macronutrientes" },
-          { "key": "plan_alimentacion", "label": "Plan de alimentación o recomendaciones dietéticas" },
-          { "key": "pauta_alimentaria", "label": "Pauta alimentaria" }
+          {
+            "key": "objetivos_tratamiento",
+            "label": "Objetivos del tratamiento"
+          },
+          {
+            "key": "requerimientos_energeticos",
+            "label": "Requerimientos energéticos y de macronutrientes"
+          },
+          {
+            "key": "plan_alimentacion",
+            "label": "Plan de alimentación o recomendaciones dietéticas"
+          },
+          {
+            "key": "pauta_alimentaria",
+            "label": "Pauta alimentaria"
+          }
         ]
       },
       {
         "section": "Seguimiento y Evaluación",
         "fields": [
-          { "key": "registro_evolucion", "label": "Registro de evolución del paciente" },
-          { "key": "cumplimiento_plan", "label": "Cumplimiento del plan nutricional" },
-          { "key": "ajustes_intervencion", "label": "Ajustes en la intervención" },
-          { "key": "proximo_control", "label": "Próximo control" },
-          { "key": "derivaciones", "label": "Derivaciones" }
+          {
+            "key": "registro_evolucion",
+            "label": "Registro de evolución del paciente"
+          },
+          {
+            "key": "cumplimiento_plan",
+            "label": "Cumplimiento del plan nutricional"
+          },
+          {
+            "key": "ajustes_intervencion",
+            "label": "Ajustes en la intervención"
+          },
+          {
+            "key": "proximo_control",
+            "label": "Próximo control"
+          },
+          {
+            "key": "derivaciones",
+            "label": "Derivaciones"
+          }
         ]
       }
     ]
   },
   {
     "id": 2,
-    "name": "test",
+    "name": "Cuestionario de Dolor Español (CDE)",
+    "retroFields": [
+      "anamnesis_clinica",
+      "anamnesis_alimentaria",
+      "factores_psicosociales"
+    ],
     "sections": [
       {
-        "section": "Prueba",
+        "section": "Valor de intensidad sensorial",
         "fields": [
-          { "key": "test", "label": "Dato1" },
-          { "key": "test1", "label": "Dato2" }
+          {
+            "key": "sensorial_temporal_1",
+            "label": "Temporal 1",
+            "type": "checkbox_group",
+            "options": [
+              "Como pulsaciones",
+              "Como una sacudida",
+              "Como un latigazo"
+            ]
+          },
+          {
+            "key": "sensorial_termica",
+            "label": "Térmica",
+            "type": "checkbox_group",
+            "options": [
+              "Frío",
+              "Caliente",
+              "Ardiente"
+            ]
+          },
+          {
+            "key": "sensorial_constrictiva",
+            "label": "Presión constrictiva",
+            "type": "checkbox_group",
+            "options": [
+              "Entumecimiento",
+              "Como un pellizco",
+              "Agarrotamiento",
+              "Calambre",
+              "Espasmo",
+              "Retortijón",
+              "Opresivo"
+            ]
+          },
+          {
+            "key": "sensorial_presion_puntiforme_incisiva",
+            "label": "Presión puntiforme/incisiva",
+            "type": "checkbox_group",
+            "options": [
+              "Pinchazo",
+              "Punzante",
+              "Penetrante",
+              "Agudo"
+            ]
+          },
+          {
+            "key": "sensorial_presion_traccion_gravativa",
+            "label": "Presión de traccion gravativa",
+            "type": "checkbox_group",
+            "options": [
+              "Pesado",
+              "Tirante",
+              "Como un desgarro",
+              "Tenso"
+            ]
+          },
+          {
+            "key": "sensorial_espacial",
+            "label": "Espacial",
+            "type": "checkbox_group",
+            "options": [
+              "Superficial",
+              "Difuso",
+              "Que se irradia",
+              "Fijo",
+              "Interno",
+              "Profundo"
+            ]
+          },
+          {
+            "key": "sensorial_viveza",
+            "label": "Viveza",
+            "type": "checkbox_group",
+            "options": [
+              "Adormecido",
+              "Picor",
+              "Hormigueo",
+              "Como agujetas",
+              "Escozor",
+              "Como una corriente"
+            ]
+          }
+        ]
+      },
+      {
+        "section": "Valor de intensidad afectiva",
+        "fields": [
+          {
+            "key": "afectiva_temor",
+            "label": "Temor",
+            "type": "checkbox_group",
+            "options": [
+              "Temible",
+              "Espantoso",
+              "Horrible"
+            ]
+          },
+          {
+            "key": "afectiva_autonomo_vegetativa",
+            "label": "Autónomo / Vegetativa",
+            "type": "checkbox_group",
+            "options": [
+              "Que marea",
+              "Sofocante"
+            ]
+          },
+          {
+            "key": "afectiva_castigo",
+            "label": "Castigo",
+            "type": "checkbox_group",
+            "options": [
+              "Que atormenta",
+              "Morticante",
+              "Violento"
+            ]
+          },
+          {
+            "key": "afectiva_tension_cansancio",
+            "label": "Tensión / Cansancio",
+            "type": "checkbox_group",
+            "options": [
+              "Extenuante",
+              "Agotador",
+              "Incapacitante"
+            ]
+          },
+          {
+            "key": "afectiva_colera_disgusto",
+            "label": "Cólera / Disgusto",
+            "type": "checkbox_group",
+            "options": [
+              "Incómodo",
+              "Que irrita",
+              "Que consume"
+            ]
+          },
+          {
+            "key": "afectiva_pena_ansiedad",
+            "label": "Pena / ansiedad",
+            "type": "checkbox_group",
+            "options": [
+              "Deprimente",
+              "Agobiante",
+              "Que angustia",
+              "Que obsesiona",
+              "Desesperante"
+            ]
+          }
+        ]
+      },
+      {
+        "section": "Valor intensidad actual",
+        "fields": [
+          {
+            "key": "actual_intensidad",
+            "label": "Intensidad",
+            "type": "checkbox_group",
+            "options": [
+              "Sin dolor",
+              "Leve",
+              "Molesto",
+              "Intenso",
+              "Fuerte",
+              "Insoportable"
+            ]
+          }
+        ]
+      },
+      {
+        "section": "Valor de intensidad evaluativa",
+        "fields": [
+          {
+            "key": "evaluativa_temporal_2",
+            "label": "Temporal 2",
+            "type": "checkbox_group",
+            "options": [
+              "Momentáneo",
+              "Intermitente",
+              "Creciente",
+              "Constante",
+              "Persistente"
+            ]
+          }
+        ]
+      },
+      {
+        "section": "Escala Visual",
+        "fields": [
+          {
+            "key": "escala_visual_analogica_valor",
+            "label": "Puntuación en la escala visual analógica (0-10)",
+            "type": "evaluation_scale",
+            "min": 0,
+            "max": 10,
+            "minLabel": "Sin dolor",
+            "maxLabel": "Dolor insoportable"
+          }
         ]
       }
     ]
