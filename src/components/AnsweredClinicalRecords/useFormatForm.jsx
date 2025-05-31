@@ -1,36 +1,58 @@
 import { useState } from 'react';
 
 export function useFormatForm(formats) {
-  const [selectedFormat, setSelectedFormat] = useState(null);
-  const [responses, setResponses] = useState({});
+  const [selectedFormatIds, setSelectedFormatIds] = useState([]);
+  const [responses, setResponses] = useState({}); // Estructura: { formatId: { key: value } }
 
-  const handleFormatChange = (formatId) => {
-    const format = formats.find((f) => f.id === formatId);
-    if (!format || format === selectedFormat) return;
+  const handleFormatSelectionChange = (formatId, isSelected) => {
+    setSelectedFormatIds(prevSelectedIds => {
+      const newSelectedIds = isSelected
+        ? [...prevSelectedIds, formatId]
+        : prevSelectedIds.filter(id => id !== formatId);
 
-    // Inicializar respuestas vacías con los campos del formato
-    const initialResponses = {};
-    format.sections?.forEach((section) => {
-      section.fields.forEach((field) => {
-        initialResponses[field.key] = "";
+      setResponses(prevResponses => {
+        const newResponses = { ...prevResponses };
+        if (isSelected) {
+          if (!newResponses[formatId]) {
+            const format = formats.find(f => f.id === formatId);
+            const initialFormatResponses = {};
+            format?.sections?.forEach(section => {
+              (section.fields || []).forEach(field => {
+                initialFormatResponses[field.key] = field.type === "checkbox_group" 
+                                                    ? null 
+                                                    : (field.type === "evaluation_scale" 
+                                                       ? (field.min ?? 0) 
+                                                       : "");
+              });
+            });
+            newResponses[formatId] = initialFormatResponses;
+          }
+        } else {
+          delete newResponses[formatId];
+        }
+        return newResponses;
       });
+      return newSelectedIds;
     });
-
-    setSelectedFormat(format);
-    setResponses(initialResponses);
   };
 
-  const handleInputChange = (key, value) => {
-    setResponses((prevResponses) => ({
+  const handleInputChange = (formatId, key, value) => {
+    setResponses(prevResponses => ({
       ...prevResponses,
-      [key]: value,
+      [formatId]: {
+        ...(prevResponses[formatId] || {}),
+        [key]: value,
+      },
     }));
   };
 
+  const selectedFormats = formats.filter(f => selectedFormatIds.includes(f.id));
+
   return {
-    selectedFormat,
+    selectedFormats,
+    selectedFormatIds,
     responses,
-    handleFormatChange,
+    handleFormatSelectionChange,
     handleInputChange,
   };
 }
