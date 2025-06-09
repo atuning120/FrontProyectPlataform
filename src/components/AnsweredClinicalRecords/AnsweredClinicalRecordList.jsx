@@ -3,7 +3,7 @@ import axios from "axios";
 import TableComponent from "../TableComponent";
 import ToggleButton from "../ToggleButton";
 import { AuthContext } from "../Auth/AuthProvider";
-import formatsData from "../../data/formats.json"; 
+import formatsData from "../../data/formats.json";
 
 export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
   const { user } = useContext(AuthContext);
@@ -12,6 +12,10 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [filter, setFilter] = useState("all");
+  const [filterByProfessor, setFilterByProfessor] = useState(""); // Nuevo filtro por profesor
+  const [filterByRecordNumber, setFilterByRecordNumber] = useState("");
+  const [filterByDate, setFilterByDate] = useState("");
+  const [sortByDate, setSortByDate] = useState("desc"); // "asc" o "desc"
   const [feedbackState, setFeedbackState] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
@@ -21,10 +25,10 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
   useEffect(() => {
     const fetchRecords = async () => {
       setLoading(true);
-      setError(""); 
+      setError("");
       try {
         const { data: records } = await axios.get("http://localhost:5000/api/answered-clinical-records");
-        const filtered = records
+        let filtered = records
           .filter((r) => {
             if (userRole === "alumno") return r.email === userEmail;
             if (userRole === "profesor") return r.email !== userEmail; // Profesores ven respuestas de alumnos
@@ -35,6 +39,25 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
             const hasFeedback = r.feedback && (Object.keys(r.feedback).length > 0 || r.feedback.general);
             return filter === "with-feedback" ? hasFeedback : !hasFeedback;
           });
+
+        // Aplicar filtros adicionales
+        if (filterByProfessor) {
+          filtered = filtered.filter((r) => r.teacherEmail === filterByProfessor);
+        }
+        if (filterByRecordNumber) {
+          filtered = filtered.filter((r) => r.clinicalRecordNumber.toString().includes(filterByRecordNumber));
+        }
+        if (filterByDate) {
+          filtered = filtered.filter((r) => new Date(r.createdAt).toLocaleDateString() === new Date(filterByDate).toLocaleDateString());
+        }
+
+        // Ordenar por fecha
+        filtered = filtered.sort((a, b) => {
+          const dateA = new Date(a.createdAt);
+          const dateB = new Date(b.createdAt);
+          return sortByDate === "asc" ? dateA - dateB : dateB - dateA;
+        });
+
         setAnsweredRecords(filtered);
       } catch (err) {
         setError("Error al cargar las respuestas. Intente de nuevo más tarde.");
@@ -45,7 +68,7 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
     };
 
     fetchRecords();
-  }, [userEmail, userRole, filter, onFeedbackSaved]); // Incluir onFeedbackSaved para recargar la lista cuando se guarda un feedback
+  }, [userEmail, userRole, filter, filterByProfessor, filterByRecordNumber, filterByDate, sortByDate, onFeedbackSaved]);
 
   const handleToggle = (record) => {
     if (selectedRecord?._id === record._id) {
@@ -66,8 +89,8 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
 
   const handleSubmitFeedback = async (recordId) => {
     if (Object.keys(feedbackState).length === 0) {
-        setError("No hay retroalimentación para guardar.");
-        return;
+      setError("No hay retroalimentación para guardar.");
+      return;
     }
     setSubmitting(true);
     setError("");
@@ -76,7 +99,7 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
         feedback: feedbackState,
         teacherEmail: user?.email,
       });
-      
+
       // Actualizar el selectedRecord localmente para reflejar el feedback guardado inmediatamente
       setSelectedRecord(prev => ({
         ...prev,
@@ -84,7 +107,7 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
         teacherEmail: user?.email,
         updatedAt: response.data.updatedAt // Actualizar con la fecha del servidor si la devuelve
       }));
-      
+
       // Opcional: Limpiar feedbackState si se considera que el ciclo de feedback para este item terminó
       // setFeedbackState({}); 
 
@@ -102,6 +125,8 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
 
   const feedbackableBaseFields = ["anamnesis", "exploracion", "diagnostico"];
   const formatLabel = (key) => key.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+
+  const uniqueProfessors = [...new Set(answeredRecords.map((r) => r.teacherEmail).filter(Boolean))];
 
   const renderAnswersWithFeedback = (record) => {
     if (!record || !record.answer) return <p className="text-red-500">Datos de la respuesta no disponibles.</p>;
@@ -199,26 +224,26 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
 
         {/* Retroalimentación General */}
         <div className="bg-white p-4 rounded shadow mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
-            <div>
-                <p className="font-semibold text-gray-800">Retroalimentación General</p>
-            </div>
-            <div>
-                {currentFeedback.general && !feedbackState.hasOwnProperty('general')? (
-                    <div className="bg-green-50 p-2 rounded mt-1 whitespace-pre-wrap min-h-[60px]">{currentFeedback.general}</div>
-                ) : userRole === "profesor" && (!currentFeedback.general || feedbackState.hasOwnProperty('general')) ? (
-                    <textarea
-                    className="w-full border rounded p-2"
-                    value={feedbackState.general || ""}
-                    onChange={(e) => handleFeedbackChange("general", e.target.value)}
-                    rows="3"
-                    placeholder="Escribe retroalimentación general..."
-                    />
-                ) : (
-                    <p className="text-gray-400 italic mt-1 min-h-[60px]">{currentFeedback.general || "Sin retroalimentación general"}</p>
-                )}
-            </div>
+          <div>
+            <p className="font-semibold text-gray-800">Retroalimentación General</p>
+          </div>
+          <div>
+            {currentFeedback.general && !feedbackState.hasOwnProperty('general') ? (
+              <div className="bg-green-50 p-2 rounded mt-1 whitespace-pre-wrap min-h-[60px]">{currentFeedback.general}</div>
+            ) : userRole === "profesor" && (!currentFeedback.general || feedbackState.hasOwnProperty('general')) ? (
+              <textarea
+                className="w-full border rounded p-2"
+                value={feedbackState.general || ""}
+                onChange={(e) => handleFeedbackChange("general", e.target.value)}
+                rows="3"
+                placeholder="Escribe retroalimentación general..."
+              />
+            ) : (
+              <p className="text-gray-400 italic mt-1 min-h-[60px]">{currentFeedback.general || "Sin retroalimentación general"}</p>
+            )}
+          </div>
         </div>
-        
+
         {userRole === "profesor" && (Object.keys(feedbackState).length > 0 || (!currentFeedback || Object.keys(currentFeedback).length === 0)) && (
           <div className="flex justify-end mt-4">
             <button
@@ -236,10 +261,10 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
 
   const columns = [
     { key: "clinicalRecordNumber", label: "N° Ficha" },
-    { 
-      key: "email", 
+    {
+      key: "email",
       label: "Alumno",
-      render: (row) => <span title={row.email}>{row.email.length > 20 ? `${row.email.substring(0,17)}...` : row.email}</span>
+      render: (row) => <span title={row.email}>{row.email.length > 20 ? `${row.email.substring(0, 17)}...` : row.email}</span>
     },
     {
       key: "formatNames",
@@ -250,12 +275,12 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
           const format = formatsData.find(f => f.id === id);
           return format ? format.name : `ID ${id}`;
         }).join(", ");
-        return <span title={names}>{names.length > 25 ? `${names.substring(0,22)}...` : names}</span>;
+        return <span title={names}>{names.length > 25 ? `${names.substring(0, 22)}...` : names}</span>;
       }
     },
     {
       key: "teacherEmail", label: "Profesor",
-      render: (row) => row.teacherEmail ? (<span title={row.teacherEmail}>{row.teacherEmail.length > 20 ? `${row.teacherEmail.substring(0,17)}...` : row.teacherEmail}</span>) : "N/A"
+      render: (row) => row.teacherEmail ? (<span title={row.teacherEmail}>{row.teacherEmail.length > 20 ? `${row.teacherEmail.substring(0, 17)}...` : row.teacherEmail}</span>) : "N/A"
     },
     {
       key: "responseTime", label: "T. Invertido",
@@ -267,9 +292,9 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
     },
     {
       key: "feedbackStatus", label: "Feedback",
-      render: (row) => (row.feedback && (Object.keys(row.feedback).length > 0 || row.feedback.general)) 
-                        ? <span className="px-2 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded-full">Completo</span> 
-                        : <span className="px-2 py-1 text-xs font-semibold text-orange-700 bg-orange-100 rounded-full">Pendiente</span>
+      render: (row) => (row.feedback && (Object.keys(row.feedback).length > 0 || row.feedback.general))
+        ? <span className="px-2 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded-full">Completo</span>
+        : <span className="px-2 py-1 text-xs font-semibold text-orange-700 bg-orange-100 rounded-full">Pendiente</span>
     },
     {
       key: "actions", label: "Acciones",
@@ -290,15 +315,59 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
       <h2 className="text-2xl font-semibold mb-6 text-gray-700">Respuestas de Atenciones Clínicas</h2>
 
       <div className="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-        <select
-          className="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 w-full sm:w-auto"
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-        >
-          <option value="all">Todas las Respuestas</option>
-          <option value="with-feedback">Con Retroalimentación</option>
-          <option value="without-feedback">Sin Retroalimentación</option>
-        </select>
+        <div className="mb-6 flex flex-wrap gap-4">
+  {/* Filtro por tipo de feedback */}
+  <select
+    className="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 w-full sm:w-auto"
+    value={filter}
+    onChange={(e) => setFilter(e.target.value)}
+  >
+    <option value="all">Todas las Respuestas</option>
+    <option value="with-feedback">Con Retroalimentación</option>
+    <option value="without-feedback">Sin Retroalimentación</option>
+  </select>
+
+  {/* Filtro por profesor */}
+  <select
+    className="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 w-full sm:w-auto"
+    value={filterByProfessor}
+    onChange={(e) => setFilterByProfessor(e.target.value)}
+  >
+    <option value="">Todos los Profesores</option>
+    {uniqueProfessors.map((professor) => (
+      <option key={professor} value={professor}>
+        {professor}
+      </option>
+    ))}
+  </select>
+
+  {/* Filtro por número de ficha */}
+  <input
+    type="text"
+    placeholder="Filtrar por N° Ficha"
+    className="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 w-full sm:w-auto"
+    value={filterByRecordNumber}
+    onChange={(e) => setFilterByRecordNumber(e.target.value)}
+  />
+
+  {/* Filtro por fecha */}
+  <input
+    type="date"
+    className="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 w-full sm:w-auto"
+    value={filterByDate}
+    onChange={(e) => setFilterByDate(e.target.value)}
+  />
+
+  {/* Ordenar por fecha */}
+  <select
+    className="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 w-full sm:w-auto"
+    value={sortByDate}
+    onChange={(e) => setSortByDate(e.target.value)}
+  >
+    <option value="desc">Fecha: Más reciente</option>
+    <option value="asc">Fecha: Más antigua</option>
+  </select>
+</div>
         {/* Mensaje de error global para la lista/feedback */}
         {error && <div className="w-full sm:w-auto text-sm text-red-600 bg-red-100 p-2 rounded-md text-center sm:text-left">{error}</div>}
       </div>
@@ -317,12 +386,12 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
                   Detalle Ficha Clínica #{selectedRecord.clinicalRecordNumber}
                   <span className="text-base font-normal text-gray-600"> (Alumno: {selectedRecord.email})</span>
                 </h3>
-                <button 
-                    onClick={() => {setSelectedRecord(null); setFeedbackState({}); setError("");}}
-                    className="text-gray-500 hover:text-gray-700 text-2xl font-bold"
-                    title="Cerrar detalle"
+                <button
+                  onClick={() => { setSelectedRecord(null); setFeedbackState({}); setError(""); }}
+                  className="text-gray-500 hover:text-gray-700 text-2xl font-bold"
+                  title="Cerrar detalle"
                 >
-                    &times;
+                  &times;
                 </button>
               </div>
               {renderAnswersWithFeedback(selectedRecord)}
