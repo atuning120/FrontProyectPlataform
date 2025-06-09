@@ -13,6 +13,7 @@ export function useFormatForm(formats) {
       setResponses(prevResponses => {
         const newResponses = { ...prevResponses };
         if (isSelected) {
+          // Si el formato se selecciona y no tiene respuestas previas, inicialízalas
           if (!newResponses[formatId]) {
             const format = formats.find(f => f.id === formatId);
             const initialFormatResponses = {};
@@ -27,9 +28,11 @@ export function useFormatForm(formats) {
             });
             newResponses[formatId] = initialFormatResponses;
           }
-        } else {
-          delete newResponses[formatId];
-        }
+        } 
+        // Ya no eliminamos las respuestas si el formato se deselecciona
+        // else {
+        //   delete newResponses[formatId]; 
+        // }
         return newResponses;
       });
       return newSelectedIds;
@@ -40,7 +43,7 @@ export function useFormatForm(formats) {
     setResponses(prevResponses => ({
       ...prevResponses,
       [formatId]: {
-        ...(prevResponses[formatId] || {}),
+        ...(prevResponses[formatId] || {}), // Asegura que exista un objeto para formatId
         [key]: value,
       },
     }));
@@ -50,7 +53,7 @@ export function useFormatForm(formats) {
 
   return {
     selectedFormats,
-    selectedFormatIds,
+    selectedFormatIds, // Mantén esto si lo usas en otro lugar, aunque selectedFormats ya te da los objetos completos
     responses,
     handleFormatSelectionChange,
     handleInputChange,

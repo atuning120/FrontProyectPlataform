@@ -3,7 +3,7 @@ import axios from "axios";
 import TableComponent from "../TableComponent";
 import ToggleButton from "../ToggleButton";
 import { AuthContext } from "../Auth/AuthProvider";
-import formatsData from "../../data/formats.json"; // Asegúrate que el nombre del import coincida
+import formatsData from "../../data/formats.json"; 
 
 export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
   const { user } = useContext(AuthContext);
@@ -21,7 +21,7 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
   useEffect(() => {
     const fetchRecords = async () => {
       setLoading(true);
-      setError(""); // Limpiar errores previos
+      setError(""); 
       try {
         const { data: records } = await axios.get("http://localhost:5000/api/answered-clinical-records");
         const filtered = records
