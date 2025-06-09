@@ -48,7 +48,10 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
           filtered = filtered.filter((r) => r.clinicalRecordNumber.toString().includes(filterByRecordNumber));
         }
         if (filterByDate) {
-          filtered = filtered.filter((r) => new Date(r.createdAt).toLocaleDateString() === new Date(filterByDate).toLocaleDateString());
+          filtered = filtered.filter((r) => {
+            const recordDate = new Date(r.createdAt).toISOString().split("T")[0]; // Formato YYYY-MM-DD
+            return recordDate === filterByDate; // Comparar con el valor del filtro
+          });
         }
 
         // Ordenar por fecha
@@ -316,58 +319,58 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
 
       <div className="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="mb-6 flex flex-wrap gap-4">
-  {/* Filtro por tipo de feedback */}
-  <select
-    className="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 w-full sm:w-auto"
-    value={filter}
-    onChange={(e) => setFilter(e.target.value)}
-  >
-    <option value="all">Todas las Respuestas</option>
-    <option value="with-feedback">Con Retroalimentación</option>
-    <option value="without-feedback">Sin Retroalimentación</option>
-  </select>
+          {/* Filtro por tipo de feedback */}
+          <select
+            className="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 w-full sm:w-auto"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+          >
+            <option value="all">Todas las Respuestas</option>
+            <option value="with-feedback">Con Retroalimentación</option>
+            <option value="without-feedback">Sin Retroalimentación</option>
+          </select>
 
-  {/* Filtro por profesor */}
-  <select
-    className="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 w-full sm:w-auto"
-    value={filterByProfessor}
-    onChange={(e) => setFilterByProfessor(e.target.value)}
-  >
-    <option value="">Todos los Profesores</option>
-    {uniqueProfessors.map((professor) => (
-      <option key={professor} value={professor}>
-        {professor}
-      </option>
-    ))}
-  </select>
+          {/* Filtro por profesor */}
+          <select
+            className="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 w-full sm:w-auto"
+            value={filterByProfessor}
+            onChange={(e) => setFilterByProfessor(e.target.value)}
+          >
+            <option value="">Todos los Profesores</option>
+            {uniqueProfessors.map((professor) => (
+              <option key={professor} value={professor}>
+                {professor}
+              </option>
+            ))}
+          </select>
 
-  {/* Filtro por número de ficha */}
-  <input
-    type="text"
-    placeholder="Filtrar por N° Ficha"
-    className="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 w-full sm:w-auto"
-    value={filterByRecordNumber}
-    onChange={(e) => setFilterByRecordNumber(e.target.value)}
-  />
+          {/* Filtro por número de ficha */}
+          <input
+            type="text"
+            placeholder="Filtrar por N° Ficha"
+            className="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 w-full sm:w-auto"
+            value={filterByRecordNumber}
+            onChange={(e) => setFilterByRecordNumber(e.target.value)}
+          />
 
-  {/* Filtro por fecha */}
-  <input
-    type="date"
-    className="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 w-full sm:w-auto"
-    value={filterByDate}
-    onChange={(e) => setFilterByDate(e.target.value)}
-  />
+          {/* Filtro por fecha */}
+          <input
+            type="date"
+            className="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 w-full sm:w-auto"
+            value={filterByDate}
+            onChange={(e) => setFilterByDate(e.target.value)}
+          />
 
-  {/* Ordenar por fecha */}
-  <select
-    className="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 w-full sm:w-auto"
-    value={sortByDate}
-    onChange={(e) => setSortByDate(e.target.value)}
-  >
-    <option value="desc">Fecha: Más reciente</option>
-    <option value="asc">Fecha: Más antigua</option>
-  </select>
-</div>
+          {/* Ordenar por fecha */}
+          <select
+            className="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 w-full sm:w-auto"
+            value={sortByDate}
+            onChange={(e) => setSortByDate(e.target.value)}
+          >
+            <option value="desc">Fecha: Más reciente</option>
+            <option value="asc">Fecha: Más antigua</option>
+          </select>
+        </div>
         {/* Mensaje de error global para la lista/feedback */}
         {error && <div className="w-full sm:w-auto text-sm text-red-600 bg-red-100 p-2 rounded-md text-center sm:text-left">{error}</div>}
       </div>
