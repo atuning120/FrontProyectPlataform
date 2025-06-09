@@ -42,7 +42,7 @@ export default function TeacherPage() {
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-blue-950 to-blue-900">
       <Header />
 
-      <main className="flex-1 px-4 pt-20 max-w-4xl w-full mx-auto">
+      <main className="flex-1 pt-20 max-w-5xl w-full mx-auto">
         <div className="bg-white/30 backdrop-blur-md rounded-xl shadow-lg border border-white/40 p-6">
           <div className="space-y-6">
             {showForm && <CreatePatient onClose={() => setShowForm(false)} />}
