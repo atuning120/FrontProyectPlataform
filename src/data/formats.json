@@ -424,6 +424,39 @@
             "maxLabel": "Máximo dolor"
           }
         ]
+      },
+      {
+        "section": "Curso del dolor",
+        "fields": [
+          {
+            "key": "curso_dolor",
+            "label": "Marque con una cruz la imagen que mejor describa el curso de su dolor:",
+            "type": "image_radio",
+            "options": [
+              {
+                "value": "constante_fluctuaciones",
+                "label": "Dolor constante con ligeras fluctuaciones",
+                "image": "/images/d1.png"
+              },
+              {
+                "value": "constante_ataques",
+                "label": "Dolor constante con ataques de dolor",
+                "image": "/images/d2.png"
+              },
+              {
+                "value": "ataques_sin_intervalo",
+                "label": "Ataques de dolor sin dolor entre los ataques",
+                "image": "/images/d3.png"
+              },
+              {
+                "value": "ataques_frecuentes",
+                "label": "Ataques de dolor frecuentes con dolor entre los ataques",
+                "image": "/images/d4.png"
+              }
+            ],
+            "required": true
+          }
+        ]
       }
     ]
   }
