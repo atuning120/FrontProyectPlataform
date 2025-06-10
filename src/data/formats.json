@@ -373,5 +373,58 @@
         ]
       }
     ]
+  },
+  {
+    "id": 3,
+    "name": "Cuestionario del dolor",
+    "retroFields": [
+      "anamnesis_clinica",
+      "anamnesis_alimentaria",
+      "factores_psicosociales"
+    ],
+    "sections": [
+      {
+        "section": "Escala Visual",
+        "fields": [
+          {
+            "key": "escala_visual_1",
+            "label": "¿Como valoraría el dolor que siente ahora, en este momento?",
+            "type": "evaluation_scale",
+            "min": 0,
+            "max": 10,
+            "minLabel": "Ningún dolor",
+            "maxLabel": "Máximo dolor"
+          }
+        ]
+      },
+      {
+        "section": "Escala Visual",
+        "fields": [
+          {
+            "key": "escala_visual_2",
+            "label": "¿Cuál ha sido la intensidad del dolor más fuerte que ha sentido en las últimas 4 semanas?",
+            "type": "evaluation_scale",
+            "min": 0,
+            "max": 10,
+            "minLabel": "Ningún dolor",
+            "maxLabel": "Máximo dolor"
+          }
+        ]
+      },
+      {
+        "section": "Escala Visual",
+        "fields": [
+          {
+            "key": "escala_visual_3",
+            "label": "¿Por término medico, cúal ha sido la intensidad de su dolor en las últimas 4 semanas?",
+            "type": "evaluation_scale",
+            "min": 0,
+            "max": 10,
+            "minLabel": "Ningún dolor",
+            "maxLabel": "Máximo dolor"
+          }
+        ]
+      }
+    ]
   }
 ]
