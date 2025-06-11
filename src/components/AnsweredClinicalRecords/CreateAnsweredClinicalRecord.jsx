@@ -108,6 +108,7 @@ export default function CreateAnsweredClinicalRecords({
 
       await axios.post("http://localhost:5000/api/answered-clinical-records", {
         clinicalRecordNumber,
+        clinicalRecordName: selectedFormats.map((f) => f.name).join(", "),
         email: user.email,
         answer: {
           baseFields,
@@ -122,7 +123,7 @@ export default function CreateAnsweredClinicalRecords({
     } catch (err) {
       setError(
         err.response?.data?.message ||
-          "Hubo un error al enviar la respuesta. Intenta nuevamente.",
+        "Hubo un error al enviar la respuesta. Intenta nuevamente.",
       );
       console.error(err);
     } finally {
@@ -228,12 +229,11 @@ export default function CreateAnsweredClinicalRecords({
                       {section.section}
                     </h3>
                   )}
-
                   {(section.fields ?? []).map((field) => {
                     const {
                       key,
                       label,
-                      type = "text",
+                      type = "text", // Default to "text" if type is undefined
                       options = [],
                       min = 0,
                       max = 10,
@@ -327,11 +327,10 @@ export default function CreateAnsweredClinicalRecords({
                                 <img
                                   src={opt.image}
                                   alt={opt.label}
-                                  className={`w-full h-24 object-contain border-2 rounded-md ${
-                                    value === opt.value
+                                  className={`w-full h-24 object-contain border-2 rounded-md ${value === opt.value
                                       ? "border-blue-500 ring-2 ring-blue-400"
                                       : "border-transparent"
-                                  }`}
+                                    }`}
                                 />
                                 <span className="block mt-1 text-sm">
                                   {opt.label}
@@ -341,8 +340,8 @@ export default function CreateAnsweredClinicalRecords({
                           </div>
                         )}
 
-                        {/* ----- texto por defecto ----- */}
-                        {type === undefined && (
+                        {/* ----- cuadro de texto para type "text" ----- */}
+                        {type === "text" && (
                           <textarea
                             value={value || ""}
                             onChange={(e) =>
@@ -371,11 +370,10 @@ export default function CreateAnsweredClinicalRecords({
           <button
             type="submit"
             disabled={loading || !validateAnswers()}
-            className={`w-full p-3 rounded-md text-white ${
-              loading || !validateAnswers()
+            className={`w-full p-3 rounded-md text-white ${loading || !validateAnswers()
                 ? "bg-blue-400 cursor-not-allowed"
                 : "bg-blue-600 hover:bg-blue-700"
-            } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
+              } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
           >
             {loading ? "Enviando..." : "Enviar Respuesta"}
           </button>

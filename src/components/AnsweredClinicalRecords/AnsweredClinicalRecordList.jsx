@@ -301,8 +301,8 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
                                   <div
                                     key={optValue}
                                     className={`relative border rounded-lg p-2 shadow-sm ${isChecked
-                                        ? "border-blue-600 ring-2 ring-blue-400"
-                                        : "border-gray-200"
+                                      ? "border-blue-600 ring-2 ring-blue-400"
+                                      : "border-gray-200"
                                       }`}
                                   >
                                     <img
