@@ -328,8 +328,8 @@ export default function CreateAnsweredClinicalRecords({
                                   src={opt.image}
                                   alt={opt.label}
                                   className={`w-full h-24 object-contain border-2 rounded-md ${value === opt.value
-                                      ? "border-blue-500 ring-2 ring-blue-400"
-                                      : "border-transparent"
+                                    ? "border-blue-500 ring-2 ring-blue-400"
+                                    : "border-transparent"
                                     }`}
                                 />
                                 <span className="block mt-1 text-sm">
@@ -356,6 +356,27 @@ export default function CreateAnsweredClinicalRecords({
                             className="w-full p-2 border rounded-md"
                           />
                         )}
+                        {/* ----- pain_scale ----- */}
+                        {type === "pain_scale" && (
+                          <div className="flex gap-x-4">
+                            {options.map((opt, idx) => (
+                              <label
+                                key={`${idPrefix}-${idx}`}
+                                className="flex items-center gap-2"
+                              >
+                                <input
+                                  type="radio"
+                                  name={name}
+                                  value={opt}
+                                  checked={value === opt}
+                                  onChange={() => handleInputChange(format.id, key, opt)}
+                                  className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                                />
+                                {opt}
+                              </label>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     );
                   })}
@@ -371,8 +392,8 @@ export default function CreateAnsweredClinicalRecords({
             type="submit"
             disabled={loading || !validateAnswers()}
             className={`w-full p-3 rounded-md text-white ${loading || !validateAnswers()
-                ? "bg-blue-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
+              ? "bg-blue-400 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700"
               } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
           >
             {loading ? "Enviando..." : "Enviar Respuesta"}

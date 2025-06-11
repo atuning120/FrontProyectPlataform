@@ -486,6 +486,118 @@
             "required": true
           }
         ]
+      },
+      {
+        "section": "Dolor neuropático",
+        "fields": [
+          {
+            "key": "quemazon",
+            "label": "¿Tiene una sensación de quemazón (p.ej. como por roce de ortigas o al tocar la lejía) en la zona de dolor marcada?",
+            "type": "pain_scale",
+            "options": [
+              "no",
+              "muy ligera",
+              "ligera",
+              "moderada",
+              "intensa",
+              "muy intensa"
+            ]
+          },
+          {
+            "key": "hormigueo",
+            "label": "¿Tiene una sensación de hormigueo o cosquilleo (como una corriente eléctrica) en la zona de dolor marcada?",
+            "type": "pain_scale",
+            "options": [
+              "no",
+              "muy ligera",
+              "ligera",
+              "moderada",
+              "intensa",
+              "muy intensa"
+            ]
+          },
+          {
+            "key": "roce_ligero",
+            "label": "¿Le produce dolor cualquier ligero roce (p.ej. la ropa o las sábanas) en esta zona?",
+            "type": "pain_scale",
+            "options": [
+              "no",
+              "muy ligera",
+              "ligera",
+              "moderada",
+              "intensa",
+              "muy intensa"
+            ]
+          },
+          {
+            "key": "descargas_electricas",
+            "label": "¿Tiene ataques de dolor repentinos, como descargas eléctricas, en la zona de dolor marcada?",
+            "type": "pain_scale",
+            "options": [
+              "no",
+              "muy ligera",
+              "ligera",
+              "moderada",
+              "intensa",
+              "muy intensa"
+            ]
+          },
+          {
+            "key": "frio_calor",
+            "label": "¿En alguna ocasión le produce dolor el contacto del frío o el calor (p.ej. el agua de la ducha) en esta zona?",
+            "type": "pain_scale",
+            "options": [
+              "no",
+              "muy ligera",
+              "ligera",
+              "moderada",
+              "intensa",
+              "muy intensa"
+            ]
+          },
+          {
+            "key": "entumecimiento",
+            "label": "¿Tiene una sensación de entumecimiento (adormecimiento) en la zona de dolor marcada?",
+            "type": "pain_scale",
+            "options": [
+              "no",
+              "muy ligera",
+              "ligera",
+              "moderada",
+              "intensa",
+              "muy intensa"
+            ]
+          },
+          {
+            "key": "presion_ligera",
+            "label": "¿Se desencadena el dolor con solo una ligera presion en la zona de dolor marcada (p.ej. con el dedo)?",
+            "type": "pain_scale",
+            "options": [
+              "no",
+              "muy ligera",
+              "ligera",
+              "moderada",
+              "intensa",
+              "muy intensa"
+            ]
+          }
+        ],
+        "cant": [
+          {"cant_no": 0},
+          {"cant_muy_ligera": 0},
+          {"cant_ligera": 0},
+          {"cant_moderada": 0},
+          {"cant_intensa": 0},
+          {"cant_muy_intensa": 0}
+        ],
+        "ponderacion": [
+          {"ponderacion_no": 0},
+          {"ponderacion_muy_ligera": 1},
+          {"ponderacion_ligera": 2},
+          {"ponderacion_moderada": 3},
+          {"ponderacion_intensa": 4},
+          {"ponderacion_muy_intensa": 5}
+        ]
       }
     ]
   }
