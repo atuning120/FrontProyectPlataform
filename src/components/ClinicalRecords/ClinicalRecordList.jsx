@@ -6,7 +6,7 @@ import CreateAnsweredClinicalRecords from "../AnsweredClinicalRecords/CreateAnsw
 import TableComponent from "../TableComponent";
 import ToggleButton from "../ToggleButton";
 
-export default function ClinicalRecordList({ onResponseSubmitted }) {
+export default function ClinicalRecordList({ onResponseSubmitted, setNotification }) {
   const { user } = useContext(AuthContext);
   const [clinicalRecords, setClinicalRecords] = useState([]);
   const [answeredRecords, setAnsweredRecords] = useState([]);
@@ -116,6 +116,7 @@ export default function ClinicalRecordList({ onResponseSubmitted }) {
             patientRun={selectedRecord.patientRun}
             onSubmit={onResponseSubmitted}
             onPatientLoaded={setPatientName} 
+            setNotification={setNotification}
           />
         </div>
       )}
