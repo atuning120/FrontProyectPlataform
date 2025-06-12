@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Notification from "../Notification";
+import ConfirmDialog from "../confirmDialog";
 
 export default function DashboardAdmin() {
   const [stats, setStats] = useState({
@@ -10,6 +12,13 @@ export default function DashboardAdmin() {
   const [answeredRecords, setAnsweredRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [notification, setNotification] = useState({ message: "", type: "" });
+  const [confirm, setConfirm] = useState({
+    open: false,
+    message: "",
+    onConfirm: () => { },
+  });
+
 
   const fetchStatsAndRecords = async () => {
     try {
@@ -33,25 +42,58 @@ export default function DashboardAdmin() {
       setLoading(false);
     }
   };
+  const pedirConfirmacion = (message, onConfirm) => {
+    setConfirm({
+      open: true,
+      message,
+      onConfirm: () => {
+        onConfirm();
+        setConfirm((c) => ({ ...c, open: false }));
+      },
+    });
+  };
 
   useEffect(() => {
     fetchStatsAndRecords();
   }, []);
 
-  const handleDelete = async (id) => {
-    if (!confirm("¿Estás seguro de que quieres eliminar esta respuesta?")) return;
-    try {
-      await axios.delete(`http://localhost:5000/api/answered-clinical-records/${id}`);
-      alert("Respuesta eliminada correctamente.");
-      fetchStatsAndRecords(); // actualizar estadísticas y lista
-    } catch (err) {
-      console.error("Error al eliminar:", err);
-      alert("Hubo un error al eliminar la respuesta.");
-    }
+  const handleDelete = (id) => {
+    pedirConfirmacion(
+      "¿Estás seguro de que quieres eliminar esta respuesta?",
+      async () => {
+        try {
+          await axios.delete(`http://localhost:5000/api/answered-clinical-records/${id}`);
+          setNotification({
+            message: "Respuesta eliminada correctamente.",
+            type: "success"
+          });
+          fetchStatsAndRecords();
+        } catch (err) {
+          console.error("Error al eliminar:", err);
+          setNotification({
+            message: "Hubo un error al eliminar la respuesta.",
+            type: "error"
+          });
+        }
+      }
+    );
   };
+
 
   return (
     <div>
+      <Notification
+        message={notification.message}
+        type={notification.type}
+        onClose={() => setNotification({ ...notification, message: "" })}
+      />
+      <ConfirmDialog
+        open={confirm.open}
+        message={confirm.message}
+        onConfirm={confirm.onConfirm}
+        onCancel={() => setConfirm((c) => ({ ...c, open: false }))}
+      />
+
       <h1 className="text-2xl font-bold text-white mb-6">📊 Panel de administración</h1>
       <ul className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
         <li className="bg-white/50 p-4 rounded-lg shadow border border-white/40">
