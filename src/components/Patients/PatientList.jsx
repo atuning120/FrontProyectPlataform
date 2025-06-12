@@ -4,7 +4,7 @@ import { AuthContext } from "../Auth/AuthProvider";
 import DeletePatient from "./DeletePatient";
 import TableComponent from "../TableComponent";
 
-export default function PatientList() {
+export default function PatientList({setNotification}) {
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useContext(AuthContext);
@@ -54,7 +54,7 @@ export default function PatientList() {
             key: "actions",
             label: "Acciones",
             render: (row) => (
-              <DeletePatient patientId={row._id} onDelete={handleDeletePatient} />
+              <DeletePatient patientId={row._id} onDelete={handleDeletePatient} setNotification={setNotification}/>
             ),
           },
         ].filter(Boolean)}

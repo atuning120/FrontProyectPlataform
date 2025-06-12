@@ -3,7 +3,7 @@ import axios from "axios";
 import { useClinicalRecordForm } from "./useClinicalRecordForm";
 import InputField from "../InputField";
 
-export default function CreateClinicalRecord({ onClose }) {
+export default function CreateClinicalRecord({ onClose, setNotification }) {
   const initialFormData = {
     patientRunDigits: "",
     patientRunVerifier: "",
@@ -18,7 +18,7 @@ export default function CreateClinicalRecord({ onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
-      alert("Por favor, corrige los errores antes de continuar.");
+      setNotification?.({message:"Por favor, corrige los errores antes de continuar.", type: "ℹ"});
       return;
     }
 
@@ -30,12 +30,12 @@ export default function CreateClinicalRecord({ onClose }) {
         ...formData,
         patientRun: formattedRun,
       });
-      alert("Ficha creada exitosamente");
+      setNotification?.({message: "Ficha clínica creada exitosamente.", type: "success"});
       setFormData(initialFormData);
       onClose();
     } catch (error) {
       console.error("Error creando ficha clínica:", error);
-      alert(error.response?.data?.message || "Error inesperado al crear la ficha.");
+      setNotification?.({message: error.response?.data?.message || "Error inesperado al crear la ficha.", type: "error"});
     } finally {
       setLoading(false);
     }

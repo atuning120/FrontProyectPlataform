@@ -5,7 +5,7 @@ import ToggleButton from "../ToggleButton";
 import { AuthContext } from "../Auth/AuthProvider";
 import formatsData from "../../data/formats.json";
 
-export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
+export default function AnsweredClinicalRecordList({ onFeedbackSaved, setNotification }) {
   const { user } = useContext(AuthContext);
   const [answeredRecords, setAnsweredRecords] = useState([]);
   const [selectedRecord, setSelectedRecord] = useState(null);
@@ -109,6 +109,10 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
   const handleSubmitFeedback = async (recordId) => {
     if (Object.keys(feedbackState).length === 0) {
       setError("No hay retroalimentación para guardar.");
+      setNotification?.({
+        message: "No hay retroalimentación para guardar.",
+        type: "warning"
+      });
       return;
     }
     setSubmitting(true);
@@ -129,14 +133,24 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
         updatedAt: response.data.updatedAt,
       }));
 
+      setNotification?.({
+        message: "¡Retroalimentación guardada con éxito!",
+        type: "success"
+      });
+
       if (onFeedbackSaved) onFeedbackSaved();
     } catch (err) {
       setError("Error al guardar la retroalimentación.");
+      setNotification?.({
+        message: "Error al guardar la retroalimentación.",
+        type: "error"
+      });
       console.error("Error saving feedback:", err);
     } finally {
       setSubmitting(false);
     }
   };
+
 
   /* -------------------------------------------------- */
   /* Render helpers                                      */

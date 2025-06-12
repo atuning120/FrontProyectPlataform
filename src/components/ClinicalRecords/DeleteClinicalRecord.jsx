@@ -1,23 +1,36 @@
 import { useState } from "react";
 import axios from "axios";
 
-export default function DeleteClinicalRecord({ recordId, onDelete }) {
+export default function DeleteClinicalRecord({ recordId, onDelete, setNotification, pedirConfirmacion }) {
   const [loading, setLoading] = useState(false);
 
-  const handleDelete = async () => {
-    if (!window.confirm("¿Estás seguro de que deseas eliminar esta ficha clínica?")) return;
-
+  // Solo elimina realmente si hay confirmación
+  const eliminarDefinitivo = async () => {
     setLoading(true);
     try {
       const response = await axios.delete(`http://localhost:5000/api/clinical-records/${recordId}`);
-      alert(response.data.message); // Mensaje del backend
-      onDelete(recordId); // Solo eliminar de la UI si fue exitoso
+      setNotification?.({
+        message: response.data.message || "Ficha clínica eliminada exitosamente.",
+        type: "success"
+      });
+      onDelete(recordId);
     } catch (error) {
       console.error("Error eliminando la ficha clínica:", error);
-      alert(error.response?.data?.message || "Hubo un error al eliminar la ficha clínica.");
+      setNotification?.({
+        message: error.response?.data?.message || "Hubo un error al eliminar la ficha clínica.",
+        type: "error"
+      });
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDelete = () => {
+    if (loading) return;
+    pedirConfirmacion?.(
+      "¿Estás seguro de que deseas eliminar esta ficha clínica?",
+      eliminarDefinitivo
+    );
   };
 
   return (

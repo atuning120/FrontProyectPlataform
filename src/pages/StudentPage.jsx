@@ -33,7 +33,6 @@ export default function StudentPage() {
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-blue-950 to-blue-900">
       <HeaderStudent />
-      {/* Notification siempre aquí, fuera de los condicionales */}
       <Notification
         message={notification.message}
         type={notification.type}

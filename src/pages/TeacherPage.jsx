@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../components/Auth/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
@@ -9,10 +9,30 @@ import ClinicalRecordList from "../components/ClinicalRecords/ClinicalRecordList
 import AnsweredClinicalRecordList from "../components/AnsweredClinicalRecords/AnsweredClinicalRecordList";
 import Footer from "../components/Footer";
 import { useTeacherView } from "../context/TeacherViewContext";
+import Notification from "../components/Notification";
+import ConfirmDialog from "../components/confirmDialog";
 
 export default function TeacherPage() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [notification, setNotification] = useState({ message: "", type: "success" });
+  const [confirm, setConfirm] = useState({
+    open: false,
+    message: "",
+    onConfirm: () => { },
+  });
+  const pedirConfirmacion = (message, onConfirm) => {
+    setConfirm({
+      open: true,
+      message,
+      onConfirm: () => {
+        onConfirm(); // Ejecuta la acción original
+        setConfirm((c) => ({ ...c, open: false }));
+      },
+    });
+  };
+
+
 
   const {
     showForm,
@@ -35,21 +55,30 @@ export default function TeacherPage() {
 
   const handleCloseAnsweredRecords = () => {
     setShowAnsweredRecords(false);
-    alert("Retroalimentación guardada con éxito.");
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-blue-950 to-blue-900">
       <Header />
-
+      <ConfirmDialog
+        open={confirm.open}
+        message={confirm.message}
+        onConfirm={confirm.onConfirm}
+        onCancel={() => setConfirm((c) => ({ ...c, open: false }))}
+      />
+      <Notification
+        message={notification.message}
+        type={notification.type}
+        onClose={() => setNotification({ ...notification, message: "" })}
+      />
       <main className="flex-1 pt-20 max-w-5xl w-full mx-auto">
         <div className="bg-white/30 backdrop-blur-md rounded-xl shadow-lg border border-white/40 p-6">
           <div className="space-y-6">
-            {showForm && <CreatePatient onClose={() => setShowForm(false)} />}
-            {showPatientList && <PatientList />}
-            {showClinicRecordForm && <CreateClinicalRecord onClose={() => setShowClinicRecordForm(false)} />}
-            {showClinicalRecords && <ClinicalRecordList />}
-            {showAnsweredRecords && <AnsweredClinicalRecordList onFeedbackSaved={handleCloseAnsweredRecords} />}
+            {showForm && <CreatePatient onClose={() => setShowForm(false)} setNotification={setNotification} />}
+            {showPatientList && <PatientList setNotification={setNotification} />}
+            {showClinicRecordForm && <CreateClinicalRecord onClose={() => setShowClinicRecordForm(false)} setNotification={setNotification} />}
+            {showClinicalRecords && <ClinicalRecordList setNotification={setNotification} pedirConfirmacion={pedirConfirmacion} />}
+            {showAnsweredRecords && <AnsweredClinicalRecordList onFeedbackSaved={handleCloseAnsweredRecords} setNotification={setNotification}/>}
           </div>
         </div>
       </main>

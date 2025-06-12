@@ -3,7 +3,6 @@ import axios from "axios";
 import { AuthContext } from "../Auth/AuthProvider";
 import { useFormatForm } from "./useFormatForm";
 import formatsData from "../../data/formats.json";
-import Notification from "../Notification";
 
 export default function CreateAnsweredClinicalRecords({
   clinicalRecordNumber,

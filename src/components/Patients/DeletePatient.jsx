@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 
-export default function DeletePatient({ patientId, onDelete }) {
+export default function DeletePatient({ patientId, onDelete, setNotification }) {
   const [loading, setLoading] = useState(false);
 
   const handleDelete = async () => {
@@ -12,11 +12,12 @@ export default function DeletePatient({ patientId, onDelete }) {
     try {
       const response = await axios.delete(`http://localhost:5000/api/patients/${patientId}`);
       onDelete(patientId);
-      alert(response.data.message);
+      //alert(response.data.message);
+      setNotification?.({ message: response.data.message, type: "success" });
     } catch (error) {
       console.error("Error eliminando el paciente:", error);
       const errorMessage = error.response?.data?.message || "Hubo un error al eliminar el paciente.";
-      alert(errorMessage);
+      setNotification?.({ message: errorMessage, type: "error" });
     } finally {
       setLoading(false);
     }

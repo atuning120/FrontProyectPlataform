@@ -6,7 +6,7 @@ import CreateAnsweredClinicalRecords from "../AnsweredClinicalRecords/CreateAnsw
 import TableComponent from "../TableComponent";
 import ToggleButton from "../ToggleButton";
 
-export default function ClinicalRecordList({ onResponseSubmitted, setNotification }) {
+export default function ClinicalRecordList({ onResponseSubmitted, setNotification , pedirConfirmacion }) {
   const { user } = useContext(AuthContext);
   const [clinicalRecords, setClinicalRecords] = useState([]);
   const [answeredRecords, setAnsweredRecords] = useState([]);
@@ -79,6 +79,8 @@ export default function ClinicalRecordList({ onResponseSubmitted, setNotificatio
                           <DeleteClinicalRecord
                             recordId={row._id}
                             onDelete={handleDelete}
+                            setNotification={setNotification}
+                            pedirConfirmacion={pedirConfirmacion}
                           />
                         );
                       }
