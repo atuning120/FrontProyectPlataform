@@ -22,7 +22,9 @@ export default function Login() {
   }, [user, navigate]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-gradient-to-b from-blue-950 to-blue-900">
+    <div className="min-h-screen flex flex-col items-center bg-gradient-to-b from-blue-950 to-blue-900"
+    style={{userSelect: "none"}}
+    >
       {/* Imagen arriba centrada */}
       <div className="w-full flex justify-center mt-8">
         <img src={logoUCN} alt="Logo UCN" className="w-40 h-auto" />
