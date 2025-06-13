@@ -1,7 +1,6 @@
 import React from 'react'
 import { BiChevronRight } from 'react-icons/bi';
-import logoUCN from "../../public/logoUCNblancoNegro.png";
-
+import logoUCN from "../assets/logoUCNblancoNegro.png";
 
 const Footer = () => {
   return  <footer className='py-16 bg-gray-950 px-12 flex justify-between gap-10 text-slate-200 text-sm flex-wrap md:flex-nowrap'>

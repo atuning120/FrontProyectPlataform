@@ -13,7 +13,7 @@ import { AuthContext } from "./Auth/AuthProvider";
 import { logout } from "../services/firebase";
 import { useStudentView } from "../context/StudentViewContext";
 import ToggleButton from "./ToggleButton";
-import logo from "../../public/logoPaginaBlanco.png";
+import logo from "../assets/logoPaginaBlanco.png";
 import { useState } from "react";
 
 

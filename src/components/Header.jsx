@@ -10,10 +10,10 @@ import {
 import { useContext } from "react";
 import { AuthContext } from "./Auth/AuthProvider";
 import { logout } from "../services/firebase";
-import logo from "../../public/logoPaginaBlanco.png";
 import ToggleButton from "./ToggleButton";
 import { useTeacherView } from "../context/TeacherViewContext";
 import { useState } from "react";
+import logo from "../assets/logoPaginaBlanco.png";
 
 export default function Header() {
   const { user } = useContext(AuthContext);

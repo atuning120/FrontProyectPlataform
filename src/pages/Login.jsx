@@ -2,7 +2,7 @@ import { useContext, useEffect } from "react";
 import { AuthContext } from "../components/Auth/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import GoogleButton from "../components/Auth/GoogleButton";
-import logoUCN from "../../public/logoUCNblancoNegro.png";
+import logoUCN from "../assets/logoUCNblancoNegro.png";
 
 // Página de inicio de sesión con Google
 export default function Login() {

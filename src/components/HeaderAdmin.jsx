@@ -10,7 +10,7 @@ import {
 import { useContext } from "react";
 import { AuthContext } from "./Auth/AuthProvider";
 import { logout } from "../services/firebase";
-import logo from "../../public/logoPaginaBlanco.png";
+import logo from "../assets/logoPaginaBlanco.png";
 import ToggleButton from "./ToggleButton";
 import { useAdminView } from "../context/AdminViewContext";
 import { useState } from "react";
