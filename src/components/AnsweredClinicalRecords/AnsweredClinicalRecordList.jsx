@@ -57,10 +57,13 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved, setNotific
         }
         if (filterByDate) {
           filtered = filtered.filter((r) => {
-            const recordDate = new Date(r.createdAt).toISOString().split("T")[0];
-            return recordDate === filterByDate;
+            const d = new Date(r.createdAt);
+            // yyyy-mm-dd formato local
+            const localDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+            return localDate === filterByDate;
           });
         }
+
 
         filtered = filtered.sort((a, b) => {
           const dateA = new Date(a.createdAt);
