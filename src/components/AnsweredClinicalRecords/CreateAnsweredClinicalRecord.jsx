@@ -134,265 +134,312 @@ export default function CreateAnsweredClinicalRecords({
 
   /* ---------------- render ---------------- */
   return (
-      <div className="p-4 bg-gray-100 rounded-lg shadow-md">
-        {patientData && (
+    <div className="p-4 bg-gray-100 rounded-lg shadow-md">
+      {patientData && (
+        <div className="mb-4 p-4 bg-white rounded shadow">
+          <h3 className="text-lg font-bold mb-2">Datos del Paciente</h3>
+          <p>
+            <strong>Nombre:</strong> {patientData.fullName}{" "}
+            <strong>Género:</strong> {patientData.gender}{" "}
+            <strong>Edad:</strong> {patientData.age}{" "}
+            <strong>Seguro:</strong> {patientData.insurance}{" "}
+            <strong>Dirección:</strong> {patientData.address}{" "}
+            <strong>Teléfono:</strong> {patientData.mobileNumber}{" "}
+            <strong>Email:</strong> {patientData.email}
+          </p>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit}>
+        {/* ---------- campos base ---------- */}
+        <div className="mb-4 space-y-4 p-4 bg-white rounded shadow">
+          <h3 className="text-lg font-bold mb-2">Campos Base</h3>
+          {[
+            { key: "anamnesis", label: "Anamnesis" },
+            { key: "exploracion", label: "Exploración" },
+            { key: "diagnostico", label: "Diagnóstico" },
+          ].map(({ key, label }) => (
+            <div key={key}>
+              <label htmlFor={key} className="block mb-1 font-medium">
+                {label}
+              </label>
+              <textarea
+                id={key}
+                value={baseFields[key]}
+                onChange={(e) =>
+                  setBaseFields({ ...baseFields, [key]: e.target.value })
+                }
+                required
+                rows="3"
+                className="w-full p-2 border rounded-md"
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* ---------- selección de formatos ---------- */}
+        {allBaseFieldsFilled && (
           <div className="mb-4 p-4 bg-white rounded shadow">
-            <h3 className="text-lg font-bold mb-2">Datos del Paciente</h3>
-            <p>
-              <strong>Nombre:</strong> {patientData.fullName}{" "}
-              <strong>Género:</strong> {patientData.gender}{" "}
-              <strong>Edad:</strong> {patientData.age}{" "}
-              <strong>Seguro:</strong> {patientData.insurance}{" "}
-              <strong>Dirección:</strong> {patientData.address}{" "}
-              <strong>Teléfono:</strong> {patientData.mobileNumber}{" "}
-              <strong>Email:</strong> {patientData.email}
-            </p>
+            <h3 className="text-lg font-semibold mb-2">
+              Seleccionar Formatos de Ficha Clínica
+            </h3>
+            {formatsData.map((format) => (
+              <label
+                key={format.id}
+                className="flex items-center gap-2 mb-1 cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedFormats.some((f) => f.id === format.id)}
+                  onChange={(e) =>
+                    handleFormatSelectionChange(format.id, e.target.checked)
+                  }
+                  className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                />
+                {format.name}
+              </label>
+            ))}
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
-          {/* ---------- campos base ---------- */}
-          <div className="mb-4 space-y-4 p-4 bg-white rounded shadow">
-            <h3 className="text-lg font-bold mb-2">Campos Base</h3>
-            {[
-              { key: "anamnesis", label: "Anamnesis" },
-              { key: "exploracion", label: "Exploración" },
-              { key: "diagnostico", label: "Diagnóstico" },
-            ].map(({ key, label }) => (
-              <div key={key}>
-                <label htmlFor={key} className="block mb-1 font-medium">
-                  {label}
-                </label>
-                <textarea
-                  id={key}
-                  value={baseFields[key]}
-                  onChange={(e) =>
-                    setBaseFields({ ...baseFields, [key]: e.target.value })
-                  }
-                  required
-                  rows="3"
-                  className="w-full p-2 border rounded-md"
-                />
-              </div>
-            ))}
-          </div>
+        {/* ---------- render dinámico de cada formato ---------- */}
+        {selectedFormats.map((format) => {
+          const answers = responses[format.id] || {};
+          return (
+            <div
+              key={format.id}
+              className="mb-8 p-4 border rounded-md shadow-sm bg-white"
+            >
+              <h2 className="text-xl font-bold mb-4 text-blue-700">
+                {format.name}
+              </h2>
 
-          {/* ---------- selección de formatos ---------- */}
-          {allBaseFieldsFilled && (
-            <div className="mb-4 p-4 bg-white rounded shadow">
-              <h3 className="text-lg font-semibold mb-2">
-                Seleccionar Formatos de Ficha Clínica
-              </h3>
-              {formatsData.map((format) => (
-                <label
-                  key={format.id}
-                  className="flex items-center gap-2 mb-1 cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedFormats.some((f) => f.id === format.id)}
-                    onChange={(e) =>
-                      handleFormatSelectionChange(format.id, e.target.checked)
-                    }
-                    className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  {format.name}
-                </label>
-              ))}
-            </div>
-          )}
+              {(format.sections ?? []).map((section, sIdx) => (
+                <div key={`${format.id}-section-${sIdx}`} className="mb-6">
+                  {section.section && (
+                    <h3 className="text-lg font-semibold mb-2">
+                      {section.section}
+                    </h3>
+                  )}
+                  {(section.fields ?? []).map((field) => {
+                    const {
+                      key,
+                      label,
+                      type = "text", // Default to "text" if type is undefined
+                      options = [],
+                      min = 0,
+                      max = 10,
+                      minLabel = "Min",
+                      maxLabel = "Max",
+                    } = field;
+                    const value = answers[key];
+                    const name = `${format.id}-${key}`;
+                    const idPrefix = `field-${name}`;
 
-          {/* ---------- render dinámico de cada formato ---------- */}
-          {selectedFormats.map((format) => {
-            const answers = responses[format.id] || {};
-            return (
-              <div
-                key={format.id}
-                className="mb-8 p-4 border rounded-md shadow-sm bg-white"
-              >
-                <h2 className="text-xl font-bold mb-4 text-blue-700">
-                  {format.name}
-                </h2>
-
-                {(format.sections ?? []).map((section, sIdx) => (
-                  <div key={`${format.id}-section-${sIdx}`} className="mb-6">
-                    {section.section && (
-                      <h3 className="text-lg font-semibold mb-2">
-                        {section.section}
-                      </h3>
-                    )}
-                    {(section.fields ?? []).map((field) => {
-                      const {
-                        key,
-                        label,
-                        type = "text", // Default to "text" if type is undefined
-                        options = [],
-                        min = 0,
-                        max = 10,
-                        minLabel = "Min",
-                        maxLabel = "Max",
-                      } = field;
-                      const value = answers[key];
-                      const name = `${format.id}-${key}`;
-                      const idPrefix = `field-${name}`;
-
-                      /* ---------- UI por tipo ---------- */
-                      return (
-                        <div key={idPrefix} className="mb-4">
-                          <label className="block mb-1 font-medium">{label}</label>
-
-                          {/* ----- checkbox_group ----- */}
-                          {type === "checkbox_group" && (
-                            <div className="space-y-1">
-                              {options.map((opt, idx) => (
-                                <label
-                                  key={`${idPrefix}-${idx}`}
-                                  className="flex items-center gap-2"
-                                >
-                                  <input
-                                    type="radio"
-                                    name={name}
-                                    checked={value === opt}
-                                    onChange={() =>
-                                      handleInputChange(format.id, key, opt)
-                                    }
-                                    className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                                  />
-                                  {opt}
-                                </label>
-                              ))}
-                            </div>
-                          )}
-
-                          {/* ----- evaluation_scale ----- */}
-                          {type === "evaluation_scale" && (
-                            <>
-                              <input
-                                type="range"
-                                min={min}
-                                max={max}
-                                value={value ?? min}
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    format.id,
-                                    key,
-                                    Number(e.target.value),
-                                  )
-                                }
-                                className="w-full h-2 bg-gray-200 rounded-lg cursor-pointer"
+                    /* ---------- UI por tipo ---------- */
+                    return (
+                      <div key={idPrefix} className="mb-4">
+                        <label className="block mb-1 font-medium">{label}</label>
+                        {/* ----- bodymap_select ----- */}
+                        {type === "bodymap_select" && (
+                          <div className="flex flex-col items-center">
+                            <div className="relative">
+                              <img
+                                src={field.image}
+                                alt="Mapa corporal"
+                                className="max-w-xs sm:max-w-sm md:max-w-md border rounded"
+                                style={{ cursor: "crosshair" }}
+                                onClick={(e) => {
+                                  // Obtener posición click relativa a la imagen
+                                  const rect = e.target.getBoundingClientRect();
+                                  const x = ((e.clientX - rect.left) / rect.width).toFixed(3); // 0~1 relativo
+                                  const y = ((e.clientY - rect.top) / rect.height).toFixed(3);
+                                  handleInputChange(format.id, key, { x, y }); // Guarda como objeto {x, y}
+                                }}
                               />
-                              <div className="flex justify-between text-sm mt-1 text-gray-600">
-                                <span>
-                                  {minLabel} ({min})
-                                </span>
-                                <span>
-                                  {maxLabel} ({max})
-                                </span>
-                              </div>
-                              <div className="text-center mt-1">
-                                Valor: <strong>{value ?? min}</strong>
-                              </div>
-                            </>
-                          )}
-
-                          {/* ----- image_radio ----- */}
-                          {type === "image_radio" && (
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                              {options.map((opt, idx) => (
-                                <label
-                                  key={`${idPrefix}-${idx}`}
-                                  className="cursor-pointer text-center"
-                                >
-                                  <input
-                                    type="radio"
-                                    name={name}
-                                    className="sr-only"
-                                    checked={value === opt.value}
-                                    onChange={() =>
-                                      handleInputChange(
-                                        format.id,
-                                        key,
-                                        opt.value,
-                                      )
-                                    }
-                                  />
-                                  <img
-                                    src={opt.image}
-                                    alt={opt.label}
-                                    className={`w-full h-24 object-contain border-2 rounded-md ${value === opt.value
-                                      ? "border-blue-500 ring-2 ring-blue-400"
-                                      : "border-transparent"
-                                      }`}
-                                  />
-                                  <span className="block mt-1 text-sm">
-                                    {opt.label}
-                                  </span>
-                                </label>
-                              ))}
+                              {/* Dibuja un punto donde marcó el usuario */}
+                              {value && value.x && value.y && (
+                                <span
+                                  style={{
+                                    position: "absolute",
+                                    left: `${value.x * 100}%`,
+                                    top: `${value.y * 100}%`,
+                                    transform: "translate(-50%, -50%)",
+                                    width: 16,
+                                    height: 16,
+                                    borderRadius: "50%",
+                                    background: "red",
+                                    pointerEvents: "none",
+                                    border: "2px solid white",
+                                    boxShadow: "0 0 3px rgba(0,0,0,0.4)"
+                                  }}
+                                />
+                              )}
                             </div>
-                          )}
+                            <p className="text-xs mt-2 text-gray-500">
+                              Haga click sobre la imagen para marcar la zona de dolor principal.
+                            </p>
+                            {value && value.x && value.y && (
+                              <p className="text-xs mt-1 text-green-700">
+                                Zona marcada en ({(value.x * 100).toFixed(1)}, {(value.y * 100).toFixed(1)})
+                              </p>
+                            )}
+                          </div>
+                        )}
 
-                          {/* ----- cuadro de texto para type "text" ----- */}
-                          {type === "text" && (
-                            <textarea
-                              value={value || ""}
+
+                        {/* ----- checkbox_group ----- */}
+                        {type === "checkbox_group" && (
+                          <div className="space-y-1">
+                            {options.map((opt, idx) => (
+                              <label
+                                key={`${idPrefix}-${idx}`}
+                                className="flex items-center gap-2"
+                              >
+                                <input
+                                  type="radio"
+                                  name={name}
+                                  checked={value === opt}
+                                  onChange={() =>
+                                    handleInputChange(format.id, key, opt)
+                                  }
+                                  className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                                />
+                                {opt}
+                              </label>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* ----- evaluation_scale ----- */}
+                        {type === "evaluation_scale" && (
+                          <>
+                            <input
+                              type="range"
+                              min={min}
+                              max={max}
+                              value={value ?? min}
                               onChange={(e) =>
                                 handleInputChange(
                                   format.id,
                                   key,
-                                  e.target.value,
+                                  Number(e.target.value),
                                 )
                               }
-                              required
-                              rows="3"
-                              className="w-full p-2 border rounded-md"
+                              className="w-full h-2 bg-gray-200 rounded-lg cursor-pointer"
                             />
-                          )}
-                          {/* ----- pain_scale ----- */}
-                          {type === "pain_scale" && (
-                            <div className="flex gap-x-4">
-                              {options.map((opt, idx) => (
-                                <label
-                                  key={`${idPrefix}-${idx}`}
-                                  className="flex items-center gap-2"
-                                >
-                                  <input
-                                    type="radio"
-                                    name={name}
-                                    value={opt}
-                                    checked={value === opt}
-                                    onChange={() => handleInputChange(format.id, key, opt)}
-                                    className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                                  />
-                                  {opt}
-                                </label>
-                              ))}
+                            <div className="flex justify-between text-sm mt-1 text-gray-600">
+                              <span>
+                                {minLabel} ({min})
+                              </span>
+                              <span>
+                                {maxLabel} ({max})
+                              </span>
                             </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                ))}
-              </div>
-            );
-          })}
+                            <div className="text-center mt-1">
+                              Valor: <strong>{value ?? min}</strong>
+                            </div>
+                          </>
+                        )}
 
-          {/* ---------- botón submit ---------- */}
-          {allBaseFieldsFilled && selectedFormats.length > 0 && (
-            <button
-              type="submit"
-              disabled={loading || !validateAnswers()}
-              className={`w-full p-3 rounded-md text-white ${loading || !validateAnswers()
-                ? "bg-blue-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
-                } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
-            >
-              {loading ? "Enviando..." : "Enviar Respuesta"}
-            </button>
+                        {/* ----- image_radio ----- */}
+                        {type === "image_radio" && (
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                            {options.map((opt, idx) => (
+                              <label
+                                key={`${idPrefix}-${idx}`}
+                                className="cursor-pointer text-center"
+                              >
+                                <input
+                                  type="radio"
+                                  name={name}
+                                  className="sr-only"
+                                  checked={value === opt.value}
+                                  onChange={() =>
+                                    handleInputChange(
+                                      format.id,
+                                      key,
+                                      opt.value,
+                                    )
+                                  }
+                                />
+                                <img
+                                  src={opt.image}
+                                  alt={opt.label}
+                                  className={`w-full h-24 object-contain border-2 rounded-md ${value === opt.value
+                                    ? "border-blue-500 ring-2 ring-blue-400"
+                                    : "border-transparent"
+                                    }`}
+                                />
+                                <span className="block mt-1 text-sm">
+                                  {opt.label}
+                                </span>
+                              </label>
+                            ))}
+                          </div>
+                        )}
 
-          )}
-        </form>
-      </div>
+                        {/* ----- cuadro de texto para type "text" ----- */}
+                        {type === "text" && (
+                          <textarea
+                            value={value || ""}
+                            onChange={(e) =>
+                              handleInputChange(
+                                format.id,
+                                key,
+                                e.target.value,
+                              )
+                            }
+                            required
+                            rows="3"
+                            className="w-full p-2 border rounded-md"
+                          />
+                        )}
+                        {/* ----- pain_scale ----- */}
+                        {type === "pain_scale" && (
+                          <div className="flex gap-x-4">
+                            {options.map((opt, idx) => (
+                              <label
+                                key={`${idPrefix}-${idx}`}
+                                className="flex items-center gap-2"
+                              >
+                                <input
+                                  type="radio"
+                                  name={name}
+                                  value={opt}
+                                  checked={value === opt}
+                                  onChange={() => handleInputChange(format.id, key, opt)}
+                                  className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                                />
+                                {opt}
+                              </label>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          );
+        })}
+
+        {/* ---------- botón submit ---------- */}
+        {allBaseFieldsFilled && selectedFormats.length > 0 && (
+          <button
+            type="submit"
+            disabled={loading || !validateAnswers()}
+            className={`w-full p-3 rounded-md text-white ${loading || !validateAnswers()
+              ? "bg-blue-400 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700"
+              } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
+          >
+            {loading ? "Enviando..." : "Enviar Respuesta"}
+          </button>
+
+        )}
+      </form>
+    </div>
   );
 }

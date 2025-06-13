@@ -488,6 +488,18 @@
         ]
       },
       {
+        "section": "Zona de dolor principal",
+        "fields": [
+          {
+            "key": "zona_dolor_principal",
+            "label": "Marque su principal zona de dolor en la siguiente imagen",
+            "type": "bodymap_select",
+            "image": "/images/cuerpo.png",
+            "required": true
+          }
+        ]
+      },
+      {
         "section": "Dolor neuropático",
         "fields": [
           {
@@ -583,20 +595,44 @@
           }
         ],
         "cant": [
-          {"cant_no": 0},
-          {"cant_muy_ligera": 0},
-          {"cant_ligera": 0},
-          {"cant_moderada": 0},
-          {"cant_intensa": 0},
-          {"cant_muy_intensa": 0}
+          {
+            "cant_no": 0
+          },
+          {
+            "cant_muy_ligera": 0
+          },
+          {
+            "cant_ligera": 0
+          },
+          {
+            "cant_moderada": 0
+          },
+          {
+            "cant_intensa": 0
+          },
+          {
+            "cant_muy_intensa": 0
+          }
         ],
         "ponderacion": [
-          {"ponderacion_no": 0},
-          {"ponderacion_muy_ligera": 1},
-          {"ponderacion_ligera": 2},
-          {"ponderacion_moderada": 3},
-          {"ponderacion_intensa": 4},
-          {"ponderacion_muy_intensa": 5}
+          {
+            "ponderacion_no": 0
+          },
+          {
+            "ponderacion_muy_ligera": 1
+          },
+          {
+            "ponderacion_ligera": 2
+          },
+          {
+            "ponderacion_moderada": 3
+          },
+          {
+            "ponderacion_intensa": 4
+          },
+          {
+            "ponderacion_muy_intensa": 5
+          }
         ]
       }
     ]

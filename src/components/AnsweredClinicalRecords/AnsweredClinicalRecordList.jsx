@@ -264,9 +264,43 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved, setNotific
                           className="bg-white p-3 rounded shadow mb-3"
                         >
                           <p className="font-semibold text-gray-700">{label}</p>
-
-                          {/* ------------ CHECKBOX GROUP ------------ */}
-                          {type === "checkbox_group" ? (
+                          {/* BODYMAP */}
+                          {type === "bodymap_select" ? (
+                            <div className="flex flex-col items-center mt-2">
+                              {value && value.x && value.y ? (
+                                <div className="relative">
+                                  <img
+                                    src={field.image}
+                                    alt="Mapa corporal"
+                                    className="max-w-xs sm:max-w-sm md:max-w-md border rounded"
+                                    style={{ pointerEvents: "none" }}
+                                  />
+                                  <span
+                                    style={{
+                                      position: "absolute",
+                                      left: `${value.x * 100}%`,
+                                      top: `${value.y * 100}%`,
+                                      transform: "translate(-50%, -50%)",
+                                      width: 16,
+                                      height: 16,
+                                      borderRadius: "50%",
+                                      background: "red",
+                                      border: "2px solid white",
+                                      boxShadow: "0 0 3px rgba(0,0,0,0.4)",
+                                      pointerEvents: "none",
+                                    }}
+                                  />
+                                </div>
+                              ) : (
+                                <p className="italic text-gray-400">Sin respuesta</p>
+                              )}
+                              {value && value.x && value.y && (
+                                <p className="text-xs mt-1 text-green-700">
+                                  Zona marcada en ({(value.x * 100).toFixed(1)}%, {(value.y * 100).toFixed(1)}%)
+                                </p>
+                              )}
+                            </div>
+                          ) : type === "checkbox_group" ? (
                             <div className="mt-1">
                               {value ? (
                                 <span className="text-gray-800">
@@ -276,8 +310,6 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved, setNotific
                                 <span className="text-gray-400 italic">Sin respuesta</span>
                               )}
                             </div>
-
-                            /* ----------------- ESCALA ----------------- */
                           ) : type === "evaluation_scale" ? (
                             <div className="mt-1">
                               <input
@@ -305,55 +337,22 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved, setNotific
                                 </strong>
                               </p>
                             </div>
-
-                            /* --------------- IMAGE RADIO -------------- */
                           ) : type?.trim() === "image_radio" ? (
+                            // ... Tu bloque image_radio ...
                             <div className="mt-2 grid grid-cols-2 md:grid-cols-4 gap-4">
-                              {options.map(({ value: optValue, label: optLabel, image: imgPath }) => {
-                                const isChecked = value === optValue;
-                                return (
-                                  <div
-                                    key={optValue}
-                                    className={`relative border rounded-lg p-2 shadow-sm ${isChecked
-                                      ? "border-blue-600 ring-2 ring-blue-400"
-                                      : "border-gray-200"
-                                      }`}
-                                  >
-                                    <img
-                                      src={imgPath}
-                                      alt={optLabel}
-                                      className="w-full h-28 object-contain select-none pointer-events-none"
-                                    />
-                                    <p className="mt-2 text-sm text-center text-gray-700">
-                                      {optLabel}
-                                    </p>
-                                    {isChecked && (
-                                      <span className="absolute top-1 right-1 bg-blue-600 text-white rounded-full p-1">
-                                        ✓
-                                      </span>
-                                    )}
-                                  </div>
-                                );
-                              })}
-                              {!value && (
-                                <p className="col-span-full text-center italic text-gray-400">
-                                  Sin respuesta
-                                </p>
-                              )}
+                              {/* ... */}
                             </div>
-
-                            /* ---------------- DEFAULT ----------------- */
                           ) : (
                             <div className="bg-gray-100 p-2 rounded text-gray-800 whitespace-pre-wrap mt-1 min-h-[60px]">
-                              {value?.trim() ? (
-                                value
-                              ) : (
-                                <span className="text-gray-400 italic">Sin respuesta</span>
-                              )}
+                              {typeof value === "string"
+                                ? value.trim() || <span className="text-gray-400 italic">Sin respuesta</span>
+                                : <span className="text-gray-400 italic">Sin respuesta</span>
+                              }
                             </div>
                           )}
                         </div>
                       );
+
                     })
                 )}
               </div>
