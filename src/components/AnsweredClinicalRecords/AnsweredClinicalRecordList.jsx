@@ -344,9 +344,9 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved, setNotific
                             <div className="mt-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                               {options.map((opt) => (
                                 <div
-                                  key={`${formatId}-${key}-${opt.value}`}
+                                  key={`${formatId}-${key}-${opt.value}`} // La key puede seguir usando opt.value si es único y estable
                                   className={`text-center p-2 border-2 rounded-md ${
-                                    value === opt.value
+                                    value === opt.image 
                                       ? "border-blue-500 ring-2 ring-blue-300 bg-blue-50"
                                       : "border-gray-200 bg-gray-50"
                                   }`}
@@ -355,13 +355,13 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved, setNotific
                                     src={opt.image}
                                     alt={opt.label}
                                     className={`w-full h-24 object-contain rounded-md mb-1 ${
-                                      value !== opt.value ? "opacity-50" : ""
+                                      value !== opt.image ? "opacity-50" : "" 
                                     }`}
                                   />
-                                  <span className={`block text-xs ${ value === opt.value ? "font-semibold text-blue-700" : "text-gray-600"}`}>
+                                  <span className={`block text-xs ${ value === opt.image ? "font-semibold text-blue-700" : "text-gray-600"}`}> {/* MODIFICADO: Comparar con opt.image */}
                                     {opt.label}
                                   </span>
-                                  {value === opt.value && (
+                                  {value === opt.image && ( // MODIFICADO: Comparar con opt.image
                                     <span className="block text-xxs text-green-600 font-bold">(Seleccionado)</span>
                                   )}
                                 </div>
@@ -432,9 +432,7 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved, setNotific
     );
   };
 
-  /* -------------------------------------------------- */
-  /* Columnas de la tabla                                */
-  /* -------------------------------------------------- */
+
   const columns = [
     { key: "clinicalRecordNumber", label: "N° Ficha" },
     {
@@ -514,9 +512,7 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved, setNotific
     },
   ];
 
-  /* -------------------------------------------------- */
-  /* Render principal                                    */
-  /* -------------------------------------------------- */
+
   return (
     <div className="bg-white p-4 md:p-6 rounded-lg shadow-lg mt-6">
       <h2 className="text-2xl font-semibold mb-6 text-gray-700">
@@ -586,7 +582,7 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved, setNotific
         )}
       </div>
 
-      {/* ---------- Tabla + Detalle ---------- */}
+      {/* ---------- Tabla de Registros ---------- */}
       {loading ? (
         <div className="text-center py-12">
           <p className="text-lg text-gray-500">Cargando respuestas...</p>

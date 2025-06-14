@@ -11,7 +11,7 @@ export default function ClinicalRecordList({ onResponseSubmitted, setNotificatio
   const [clinicalRecords, setClinicalRecords] = useState([]);
   const [answeredRecords, setAnsweredRecords] = useState([]);
   const [selectedRecord, setSelectedRecord] = useState(null);
-  const [patientName, setPatientName] = useState(""); // Nuevo estado
+  const [patientName, setPatientName] = useState(""); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 

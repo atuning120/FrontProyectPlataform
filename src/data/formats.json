@@ -465,22 +465,22 @@
               {
                 "value": "constante_fluctuaciones",
                 "label": "Dolor constante con ligeras fluctuaciones",
-                "image": "/images/d1.png"
+                "image": "https://res.cloudinary.com/diywi2vni/image/upload/v1749923766/d1_jr8znn.png"
               },
               {
                 "value": "constante_ataques",
                 "label": "Dolor constante con ataques de dolor",
-                "image": "/images/d2.png"
+                "image": "https://res.cloudinary.com/diywi2vni/image/upload/v1749923766/d2_m4ujso.png"
               },
               {
                 "value": "ataques_sin_intervalo",
                 "label": "Ataques de dolor sin dolor entre los ataques",
-                "image": "/images/d3.png"
+                "image": "https://res.cloudinary.com/diywi2vni/image/upload/v1749923766/d3_wcmysx.png"
               },
               {
                 "value": "ataques_frecuentes",
                 "label": "Ataques de dolor frecuentes con dolor entre los ataques",
-                "image": "/images/d4.png"
+                "image": "https://res.cloudinary.com/diywi2vni/image/upload/v1749923766/d4_dgosxl.png"
               }
             ],
             "required": true
@@ -494,7 +494,7 @@
             "key": "zona_dolor_principal",
             "label": "Marque su principal zona de dolor en la siguiente imagen",
             "type": "bodymap_select",
-            "image": "/images/cuerpo.png",
+            "image": "https://res.cloudinary.com/diywi2vni/image/upload/v1749923766/cuerpo_s58hn8.png",
             "required": true
           }
         ]

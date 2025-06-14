@@ -354,19 +354,19 @@ export default function CreateAnsweredClinicalRecords({
                                   type="radio"
                                   name={name}
                                   className="sr-only"
-                                  checked={value === opt.value}
+                                  checked={value === opt.image} 
                                   onChange={() =>
                                     handleInputChange(
                                       format.id,
                                       key,
-                                      opt.value,
+                                      opt.image, 
                                     )
                                   }
                                 />
                                 <img
                                   src={opt.image}
                                   alt={opt.label}
-                                  className={`w-full h-24 object-contain border-2 rounded-md ${value === opt.value
+                                  className={`w-full h-24 object-contain border-2 rounded-md ${value === opt.image // MODIFICADO: Comparar con opt.image para el estilo
                                     ? "border-blue-500 ring-2 ring-blue-400"
                                     : "border-transparent"
                                     }`}
