@@ -341,9 +341,34 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved, setNotific
                               </p>
                             </div>
                           ) : type?.trim() === "image_radio" ? (
-                            // ... Tu bloque image_radio ...
-                            <div className="mt-2 grid grid-cols-2 md:grid-cols-4 gap-4">
-                              {/* ... */}
+                            <div className="mt-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                              {options.map((opt) => (
+                                <div
+                                  key={`${formatId}-${key}-${opt.value}`}
+                                  className={`text-center p-2 border-2 rounded-md ${
+                                    value === opt.value
+                                      ? "border-blue-500 ring-2 ring-blue-300 bg-blue-50"
+                                      : "border-gray-200 bg-gray-50"
+                                  }`}
+                                >
+                                  <img
+                                    src={opt.image}
+                                    alt={opt.label}
+                                    className={`w-full h-24 object-contain rounded-md mb-1 ${
+                                      value !== opt.value ? "opacity-50" : ""
+                                    }`}
+                                  />
+                                  <span className={`block text-xs ${ value === opt.value ? "font-semibold text-blue-700" : "text-gray-600"}`}>
+                                    {opt.label}
+                                  </span>
+                                  {value === opt.value && (
+                                    <span className="block text-xxs text-green-600 font-bold">(Seleccionado)</span>
+                                  )}
+                                </div>
+                              ))}
+                              {!value && options.length > 0 && (
+                                <p className="col-span-full text-gray-400 italic">Sin respuesta seleccionada.</p>
+                              )}
                             </div>
                           ) : (
                             <div className="bg-gray-100 p-2 rounded text-gray-800 whitespace-pre-wrap mt-1 min-h-[60px]">
