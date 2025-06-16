@@ -33,33 +33,37 @@
         "fields": [
           {
             "key": "peso_actual",
-            "label": "Peso actual",
-            "type": "text"
+            "label": "Peso actual (kg)",
+            "type": "number"
           },
           {
             "key": "talla",
-            "label": "Talla",
-            "type": "text"
+            "label": "Talla (m)",
+            "type": "number"
           },
           {
             "key": "IMC",
             "label": "Índice de Masa Corporal (IMC)",
-            "type": "text"
+            "type": "calculated",
+            "dependsOn": [
+              "peso_actual",
+              "talla"
+            ]
           },
           {
             "key": "circunferencia_cintura",
-            "label": "Circunferencia de cintura desde los 5 años",
-            "type": "text"
+            "label": "Circunferencia de cintura desde los 5 años (cm)",
+            "type": "number"
           },
           {
             "key": "circunferencia_craneana",
-            "label": "Circunferencia craneana hasta los 2 años",
-            "type": "text"
+            "label": "Circunferencia craneana hasta los 2 años (cm)",
+            "type": "number"
           },
           {
             "key": "pliegues_cutaneos",
-            "label": "Pliegues cutáneos",
-            "type": "text"
+            "label": "Pliegues cutáneos (mm)",
+            "type": "number"
           },
           {
             "key": "composicion_corporal",

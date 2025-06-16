@@ -345,20 +345,18 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved, setNotific
                               {options.map((opt) => (
                                 <div
                                   key={`${formatId}-${key}-${opt.value}`} // La key puede seguir usando opt.value si es único y estable
-                                  className={`text-center p-2 border-2 rounded-md ${
-                                    value === opt.image 
+                                  className={`text-center p-2 border-2 rounded-md ${value === opt.image
                                       ? "border-blue-500 ring-2 ring-blue-300 bg-blue-50"
                                       : "border-gray-200 bg-gray-50"
-                                  }`}
+                                    }`}
                                 >
                                   <img
                                     src={opt.image}
                                     alt={opt.label}
-                                    className={`w-full h-24 object-contain rounded-md mb-1 ${
-                                      value !== opt.image ? "opacity-50" : "" 
-                                    }`}
+                                    className={`w-full h-24 object-contain rounded-md mb-1 ${value !== opt.image ? "opacity-50" : ""
+                                      }`}
                                   />
-                                  <span className={`block text-xs ${ value === opt.image ? "font-semibold text-blue-700" : "text-gray-600"}`}> {/* MODIFICADO: Comparar con opt.image */}
+                                  <span className={`block text-xs ${value === opt.image ? "font-semibold text-blue-700" : "text-gray-600"}`}> {/* MODIFICADO: Comparar con opt.image */}
                                     {opt.label}
                                   </span>
                                   {value === opt.image && ( // MODIFICADO: Comparar con opt.image
@@ -369,6 +367,18 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved, setNotific
                               {!value && options.length > 0 && (
                                 <p className="col-span-full text-gray-400 italic">Sin respuesta seleccionada.</p>
                               )}
+                            </div>
+                          ) : type === "number" ? (
+                            <div className="bg-gray-100 p-2 rounded text-gray-800 mt-1 min-h-[40px]">
+                              {value !== undefined && value !== null && value !== ""
+                                ? value
+                                : <span className="text-gray-400 italic">Sin respuesta</span>}
+                            </div>
+                          ) : type === "calculated" ? (
+                            <div className="bg-gray-100 p-2 rounded text-gray-800 mt-1 min-h-[40px]">
+                              {value !== undefined && value !== null && value !== ""
+                                ? value
+                                : <span className="text-gray-400 italic">Sin respuesta</span>}
                             </div>
                           ) : (
                             <div className="bg-gray-100 p-2 rounded text-gray-800 whitespace-pre-wrap mt-1 min-h-[60px]">

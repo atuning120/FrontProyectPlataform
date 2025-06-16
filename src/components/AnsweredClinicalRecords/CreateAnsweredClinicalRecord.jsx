@@ -83,9 +83,14 @@ export default function CreateAnsweredClinicalRecords({
             case "evaluation_scale":
               if (value === null || value === undefined) return false;
               break;
+            case "number":
+            case "calculated":
+              if (value === null || value === undefined || value === "") return false;
+              break;
             default:
               if (!value || String(value).trim() === "") return false;
           }
+
         }
       }
     }
@@ -240,6 +245,41 @@ export default function CreateAnsweredClinicalRecords({
                     return (
                       <div key={idPrefix} className="mb-4">
                         <label className="block mb-1 font-medium">{label}</label>
+                        {type === "calculated" && key === "IMC" && (
+                          (() => {
+                            const peso = parseFloat(answers["peso_actual"]);
+                            const talla = parseFloat(answers["talla"]);
+                            const imc = peso && talla ? (peso / (talla * talla)).toFixed(2) : "";
+
+                            // Guardar automáticamente el IMC si cambia
+                            if (imc && value !== imc) {
+                              handleInputChange(format.id, key, imc);
+                            }
+
+                            return (
+                              <input
+                                type="text"
+                                value={imc}
+                                readOnly
+                                className="w-full p-2 border rounded-md bg-gray-100 text-gray-700"
+                              />
+                            );
+                          })()
+                        )}
+
+
+                        {type === "number" && (
+                          <input
+                            type="number"
+                            value={value ?? ""}
+                            onChange={(e) =>
+                              handleInputChange(format.id, key, e.target.value === "" ? "" : parseFloat(e.target.value))
+                            }
+                            required
+                            className="w-full p-2 border rounded-md"
+                          />
+                        )}
+
                         {/* ----- bodymap_select ----- */}
                         {type === "bodymap_select" && (
                           <div className="flex flex-col items-center">
@@ -354,12 +394,12 @@ export default function CreateAnsweredClinicalRecords({
                                   type="radio"
                                   name={name}
                                   className="sr-only"
-                                  checked={value === opt.image} 
+                                  checked={value === opt.image}
                                   onChange={() =>
                                     handleInputChange(
                                       format.id,
                                       key,
-                                      opt.image, 
+                                      opt.image,
                                     )
                                   }
                                 />
