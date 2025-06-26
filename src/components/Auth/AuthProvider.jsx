@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { auth, onAuthStateChanged } from "../../services/firebase";
+import { jwtDecode } from "jwt-decode"; 
 
 export const AuthContext = createContext();
 
@@ -9,54 +10,61 @@ export function AuthProvider({ children }) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const { email } = user;
-        let role = "alumno"; // Rol por defecto
+    // Esta función se ejecutará cuando el estado de autenticación de Firebase cambie
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        //  Si el usuario inicia sesión en Firebase, obtenemos su ID Token.
+        const idToken = await firebaseUser.getIdToken();
 
-        // ✅ ADMIN
-        if (email === "vergamacarena@gmail.com") {
-          role = "admin";
-        }
+        try {
+          // Enviamos el ID Token a nuestro backend.
+          const response = await fetch("http://localhost:5000/api/auth/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ idToken }),
+          });
 
-        // ✅ PROFESOR
-        else if (
-          [
-            "benjagilberto44@gmail.com",
-            "silasglauco@gmail.com",
-            "cristian.ignacio.nunez@gmail.com"
-          ].includes(email) ||
-          email.endsWith("@ucn.cl") ||
-          email.endsWith("@ce.ucn.cl")
-        ) {
-          role = "profesor";
-        }
+          if (!response.ok) {
+            // el backend rechaza el token, lanzamos un error.
+            const errorText = await response.text();
+            throw new Error(errorText || "Acceso solo para correos institucionales de alumnos UCN.");
+          }
 
-        // ❌ NO PERMITIDO
-        else if (!email.endsWith("@alumnos.ucn.cl")) {
+          // El backend nos devuelve nuestro propio token (JWT).
+          const { token } = await response.json();
+
+          // Guardamos nuestro token en el localStorage para persistir la sesión.
+          localStorage.setItem("appToken", token);
+
+          // Decodificamos el token para obtener los datos del usuario (incluido el rol).
+          const decodedUser = jwtDecode(token);
+
+          // Actualizamos el estado del usuario en la aplicación.
+          setUser(decodedUser);
+          setError(null);
+        } catch (err) {
+          console.error("Error de autenticación con el backend:", err);
+          setError(err.message);
           setUser(null);
-          setError("Acceso solo para correos institucionales de la UCN");
-          setLoading(false);
-          return;
+          localStorage.removeItem("appToken"); // Limpiamos en caso de error
         }
-
-        // ✅ Usuario permitido
-        setUser({ ...user, role });
-        setError(null);
       } else {
-        // Usuario deslogueado
+        //  Si el usuario cierra sesión en Firebase, limpiamos todo.
         setUser(null);
-        setError(null);
+        localStorage.removeItem("appToken");
       }
-
       setLoading(false);
     });
 
-    return unsubscribe;
+    // Limpiamos la suscripción al desmontar el componente
+    return () => unsubscribe();
   }, []);
 
+  // El resto del componente sigue igual
   return (
-    <AuthContext.Provider value={{ user, loading, error }}>
+    <AuthContext.Provider value={{ user, loading, error, setUser }}>
       {children}
     </AuthContext.Provider>
   );

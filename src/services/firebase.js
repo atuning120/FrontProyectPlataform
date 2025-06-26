@@ -7,14 +7,14 @@ import {
   onAuthStateChanged 
 } from "firebase/auth";
 
-// Configuración de Firebase (NO exponer apiKey en producción)
+// Configuración de Firebase leída desde variables de entorno
 const firebaseConfig = {
-  apiKey: "AIzaSyB1ZxNjQIW_QhgzuSXRdhdrleLq8y6AOY8",
-  authDomain: "proy-intr.firebaseapp.com",
-  projectId: "proy-intr",
-  storageBucket: "proy-intr.appspot.com",
-  messagingSenderId: "776192749489",
-  appId: "1:776192749489:web:ac081ee6cecd93cd529790"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 // Inicializar Firebase
