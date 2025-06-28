@@ -39,7 +39,7 @@ export default function CreateAnsweredClinicalRecords({
     const fetchPatientData = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:5000/api/patients/${patientRun}`,
+          `${import.meta.env.VITE_API}/patients/${patientRun}`,
         );
         setPatientData(data);
         onPatientLoaded?.(data.fullName);
@@ -112,13 +112,22 @@ export default function CreateAnsweredClinicalRecords({
     try {
       const duration = formatDuration(Date.now() - startTime);
 
-      await axios.post("http://localhost:5000/api/answered-clinical-records", {
+      const filteredResponses = Object.keys(responses)
+        .filter((formatId) =>
+          selectedFormats.some((f) => String(f.id) === formatId),
+        )
+        .reduce((obj, key) => {
+          obj[key] = responses[key];
+          return obj;
+        }, {});
+
+      await axios.post(`${import.meta.env.VITE_API}/answered-clinical-records`, {
         clinicalRecordNumber,
         clinicalRecordName: selectedFormats.map((f) => f.name).join(", "),
         email: user.email,
         answer: {
           baseFields,
-          formatSpecificAnswers: responses,
+          formatSpecificAnswers: filteredResponses,
         },
         formatIds: selectedFormats.map((f) => f.id),
         responseTime: duration,

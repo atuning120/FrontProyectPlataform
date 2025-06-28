@@ -14,7 +14,7 @@ export default function FindAnsweredClinicalRecordByEmail({ userEmail, onAnswere
       setError(null);
 
       try {
-        const { data } = await axios.get(`http://localhost:5000/api/answered-clinical-records/${userEmail}`);
+        const { data } = await axios.get(`${import.meta.env.VITE_API}/answered-clinical-records/${userEmail}`);
         setAnsweredRecords(data);
         onAnswered(data);
       } catch (err) {

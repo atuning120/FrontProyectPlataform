@@ -19,8 +19,8 @@ export default function ClinicalRecordList({ onResponseSubmitted, setNotificatio
     const fetchData = async () => {
       try {
         const [recordsResponse, answeredResponse] = await Promise.all([
-          axios.get("http://localhost:5000/api/clinical-records"),
-          axios.get(`http://localhost:5000/api/answered-clinical-records/${user.email}`)
+          axios.get(`${import.meta.env.VITE_API}/clinical-records`),
+          axios.get(`${import.meta.env.VITE_API}/answered-clinical-records/${user.email}`)
         ]);
 
         setClinicalRecords(recordsResponse.data);

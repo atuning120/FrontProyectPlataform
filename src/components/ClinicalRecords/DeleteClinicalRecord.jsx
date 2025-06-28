@@ -8,7 +8,7 @@ export default function DeleteClinicalRecord({ recordId, onDelete, setNotificati
   const eliminarDefinitivo = async () => {
     setLoading(true);
     try {
-      const response = await axios.delete(`http://localhost:5000/api/clinical-records/${recordId}`);
+      const response = await axios.delete(`${import.meta.env.VITE_API}/clinical-records/${recordId}`);
       setNotification?.({
         message: response.data.message || "Ficha clínica eliminada exitosamente.",
         type: "success"

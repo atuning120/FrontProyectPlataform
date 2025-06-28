@@ -10,7 +10,7 @@ export default function DeletePatient({ patientId, onDelete, setNotification }) 
     setLoading(true);
 
     try {
-      const response = await axios.delete(`http://localhost:5000/api/patients/${patientId}`);
+      const response = await axios.delete(`${import.meta.env.VITE_API}/patients/${patientId}`);
       onDelete(patientId);
       //alert(response.data.message);
       setNotification?.({ message: response.data.message, type: "success" });

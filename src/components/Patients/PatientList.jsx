@@ -12,7 +12,7 @@ export default function PatientList({setNotification}) {
   useEffect(() => {
     const fetchPatients = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/patients");
+        const response = await axios.get(`${import.meta.env.VITE_API}/patients`);
         setPatients(response.data);
       } catch (error) {
         console.error("Error al obtener pacientes:", error);

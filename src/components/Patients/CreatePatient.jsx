@@ -41,7 +41,7 @@ export default function CreatePatientForm({ onClose, setNotification}) {
         delete patientData.email;
       }
 
-      await axios.post("http://localhost:5000/api/patients", patientData);
+      await axios.post(`${import.meta.env.VITE_API}/patients`, patientData);
       setNotification?.({ message: "Paciente guardado con éxito!", type: "success" });
       onClose();
     } catch (error) {

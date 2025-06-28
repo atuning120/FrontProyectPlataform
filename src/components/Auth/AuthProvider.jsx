@@ -18,7 +18,7 @@ export function AuthProvider({ children }) {
 
         try {
           // Enviamos el ID Token a nuestro backend.
-          const response = await fetch("http://localhost:5000/api/auth/login", {
+          const response = await fetch(`${import.meta.env.VITE_API}/auth/login`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

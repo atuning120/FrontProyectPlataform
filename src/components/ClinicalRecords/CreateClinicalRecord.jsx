@@ -26,7 +26,7 @@ export default function CreateClinicalRecord({ onClose, setNotification }) {
     const formattedRun = `${formData.patientRunDigits}-${formData.patientRunVerifier}`;
 
     try {
-      await axios.post("http://localhost:5000/api/clinical-records", {
+      await axios.post(`${import.meta.env.VITE_API}/clinical-records`, {
         ...formData,
         patientRun: formattedRun,
       });

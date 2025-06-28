@@ -31,7 +31,7 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved, setNotific
       setError("");
       try {
         const { data: records } = await axios.get(
-          "http://localhost:5000/api/answered-clinical-records"
+          `${import.meta.env.VITE_API}/answered-clinical-records`
         );
 
         let filtered = records
@@ -122,7 +122,7 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved, setNotific
     setError("");
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/answered-clinical-records/${recordId}`,
+        `${import.meta.env.VITE_API}/answered-clinical-records/${recordId}`,
         {
           feedback: feedbackState,
           teacherEmail: user?.email,

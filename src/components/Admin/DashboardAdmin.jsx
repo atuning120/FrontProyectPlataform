@@ -23,9 +23,9 @@ export default function DashboardAdmin() {
   const fetchStatsAndRecords = async () => {
     try {
       const [patients, clinicals, answered] = await Promise.all([
-        axios.get("http://localhost:5000/api/patients"),
-        axios.get("http://localhost:5000/api/clinical-records"),
-        axios.get("http://localhost:5000/api/answered-clinical-records"),
+        axios.get(`${import.meta.env.VITE_API}/patients`),
+        axios.get(`${import.meta.env.VITE_API}/clinical-records`),
+        axios.get(`${import.meta.env.VITE_API}/answered-clinical-records`),
       ]);
 
       setStats({
