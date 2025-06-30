@@ -28,11 +28,18 @@ const Footer = () => {
     </div>
     <div className="flex flex-col gap-4 flex-1">
         <p className='font-semibold uppercase tracking-tighter'>
-            Politicas
+            Descarga la APP
         </p>
         <nav className="flex flex-col gap-2 text-xs font-medium">
-            <div className='text-slate-300 hover:text-white'>Politicas de privacidad</div>
-            <div className='text-slate-300 hover:text-white'>Terminos de uso</div>
+            <div className='text-slate-300'>Compatible solo con android</div>
+            <a 
+                href="https://www.mediafire.com/file/q3d85ibyctaycx2/app-release.apk/file" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className='text-slate-300 hover:text-white cursor-pointer'
+            >
+                DESCARGA AQUÍ
+            </a>
         </nav>
     </div>
     <div className="flex flex-col gap-4 flex-1">
