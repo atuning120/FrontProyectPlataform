@@ -10,7 +10,7 @@ import AnsweredClinicalRecordList from "../components/AnsweredClinicalRecords/An
 import Footer from "../components/Footer";
 import { useTeacherView } from "../context/TeacherViewContext";
 import Notification from "../components/Notification";
-import ConfirmDialog from "../components/confirmDialog";
+import ConfirmDialog from "../components/ConfirmDialog";
 
 export default function TeacherPage() {
   const { user } = useContext(AuthContext);
