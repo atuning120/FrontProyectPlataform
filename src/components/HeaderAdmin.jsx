@@ -16,9 +16,14 @@ import { useAdminView } from "../context/AdminViewContext";
 import { useState } from "react";
 
 export default function HeaderAdmin() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+   const defaultAvatar = "https://ui-avatars.com/api/?name=Usuario&background=0D8ABC&color=fff";
+
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   const { user } = useContext(AuthContext);
+  const avatarSrc = !imgError && user?.photoURL ? user.photoURL : defaultAvatar;
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const {
     setShowDashboard,
     setShowPatientList,
@@ -86,13 +91,29 @@ export default function HeaderAdmin() {
         <NavbarContent as="div" justify="end">
           <Dropdown placement="bottom-end">
             <DropdownTrigger className="flex gap-4 items-center">
-              <img
-                src={user?.photoURL}
-                alt="Foto de usuario"
-                className="w-16 h-16 rounded-full border-2 border-white/40 object-cover hover:ring-2 hover:ring-white/50 transition"
-              />
+              <div className="relative">
+                {!imgLoaded && (
+                  <div className="w-16 h-16 flex items-center justify-center rounded-full bg-gray-200 animate-pulse border-2 border-white/40 absolute top-0 left-0 z-10">
+                    {/* Spinner simple */}
+                    <svg className="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                    </svg>
+                  </div>
+                )}
+                <img
+                  src={avatarSrc}
+                  alt="Foto de usuario"
+                  className={`w-16 h-16 rounded-full border-2 border-white/40 object-cover hover:ring-2 hover:ring-white/50 transition ${imgLoaded ? "block" : "hidden"}`}
+                  onLoad={() => setImgLoaded(true)}
+                  onError={e => {
+                    setImgError(true);
+                    setImgLoaded(true); // Quita loader si falla
+                  }}
+                  style={{ minWidth: 64, minHeight: 64 }}
+                />
+              </div>
             </DropdownTrigger>
-
             <DropdownMenu
               aria-label="Profile Actions"
               variant="flat"
@@ -100,16 +121,16 @@ export default function HeaderAdmin() {
             >
               <DropdownItem
                 key="profile"
-                textValue="Perfil de usuario"
+                textValue={user?.displayName || "Usuario"}
                 className="flex flex-col items-start gap-0 px-0 py-1 cursor-default"
               >
                 <p className="text-sm text-white/80">Bienvenido,</p>
                 <p className="text-base font-semibold text-white">{user?.displayName}</p>
                 <p className="text-sm text-white/70">{user?.email}</p>
-                <p className="text-xs text-white/60 italic">Rol: Administrador</p>
+                <p className="text-xs text-white/60 italic">Rol: Profesor</p>
               </DropdownItem>
 
-              <DropdownItem key="logout" className="px-0 py-1" textValue="Cerrar sesión">
+              <DropdownItem key="logout" className="px-0 py-1" textValue="Cerrar sesion">
                 <button
                   onClick={logout}
                   className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm transition"
