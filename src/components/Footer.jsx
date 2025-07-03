@@ -33,7 +33,7 @@ const Footer = () => {
         <nav className="flex flex-col gap-2 text-xs font-medium">
             <div className='text-slate-300'>Compatible solo con android</div>
             <a 
-                href="https://download946.mediafire.com/es5o96dtd4rgxxMLTQjGIFZoxZHqSEB7sVjWf-yPFZRUSvjuclJDw5uIAxKDggU1WcLjmsc67CrPkPySQ8pK9ohamMrtyZZng3cmuTAko_QUeztrYVU16VX0Zrn9Y2WnmGUBT_TujYLDVX0QtjRL0zQD9bTB86fljrAK8aGkubzO/q3d85ibyctaycx2/app-release.apk" 
+                href="https://www.mediafire.com/file/qdhzws3qjh8t4qf/Fisim.apk/file" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className='text-slate-300 hover:text-white cursor-pointer'
