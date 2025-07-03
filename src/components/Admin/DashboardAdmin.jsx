@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Notification from "../Notification";
-import ConfirmDialog from "../confirmDialog";
+import ConfirmDialog from "../ConfirmDialog";
 
 export default function DashboardAdmin() {
   const [stats, setStats] = useState({
