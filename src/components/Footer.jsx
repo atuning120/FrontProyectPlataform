@@ -13,13 +13,13 @@ const Footer = () => {
             Contacto
         </p>
         <p className="text-xs font-medium">
-            silasglauco@gmail.com
+            silas.vieira@alumnos.ucn.cl
         </p>
          <p className="text-xs font-medium">
-            cristian.ignacio.nunez@gmail.com
+            cristian.nunez@alumnos.ucn.cl
         </p>
          <p className="text-xs font-medium">
-            benjagilberto44@gmail.com
+            benja.gilberto@alumnos.ucn.cl
         </p>
     </div>
     <div className="flex flex-col gap-4 flex-1">
