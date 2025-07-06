@@ -18,9 +18,9 @@ export default function PatientList({setNotification}) {
         console.error("Error al obtener pacientes:", error);
         
         if (error.response?.data?.message) {
-          alert(error.response.data.message); // 🔹 Usa el mensaje del backend si existe
+          alert(error.response.data.message); //  Usa el mensaje del backend si existe
         } else {
-          alert("Error de conexión con el servidor."); // 🔹 Si el backend está caído
+          alert("Error de conexión con el servidor."); //  Si el backend está caído
         }
       } finally {
         setLoading(false);
@@ -50,7 +50,7 @@ export default function PatientList({setNotification}) {
           { key: "address", label: "Dirección" },
           { key: "mobileNumber", label: "Teléfono" },
           { key: "email", label: "Correo" },
-          user.role === "profesor" && {
+          (user.role === "profesor" || user.role === "admin") && {
             key: "actions",
             label: "Acciones",
             render: (row) => (

@@ -18,7 +18,7 @@ export default function DashboardAdmin() {
     message: "",
     onConfirm: () => { },
   });
-
+  const [selectedRecords, setSelectedRecords] = useState([]);
 
   const fetchStatsAndRecords = async () => {
     try {
@@ -35,6 +35,7 @@ export default function DashboardAdmin() {
       });
 
       setAnsweredRecords(answered.data);
+      setSelectedRecords([]); // Limpiar selección al recargar
     } catch (error) {
       console.error("Error al obtener datos:", error);
       setError("No se pudieron cargar las estadísticas.");
@@ -57,28 +58,48 @@ export default function DashboardAdmin() {
     fetchStatsAndRecords();
   }, []);
 
-  const handleDelete = (id) => {
-    pedirConfirmacion(
-      "¿Estás seguro de que quieres eliminar esta respuesta?",
-      async () => {
-        try {
-          await axios.delete(`http://localhost:5000/api/answered-clinical-records/${id}`);
-          setNotification({
-            message: "Respuesta eliminada correctamente.",
-            type: "success"
-          });
-          fetchStatsAndRecords();
-        } catch (err) {
-          console.error("Error al eliminar:", err);
-          setNotification({
-            message: "Hubo un error al eliminar la respuesta.",
-            type: "error"
-          });
-        }
+  const handleDelete = (ids) => {
+    const message = Array.isArray(ids)
+      ? `¿Estás seguro de que quieres eliminar ${ids.length} respuestas seleccionadas?`
+      : "¿Estás seguro de que quieres eliminar esta respuesta?";
+
+    pedirConfirmacion(message, async () => {
+      try {
+        const params = Array.isArray(ids) ? { ids } : {};
+        const url = Array.isArray(ids)
+          ? `${import.meta.env.VITE_API}/answered-clinical-records`
+          : `${import.meta.env.VITE_API}/answered-clinical-records/${ids}`;
+
+        await axios.delete(url, { data: params });
+
+        setNotification({
+          message: "Respuesta(s) eliminada(s) correctamente.",
+          type: "success",
+        });
+        fetchStatsAndRecords(); // Recarga los datos y limpia la selección
+      } catch (err) {
+        console.error("Error al eliminar:", err);
+        setNotification({
+          message: "Hubo un error al eliminar la(s) respuesta(s).",
+          type: "error",
+        });
       }
+    });
+  };
+
+  const handleSelectOne = (id) => {
+    setSelectedRecords((prev) =>
+      prev.includes(id) ? prev.filter((recordId) => recordId !== id) : [...prev, id]
     );
   };
 
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedRecords(answeredRecords.map((r) => r._id));
+    } else {
+      setSelectedRecords([]);
+    }
+  };
 
   return (
     <div>
@@ -110,7 +131,17 @@ export default function DashboardAdmin() {
         </li>
       </ul>
 
-      <h2 className="text-xl font-semibold text-white mb-4">📄 Fichas Respondidas</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold text-white">📄 Fichas Respondidas</h2>
+        {selectedRecords.length > 0 && (
+          <button
+            onClick={() => handleDelete(selectedRecords)}
+            className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-all duration-200"
+          >
+            Eliminar ({selectedRecords.length}) seleccionadas
+          </button>
+        )}
+      </div>
 
       {loading ? (
         <p className="text-white">Cargando respuestas...</p>
@@ -122,6 +153,17 @@ export default function DashboardAdmin() {
         <table className="min-w-full bg-white rounded shadow overflow-hidden">
           <thead>
             <tr className="bg-gray-200 text-left text-sm">
+              <th className="p-2 w-4">
+                <input
+                  type="checkbox"
+                  onChange={handleSelectAll}
+                  checked={
+                    answeredRecords.length > 0 &&
+                    selectedRecords.length === answeredRecords.length
+                  }
+                  className="form-checkbox h-4 w-4 text-blue-600"
+                />
+              </th>
               <th className="p-2">N° Ficha</th>
               <th className="p-2">Alumno</th>
               <th className="p-2">Hora de Envío</th>
@@ -132,6 +174,14 @@ export default function DashboardAdmin() {
           <tbody>
             {answeredRecords.map((record) => (
               <tr key={record._id} className="border-b border-gray-300 text-sm">
+                <td className="p-2">
+                  <input
+                    type="checkbox"
+                    checked={selectedRecords.includes(record._id)}
+                    onChange={() => handleSelectOne(record._id)}
+                    className="form-checkbox h-4 w-4 text-blue-600"
+                  />
+                </td>
                 <td className="p-2">{record.clinicalRecordNumber}</td>
                 <td className="p-2">{record.email}</td>
                 <td className="p-2">{new Date(record.createdAt).toLocaleString()}</td>

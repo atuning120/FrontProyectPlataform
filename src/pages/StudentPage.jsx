@@ -5,7 +5,7 @@ import ClinicalRecordList from "../components/ClinicalRecords/ClinicalRecordList
 import AnsweredClinicalRecordList from "../components/AnsweredClinicalRecords/AnsweredClinicalRecordList";
 import HeaderStudent from "../components/HeaderStudent";
 import Footer from "../components/Footer";
-import { useStudentView } from "../context/StudentViewContext"; // 👈 contexto
+import { useStudentView } from "../context/StudentViewContext"; 
 import Notification from "../components/Notification";
 
 export default function StudentPage() {

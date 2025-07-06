@@ -68,40 +68,36 @@ export default function ClinicalRecordList({ onResponseSubmitted, setNotificatio
               render: (row) => new Date(row.updatedAt).toLocaleDateString(),
             },
             { key: "content", label: "Descripción" },
-            ...(user.role !== "admin"
-              ? [
-                  {
-                    key: "actions",
-                    label: "Acciones",
-                    render: (row) => {
-                      if (user.role === "profesor") {
-                        return (
-                          <DeleteClinicalRecord
-                            recordId={row._id}
-                            onDelete={handleDelete}
-                            setNotification={setNotification}
-                            pedirConfirmacion={pedirConfirmacion}
-                          />
-                        );
-                      }
+            {
+              key: "actions",
+              label: "Acciones",
+              render: (row) => {
+                if (user.role === "profesor" || user.role === "admin") {
+                  return (
+                    <DeleteClinicalRecord
+                      recordId={row._id}
+                      onDelete={handleDelete}
+                      setNotification={setNotification}
+                      pedirConfirmacion={pedirConfirmacion}
+                    />
+                  );
+                }
 
-                      if (user.role === "alumno") {
-                        return (
-                          <ToggleButton
-                            isVisible={selectedRecord?._id === row._id}
-                            onToggle={() => toggleRecord(row)}
-                            showText="Ingresar"
-                            hideText="Cancelar"
-                            className="p-2 bg-blue-500 text-white rounded-md"
-                          />
-                        );
-                      }
+                if (user.role === "alumno") {
+                  return (
+                    <ToggleButton
+                      isVisible={selectedRecord?._id === row._id}
+                      onToggle={() => toggleRecord(row)}
+                      showText="Ingresar"
+                      hideText="Cancelar"
+                      className="p-2 bg-blue-500 text-white rounded-md"
+                    />
+                  );
+                }
 
-                      return null;
-                    },
-                  },
-                ]
-              : []),
+                return null;
+              },
+            },
           ]}
           data={recordsToShow}
         />

@@ -127,7 +127,7 @@ export default function HeaderAdmin() {
                 <p className="text-sm text-white/80">Bienvenido,</p>
                 <p className="text-base font-semibold text-white">{user?.displayName}</p>
                 <p className="text-sm text-white/70">{user?.email}</p>
-                <p className="text-xs text-white/60 italic">Rol: Profesor</p>
+                <p className="text-xs text-white/60 italic">Rol: {user?.role.charAt(0).toUpperCase() + user?.role.slice(1)}</p>
               </DropdownItem>
 
               <DropdownItem key="logout" className="px-0 py-1" textValue="Cerrar sesion">
