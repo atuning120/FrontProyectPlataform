@@ -150,6 +150,7 @@ export default function DashboardAdmin() {
       ) : answeredRecords.length === 0 ? (
         <p className="text-white">No hay fichas respondidas.</p>
       ) : (
+        <div className="overflow-x-auto w-full">
         <table className="min-w-full bg-white rounded shadow overflow-hidden">
           <thead>
             <tr className="bg-gray-200 text-left text-sm">
@@ -198,6 +199,7 @@ export default function DashboardAdmin() {
             ))}
           </tbody>
         </table>
+        </div>
       )}
     </div>
   );
