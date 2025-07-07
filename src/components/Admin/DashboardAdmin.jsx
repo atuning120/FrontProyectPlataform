@@ -115,7 +115,7 @@ export default function DashboardAdmin() {
         onCancel={() => setConfirm((c) => ({ ...c, open: false }))}
       />
 
-      <h1 className="text-2xl font-bold text-white mb-6">📊 Panel de administración</h1>
+      <h1 className="text-2xl font-bold text-white mb-6"> Panel de administración</h1>
       <ul className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
         <li className="bg-white/50 p-4 rounded-lg shadow border border-white/40">
           <h2 className="text-lg font-semibold text-blue-900">Pacientes registrados</h2>
@@ -132,7 +132,7 @@ export default function DashboardAdmin() {
       </ul>
 
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold text-white">📄 Fichas Respondidas</h2>
+        <h2 className="text-xl font-semibold text-white"> Fichas Respondidas</h2>
         {selectedRecords.length > 0 && (
           <button
             onClick={() => handleDelete(selectedRecords)}
