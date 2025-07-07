@@ -19,7 +19,7 @@ const Footer = () => {
             cristian.nunez@alumnos.ucn.cl
         </p>
          <p className="text-xs font-medium">
-            benja.gilberto@alumnos.ucn.cl
+            benjamin.gilberto@alumnos.ucn.cl
         </p>
     </div>
     <div className="flex flex-col gap-4 flex-1">
