@@ -1,20 +1,23 @@
-# frontend/Dockerfile
-FROM node:20
+# Etapa 1: Build
+FROM node:20-alpine AS build
 
-# Establece el directorio de trabajo
 WORKDIR /app
 
-# Copia el package.json y package-lock.json
 COPY package*.json ./
 
-# Instala las dependencias
-RUN npm install
+RUN npm ci
 
-# Copia el resto del código fuente
 COPY . .
 
-# Expone el puerto de desarrollo de Vite
-EXPOSE 5173
+RUN npm run build
 
-# Comando por defecto
-CMD ["npm", "run", "dev", "--", "--host"]
+# Etapa 2: Producción con Nginx
+FROM nginx:alpine
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+COPY --from=build /app/dist /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
