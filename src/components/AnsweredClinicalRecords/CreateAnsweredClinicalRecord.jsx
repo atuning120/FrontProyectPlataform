@@ -446,11 +446,11 @@ export default function CreateAnsweredClinicalRecords({
                         )}
                         {/* ----- pain_scale ----- */}
                         {type === "pain_scale" && (
-                          <div className="flex gap-x-4">
+                          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
                             {options.map((opt, idx) => (
                               <label
                                 key={`${idPrefix}-${idx}`}
-                                className="flex items-center gap-2"
+                                className="flex items-center gap-1 sm:gap-2 text-sm sm:text-base cursor-pointer p-2 border rounded-md hover:bg-gray-50 transition-colors"
                               >
                                 <input
                                   type="radio"
@@ -458,9 +458,9 @@ export default function CreateAnsweredClinicalRecords({
                                   value={opt}
                                   checked={value === opt}
                                   onChange={() => handleInputChange(format.id, key, opt)}
-                                  className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                                  className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500 flex-shrink-0"
                                 />
-                                {opt}
+                                <span className="text-xs sm:text-sm leading-tight">{opt}</span>
                               </label>
                             ))}
                           </div>
