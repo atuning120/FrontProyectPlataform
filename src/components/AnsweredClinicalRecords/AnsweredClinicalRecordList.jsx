@@ -4,8 +4,11 @@ import TableComponent from "../TableComponent";
 import ToggleButton from "../ToggleButton";
 import { AuthContext } from "../Auth/AuthProvider";
 import formatsData from "../../data/formats.json";
+// Asegúrate de importar los componentes de diálogo y notificación
+import ConfirmDialog from "../ConfirmDialog";
+import Notification from "../Notification";
 
-export default function AnsweredClinicalRecordList({ onFeedbackSaved, setNotification }) {
+export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
   const { user } = useContext(AuthContext);
   const [answeredRecords, setAnsweredRecords] = useState([]);
   const [selectedRecord, setSelectedRecord] = useState(null);
@@ -19,67 +22,73 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved, setNotific
   const [feedbackState, setFeedbackState] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
+  // --- ESTADOS PARA ELIMINACIÓN (SOLO ADMIN) ---
+  const [selectedForDeletion, setSelectedForDeletion] = useState([]);
+  const [notification, setNotification] = useState({ message: "", type: "" });
+  const [confirm, setConfirm] = useState({ open: false, message: "", onConfirm: () => {} });
+
   const userEmail = user?.email;
   const userRole = user?.role;
+
+  const fetchRecords = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const { data: records } = await axios.get(
+        `${import.meta.env.VITE_API}/answered-clinical-records`
+      );
+
+      let filtered = records
+        .filter((r) => {
+          if (userRole === "alumno") return r.email === userEmail;
+          if (userRole === "profesor") return r.email !== userEmail;
+          return true;
+        })
+        .filter((r) => {
+          if (filter === "all") return true;
+          const hasFeedback =
+            r.feedback && (Object.keys(r.feedback).length > 0 || r.feedback.general);
+          return filter === "with-feedback" ? hasFeedback : !hasFeedback;
+        });
+
+      if (filterByProfessor) {
+        filtered = filtered.filter((r) => r.teacherEmail === filterByProfessor);
+      }
+      if (filterByRecordNumber) {
+        filtered = filtered.filter((r) =>
+          r.clinicalRecordNumber.toString().includes(filterByRecordNumber)
+        );
+      }
+      if (filterByDate) {
+        filtered = filtered.filter((r) => {
+          const d = new Date(r.createdAt);
+          // yyyy-mm-dd formato local
+          const localDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+          return localDate === filterByDate;
+        });
+      }
+
+
+      filtered = filtered.sort((a, b) => {
+        const dateA = new Date(a.createdAt);
+        const dateB = new Date(b.createdAt);
+        return sortByDate === "asc" ? dateA - dateB : dateB - dateA;
+      });
+
+      setAnsweredRecords(filtered);
+      setSelectedForDeletion([]); // Limpiar selección al recargar
+    } catch (err) {
+      setError("Error al cargar las respuestas. Intente de nuevo más tarde.");
+      console.error("Error fetching records:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   /* -------------------------------------------------- */
   /* Carga de registros con filtros                      */
   /* -------------------------------------------------- */
   useEffect(() => {
-    const fetchRecords = async () => {
-      setLoading(true);
-      setError("");
-      try {
-        const { data: records } = await axios.get(
-          `${import.meta.env.VITE_API}/answered-clinical-records`
-        );
-
-        let filtered = records
-          .filter((r) => {
-            if (userRole === "alumno") return r.email === userEmail;
-            if (userRole === "profesor") return r.email !== userEmail;
-            return true;
-          })
-          .filter((r) => {
-            if (filter === "all") return true;
-            const hasFeedback =
-              r.feedback && (Object.keys(r.feedback).length > 0 || r.feedback.general);
-            return filter === "with-feedback" ? hasFeedback : !hasFeedback;
-          });
-
-        if (filterByProfessor) {
-          filtered = filtered.filter((r) => r.teacherEmail === filterByProfessor);
-        }
-        if (filterByRecordNumber) {
-          filtered = filtered.filter((r) =>
-            r.clinicalRecordNumber.toString().includes(filterByRecordNumber)
-          );
-        }
-        if (filterByDate) {
-          filtered = filtered.filter((r) => {
-            const d = new Date(r.createdAt);
-            // yyyy-mm-dd formato local
-            const localDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-            return localDate === filterByDate;
-          });
-        }
-
-
-        filtered = filtered.sort((a, b) => {
-          const dateA = new Date(a.createdAt);
-          const dateB = new Date(b.createdAt);
-          return sortByDate === "asc" ? dateA - dateB : dateB - dateA;
-        });
-
-        setAnsweredRecords(filtered);
-      } catch (err) {
-        setError("Error al cargar las respuestas. Intente de nuevo más tarde.");
-        console.error("Error fetching records:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchRecords();
   }, [
     userEmail,
@@ -91,6 +100,62 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved, setNotific
     sortByDate,
     onFeedbackSaved,
   ]);
+
+  /* -------------------------------------------------- */
+  /* LÓGICA DE ELIMINACIÓN (SOLO ADMIN)                 */
+  /* -------------------------------------------------- */
+  const pedirConfirmacion = (message, onConfirm) => {
+    setConfirm({
+      open: true,
+      message,
+      onConfirm: () => {
+        onConfirm();
+        setConfirm((c) => ({ ...c, open: false }));
+      },
+    });
+  };
+
+  const handleDelete = (ids) => {
+    if (userRole !== 'admin') return; // Doble seguridad
+
+    const isBulk = Array.isArray(ids);
+    const message = isBulk
+      ? `¿Estás seguro de que quieres eliminar ${ids.length} respuestas seleccionadas?`
+      : "¿Estás seguro de que quieres eliminar esta respuesta?";
+
+    pedirConfirmacion(message, async () => {
+      try {
+        if (isBulk) {
+          // Endpoint para eliminación masiva
+          await axios.delete(`${import.meta.env.VITE_API}/answered-clinical-records`, { data: { ids } });
+        } else {
+          // Endpoint para eliminación individual
+          await axios.delete(`${import.meta.env.VITE_API}/answered-clinical-records/${ids}`);
+        }
+        setNotification({ message: "Respuesta(s) eliminada(s) exitosamente.", type: "success" });
+        fetchRecords(); // Recargar la lista
+      } catch (err) {
+        const errorMessage = err.response?.data?.message || "Hubo un error al eliminar.";
+        setNotification({ message: errorMessage, type: "error" });
+        console.error("Error al eliminar:", err);
+      }
+    });
+  };
+
+  const handleSelectOne = (id) => {
+    setSelectedForDeletion((prev) =>
+      prev.includes(id) ? prev.filter((recordId) => recordId !== id) : [...prev, id]
+    );
+  };
+
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedForDeletion(answeredRecords.map((r) => r._id));
+    } else {
+      setSelectedForDeletion([]);
+    }
+  };
+
 
   /* -------------------------------------------------- */
   /* Handlers de UI                                      */
@@ -444,6 +509,26 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved, setNotific
 
 
   const columns = [
+    // --- NUEVA COLUMNA DE CHECKBOX (SOLO ADMIN) ---
+    userRole === 'admin' && {
+      key: "select",
+      label: (
+        <input
+          type="checkbox"
+          onChange={handleSelectAll}
+          checked={answeredRecords.length > 0 && selectedForDeletion.length === answeredRecords.length}
+          className="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
+        />
+      ),
+      render: (row) => (
+        <input
+          type="checkbox"
+          checked={selectedForDeletion.includes(row._id)}
+          onChange={() => handleSelectOne(row._id)}
+          className="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
+        />
+      ),
+    },
     { key: "clinicalRecordNumber", label: "N° Ficha" },
     {
       key: "email",
@@ -508,26 +593,63 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved, setNotific
       key: "actions",
       label: "Acciones",
       render: (row) => (
-        <ToggleButton
-          isVisible={selectedRecord?._id === row._id}
-          onToggle={() => handleToggle(row)}
-          showText="Detalle"
-          hideText="Cerrar"
-          className={`px-3 py-1 text-sm rounded-md ${selectedRecord?._id === row._id
-            ? "bg-red-500 hover:bg-red-600"
-            : "bg-blue-500 hover:bg-blue-600"
-            } text-white`}
-        />
+        <div className="flex items-center gap-2">
+          <ToggleButton
+            isVisible={selectedRecord?._id === row._id}
+            onToggle={() => handleToggle(row)}
+            showText="Detalle"
+            hideText="Cerrar"
+            className={`px-3 py-1 text-sm rounded-md ${selectedRecord?._id === row._id
+              ? "bg-gray-500 hover:bg-gray-600"
+              : "bg-blue-500 hover:bg-blue-600"
+              } text-white`}
+          />
+          {/* --- BOTÓN DE ELIMINAR INDIVIDUAL (SOLO ADMIN) --- */}
+          {userRole === 'admin' && (
+            <button
+              onClick={() => handleDelete(row._id)}
+              className="px-3 py-1 text-sm rounded-md bg-red-500 hover:bg-red-600 text-white"
+              title="Eliminar esta respuesta"
+            >
+              Eliminar
+            </button>
+          )}
+        </div>
       ),
     },
-  ];
+  ].filter(Boolean); // Filtra los valores `false` para que la columna de checkbox no aparezca para otros roles
 
 
   return (
     <div className="bg-white p-4 md:p-6 rounded-lg shadow-lg mt-6">
-      <h2 className="text-2xl font-semibold mb-6 text-gray-700">
-        Respuestas de Atenciones Clínicas
-      </h2>
+      {/* --- COMPONENTES DE NOTIFICACIÓN Y CONFIRMACIÓN --- */}
+      <Notification
+        message={notification.message}
+        type={notification.type}
+        onClose={() => setNotification({ ...notification, message: "" })}
+      />
+      <ConfirmDialog
+        open={confirm.open}
+        message={confirm.message}
+        onConfirm={confirm.onConfirm}
+        onCancel={() => setConfirm((c) => ({ ...c, open: false }))}
+      />
+
+      <div className="flex justify-between items-center mb-4 flex-wrap gap-4">
+        <h2 className="text-2xl font-semibold text-gray-700">
+          Respuestas de Atenciones Clínicas
+        </h2>
+        {/* --- BOTÓN DE ELIMINACIÓN MASIVA (SOLO ADMIN) --- */}
+        {userRole === 'admin' && selectedForDeletion.length > 0 && (
+          <button
+            onClick={() => handleDelete(selectedForDeletion)}
+            className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-all duration-300 ease-in-out"
+          >
+            Eliminar ({selectedForDeletion.length}) seleccionadas
+          </button>
+        )}
+      </div>
+
 
       {/* ---------- Filtros ---------- */}
       <div className="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">

@@ -1,18 +1,14 @@
 import axios from "axios";
 import { useState } from "react";
 
-export default function DeletePatient({ patientId, onDelete, setNotification }) {
+export default function DeletePatient({ patientId, onDelete, setNotification, pedirConfirmacion }) {
   const [loading, setLoading] = useState(false);
 
-  const handleDelete = async () => {
-    if (loading) return;
-    
+  const eliminarDefinitivo = async () => {
     setLoading(true);
-
     try {
       const response = await axios.delete(`${import.meta.env.VITE_API}/patients/${patientId}`);
       onDelete(patientId);
-      //alert(response.data.message);
       setNotification?.({ message: response.data.message, type: "success" });
     } catch (error) {
       console.error("Error eliminando el paciente:", error);
@@ -20,6 +16,19 @@ export default function DeletePatient({ patientId, onDelete, setNotification }) 
       setNotification?.({ message: errorMessage, type: "error" });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = () => {
+    if (loading) return;
+    // Usar el diálogo de confirmación si está disponible
+    if (pedirConfirmacion) {
+      pedirConfirmacion("¿Estás seguro de que deseas eliminar este paciente?", eliminarDefinitivo);
+    } else {
+      // Fallback al confirm del navegador si no se pasa la prop
+      if (window.confirm("¿Estás seguro de que deseas eliminar este paciente?")) {
+        eliminarDefinitivo();
+      }
     }
   };
 
