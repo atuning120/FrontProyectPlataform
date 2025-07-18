@@ -15,7 +15,7 @@ export function AuthProvider({ children }) {
       if (firebaseUser) {
         //  Si el usuario inicia sesión en Firebase, obtenemos su ID Token.
         const idToken = await firebaseUser.getIdToken();
-
+ 
         try {
           // Enviamos el ID Token a nuestro backend.
           const response = await fetch(`${import.meta.env.VITE_API}/auth/login`, {
