@@ -46,9 +46,17 @@ export default function StudentPage() {
               <ClinicalRecordList
                 onResponseSubmitted={handleResponseSubmitted}
                 setNotification={setNotification}
+                usePagination={true}
+                itemsPerPage={10}
               />
             )}
-            {showAnsweredRecords && <AnsweredClinicalRecordList />}
+            
+            {showAnsweredRecords && (
+              <AnsweredClinicalRecordList 
+                usePagination={true}
+                itemsPerPage={10}
+              />
+            )}
           </div>
         </div>
       </main>

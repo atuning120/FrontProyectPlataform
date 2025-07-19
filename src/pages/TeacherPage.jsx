@@ -74,11 +74,45 @@ export default function TeacherPage() {
       <main className="flex-1 pt-20 max-w-5xl w-full mx-auto">
         <div className="bg-white/30 backdrop-blur-md rounded-xl shadow-lg border border-white/40 p-6">
           <div className="space-y-6">
-            {showForm && <CreatePatient onClose={() => setShowForm(false)} setNotification={setNotification} />}
-            {showPatientList && <PatientList setNotification={setNotification} />}
-            {showClinicRecordForm && <CreateClinicalRecord onClose={() => setShowClinicRecordForm(false)} setNotification={setNotification} />}
-            {showClinicalRecords && <ClinicalRecordList setNotification={setNotification} pedirConfirmacion={pedirConfirmacion} />}
-            {showAnsweredRecords && <AnsweredClinicalRecordList onFeedbackSaved={handleCloseAnsweredRecords} setNotification={setNotification}/>}
+            {showForm && (
+              <CreatePatient 
+                onClose={() => setShowForm(false)} 
+                setNotification={setNotification} 
+              />
+            )}
+            
+            {showPatientList && (
+              <PatientList 
+                setNotification={setNotification}
+                usePagination={true}
+                itemsPerPage={12}
+              />
+            )}
+            
+            {showClinicRecordForm && (
+              <CreateClinicalRecord 
+                onClose={() => setShowClinicRecordForm(false)} 
+                setNotification={setNotification} 
+              />
+            )}
+            
+            {showClinicalRecords && (
+              <ClinicalRecordList 
+                setNotification={setNotification} 
+                pedirConfirmacion={pedirConfirmacion}
+                usePagination={true}
+                itemsPerPage={8}
+              />
+            )}
+            
+            {showAnsweredRecords && (
+              <AnsweredClinicalRecordList 
+                onFeedbackSaved={handleCloseAnsweredRecords} 
+                setNotification={setNotification}
+                usePagination={true}
+                itemsPerPage={8}
+              />
+            )}
           </div>
         </div>
       </main>

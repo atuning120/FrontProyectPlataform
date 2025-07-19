@@ -3,8 +3,14 @@ import axios from "axios";
 import { AuthContext } from "../Auth/AuthProvider";
 import DeletePatient from "./DeletePatient";
 import TableComponent from "../TableComponent";
+import PaginationComponent from "../Pagination/PaginationComponent";
 
-export default function PatientList({ setNotification, pedirConfirmacion }) { // Añadir pedirConfirmacion
+export default function PatientList({ 
+  setNotification, 
+  pedirConfirmacion, 
+  usePagination = false, 
+  itemsPerPage = 10 
+}) {
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedPatients, setSelectedPatients] = useState([]);
@@ -129,7 +135,23 @@ export default function PatientList({ setNotification, pedirConfirmacion }) { //
         )}
       </div>
 
-      <TableComponent columns={columns} data={patients} />
+      {usePagination ? (
+        <PaginationComponent
+          data={patients}
+          itemsPerPage={itemsPerPage}
+          renderItem={(patient, index) => (
+            <div key={patient._id} className="mb-4">
+              <TableComponent 
+                columns={columns} 
+                data={[patient]} 
+              />
+            </div>
+          )}
+          containerClassName="space-y-4"
+        />
+      ) : (
+        <TableComponent columns={columns} data={patients} />
+      )}
     </div>
   );
 }

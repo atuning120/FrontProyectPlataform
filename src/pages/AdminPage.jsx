@@ -29,19 +29,34 @@ function AdminContent() {
 
         {showPatientList && (
           <div className="border-t border-white/30 pt-6">
-            <PatientList setNotification={setNotification} pedirConfirmacion={pedirConfirmacion} />
+            <PatientList 
+              setNotification={setNotification} 
+              pedirConfirmacion={pedirConfirmacion}
+              usePagination={true}
+              itemsPerPage={15}
+            />
           </div>
         )}
 
         {showClinicalRecords && (
           <div className="border-t border-white/30 pt-6">
-            <ClinicalRecordList onResponseSubmitted={() => {}} setNotification={setNotification} pedirConfirmacion={pedirConfirmacion} />
+            <ClinicalRecordList 
+              onResponseSubmitted={() => {}} 
+              setNotification={setNotification} 
+              pedirConfirmacion={pedirConfirmacion}
+              usePagination={true}
+              itemsPerPage={10}
+            />
           </div>
         )}
 
         {showAnsweredRecords && (
           <div className="border-t border-white/30 pt-6">
-            <AnsweredClinicalRecordList setNotification={setNotification} />
+            <AnsweredClinicalRecordList 
+              setNotification={setNotification}
+              usePagination={true}
+              itemsPerPage={10}
+            />
           </div>
         )}
       </div>

@@ -5,8 +5,15 @@ import DeleteClinicalRecord from "./DeleteClinicalRecord";
 import CreateAnsweredClinicalRecords from "../AnsweredClinicalRecords/CreateAnsweredClinicalRecord";
 import TableComponent from "../TableComponent";
 import ToggleButton from "../ToggleButton";
+import PaginationComponent from "../Pagination/PaginationComponent";
 
-export default function ClinicalRecordList({ onResponseSubmitted, setNotification, pedirConfirmacion }) {
+export default function ClinicalRecordList({ 
+  onResponseSubmitted, 
+  setNotification, 
+  pedirConfirmacion, 
+  usePagination = false, 
+  itemsPerPage = 10 
+}) {
   const { user } = useContext(AuthContext);
   const [clinicalRecords, setClinicalRecords] = useState([]);
   const [answeredRecords, setAnsweredRecords] = useState([]);
@@ -164,6 +171,20 @@ export default function ClinicalRecordList({ onResponseSubmitted, setNotificatio
 
       {recordsToShow.length === 0 ? (
         <p>No hay fichas clínicas disponibles para responder.</p>
+      ) : usePagination ? (
+        <PaginationComponent
+          data={recordsToShow}
+          itemsPerPage={itemsPerPage}
+          renderItem={(record, index) => (
+            <div key={record._id} className="mb-4">
+              <TableComponent 
+                columns={columns} 
+                data={[record]} 
+              />
+            </div>
+          )}
+          containerClassName="space-y-4"
+        />
       ) : (
         <TableComponent columns={columns} data={recordsToShow} />
       )}

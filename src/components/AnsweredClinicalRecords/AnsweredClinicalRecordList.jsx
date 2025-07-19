@@ -7,8 +7,14 @@ import formatsData from "../../data/formats.json";
 // Asegúrate de importar los componentes de diálogo y notificación
 import ConfirmDialog from "../ConfirmDialog";
 import Notification from "../Notification";
+import PaginationComponent from "../Pagination/PaginationComponent";
 
-export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
+export default function AnsweredClinicalRecordList({ 
+  onFeedbackSaved, 
+  usePagination = false, 
+  itemsPerPage = 10,
+  setNotification: externalSetNotification 
+}) {
   const { user } = useContext(AuthContext);
   const [answeredRecords, setAnsweredRecords] = useState([]);
   const [selectedRecord, setSelectedRecord] = useState(null);
@@ -29,6 +35,15 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
 
   const userEmail = user?.email;
   const userRole = user?.role;
+
+  // Función helper para manejar notificaciones
+  const handleNotification = (message, type) => {
+    if (externalSetNotification) {
+      externalSetNotification({ message, type });
+    } else {
+      setNotification({ message, type });
+    }
+  };
 
   const fetchRecords = async () => {
     setLoading(true);
@@ -132,11 +147,11 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
           // Endpoint para eliminación individual
           await axios.delete(`${import.meta.env.VITE_API}/answered-clinical-records/${ids}`);
         }
-        setNotification({ message: "Respuesta(s) eliminada(s) exitosamente.", type: "success" });
+        handleNotification("Respuesta(s) eliminada(s) exitosamente.", "success");
         fetchRecords(); // Recargar la lista
       } catch (err) {
         const errorMessage = err.response?.data?.message || "Hubo un error al eliminar.";
-        setNotification({ message: errorMessage, type: "error" });
+        handleNotification(errorMessage, "error");
         console.error("Error al eliminar:", err);
       }
     });
@@ -623,11 +638,13 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
   return (
     <div className="bg-white p-4 md:p-6 rounded-lg shadow-lg mt-6">
       {/* --- COMPONENTES DE NOTIFICACIÓN Y CONFIRMACIÓN --- */}
-      <Notification
-        message={notification.message}
-        type={notification.type}
-        onClose={() => setNotification({ ...notification, message: "" })}
-      />
+      {!externalSetNotification && (
+        <Notification
+          message={notification.message}
+          type={notification.type}
+          onClose={() => setNotification({ ...notification, message: "" })}
+        />
+      )}
       <ConfirmDialog
         open={confirm.open}
         message={confirm.message}
@@ -714,7 +731,7 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
         )}
       </div>
 
-      {/* ---------- Tabla de Registros ---------- */}
+      {/* ---------- Tabla de Registros con Paginación ---------- */}
       {loading ? (
         <div className="text-center py-12">
           <p className="text-lg text-gray-500">Cargando respuestas...</p>
@@ -725,35 +742,48 @@ export default function AnsweredClinicalRecordList({ onFeedbackSaved }) {
             No hay respuestas registradas que coincidan con los filtros aplicados.
           </p>
         </div>
-      ) : (
-        <>
-          <TableComponent columns={columns} data={answeredRecords} />
-          {selectedRecord && (
-            <div className="mt-8 p-4 md:p-6 bg-gray-50 rounded-lg shadow-inner border border-gray-200">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-semibold text-gray-800">
-                  Detalle Ficha Clínica #{selectedRecord.clinicalRecordNumber}
-                  <span className="text-base font-normal text-gray-600">
-                    {" "}
-                    (Alumno: {selectedRecord.email})
-                  </span>
-                </h3>
-                <button
-                  onClick={() => {
-                    setSelectedRecord(null);
-                    setFeedbackState({});
-                    setError("");
-                  }}
-                  className="text-gray-500 hover:text-gray-700 text-2xl font-bold"
-                  title="Cerrar detalle"
-                >
-                  &times;
-                </button>
-              </div>
-              {renderAnswersWithFeedback(selectedRecord)}
+      ) : usePagination ? (
+        <PaginationComponent
+          data={answeredRecords}
+          itemsPerPage={itemsPerPage}
+          renderItem={(record, index) => (
+            <div key={record._id} className="mb-4">
+              <TableComponent 
+                columns={columns} 
+                data={[record]} 
+              />
             </div>
           )}
-        </>
+          containerClassName="space-y-4"
+        />
+      ) : (
+        <TableComponent columns={columns} data={answeredRecords} />
+      )}
+      
+      {selectedRecord && (
+        <div className="mt-8 p-4 md:p-6 bg-gray-50 rounded-lg shadow-inner border border-gray-200">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-semibold text-gray-800">
+              Detalle Ficha Clínica #{selectedRecord.clinicalRecordNumber}
+              <span className="text-base font-normal text-gray-600">
+                {" "}
+                (Alumno: {selectedRecord.email})
+              </span>
+            </h3>
+            <button
+              onClick={() => {
+                setSelectedRecord(null);
+                setFeedbackState({});
+                setError("");
+              }}
+              className="text-gray-500 hover:text-gray-700 text-2xl font-bold"
+              title="Cerrar detalle"
+            >
+              &times;
+            </button>
+          </div>
+          {renderAnswersWithFeedback(selectedRecord)}
+        </div>
       )}
     </div>
   );
