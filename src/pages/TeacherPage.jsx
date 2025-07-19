@@ -16,23 +16,18 @@ export default function TeacherPage() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [notification, setNotification] = useState({ message: "", type: "success" });
-  const [confirm, setConfirm] = useState({
-    open: false,
-    message: "",
-    onConfirm: () => { },
-  });
+  const [confirm, setConfirm] = useState({ open: false, message: "", onConfirm: () => {} });
+
   const pedirConfirmacion = (message, onConfirm) => {
     setConfirm({
       open: true,
       message,
       onConfirm: () => {
-        onConfirm(); // Ejecuta la acción original
+        onConfirm();
         setConfirm((c) => ({ ...c, open: false }));
       },
     });
   };
-
-
 
   const {
     showForm,
@@ -83,9 +78,10 @@ export default function TeacherPage() {
             
             {showPatientList && (
               <PatientList 
-                setNotification={setNotification}
+                setNotification={setNotification} 
+                pedirConfirmacion={pedirConfirmacion}
                 usePagination={true}
-                itemsPerPage={12}
+                itemsPerPage={15}
               />
             )}
             

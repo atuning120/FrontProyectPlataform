@@ -12,6 +12,7 @@ export default function DeletePatient({ patientId, onDelete, setNotification, pe
       setNotification?.({ message: response.data.message, type: "success" });
     } catch (error) {
       console.error("Error eliminando el paciente:", error);
+      // Capturar el mensaje específico del servidor
       const errorMessage = error.response?.data?.message || "Hubo un error al eliminar el paciente.";
       setNotification?.({ message: errorMessage, type: "error" });
     } finally {

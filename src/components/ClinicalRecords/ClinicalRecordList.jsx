@@ -86,8 +86,10 @@ export default function ClinicalRecordList({
         fetchData(); // Recarga los datos
       } catch (err) {
         console.error("Error al eliminar fichas:", err);
+        // Capturar el mensaje específico del servidor
+        const errorMessage = err.response?.data?.message || "Hubo un error al eliminar las fichas.";
         setNotification({
-          message: "Hubo un error al eliminar las fichas.",
+          message: errorMessage,
           type: "error",
         });
       }
@@ -170,7 +172,7 @@ export default function ClinicalRecordList({
       </div>
 
       {recordsToShow.length === 0 ? (
-        <p>No hay fichas clínicas disponibles para responder.</p>
+        <p>No hay fichas clínicas disponibles.</p>
       ) : usePagination ? (
         <PaginationComponent
           data={recordsToShow}

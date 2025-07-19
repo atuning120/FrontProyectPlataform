@@ -16,8 +16,10 @@ export default function DeleteClinicalRecord({ recordId, onDelete, setNotificati
       onDelete(recordId);
     } catch (error) {
       console.error("Error eliminando la ficha clínica:", error);
+      // Capturar el mensaje específico del servidor
+      const errorMessage = error.response?.data?.message || "Hubo un error al eliminar la ficha clínica.";
       setNotification?.({
-        message: error.response?.data?.message || "Hubo un error al eliminar la ficha clínica.",
+        message: errorMessage,
         type: "error"
       });
     } finally {
