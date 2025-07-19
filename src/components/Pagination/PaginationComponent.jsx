@@ -4,6 +4,7 @@ export default function PaginationComponent({
   data, 
   itemsPerPage = 10, 
   renderItem,
+  renderTable,
   containerClassName = "",
   paginationClassName = "flex justify-center items-center mt-4 space-x-2"
 }) {
@@ -23,7 +24,7 @@ export default function PaginationComponent({
 
   // Si hay menos datos que itemsPerPage, no mostrar paginación
   if (data.length <= itemsPerPage) {
-    return (
+    return renderTable ? renderTable(data) : (
       <div className={containerClassName}>
         {data.map(renderItem)}
       </div>
@@ -33,9 +34,11 @@ export default function PaginationComponent({
   return (
     <div>
       {/* Datos actuales */}
-      <div className={containerClassName}>
-        {currentData.map(renderItem)}
-      </div>
+      {renderTable ? renderTable(currentData) : (
+        <div className={containerClassName}>
+          {currentData.map(renderItem)}
+        </div>
+      )}
 
       {/* Controles de paginación */}
       <div className={paginationClassName}>

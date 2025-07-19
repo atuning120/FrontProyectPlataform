@@ -139,15 +139,12 @@ export default function PatientList({
         <PaginationComponent
           data={patients}
           itemsPerPage={itemsPerPage}
-          renderItem={(patient, index) => (
-            <div key={patient._id} className="mb-4">
-              <TableComponent 
-                columns={columns} 
-                data={[patient]} 
-              />
-            </div>
+          renderTable={(paginatedData) => (
+            <TableComponent 
+              columns={columns} 
+              data={paginatedData} 
+            />
           )}
-          containerClassName="space-y-4"
         />
       ) : (
         <TableComponent columns={columns} data={patients} />

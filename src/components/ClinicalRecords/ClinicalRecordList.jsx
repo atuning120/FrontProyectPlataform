@@ -175,15 +175,12 @@ export default function ClinicalRecordList({
         <PaginationComponent
           data={recordsToShow}
           itemsPerPage={itemsPerPage}
-          renderItem={(record, index) => (
-            <div key={record._id} className="mb-4">
-              <TableComponent 
-                columns={columns} 
-                data={[record]} 
-              />
-            </div>
+          renderTable={(paginatedData) => (
+            <TableComponent 
+              columns={columns} 
+              data={paginatedData} 
+            />
           )}
-          containerClassName="space-y-4"
         />
       ) : (
         <TableComponent columns={columns} data={recordsToShow} />
